@@ -1,0 +1,104 @@
+인자 파싱
+ - 어떻게 할지
+ - 파싱해서 연결리스트로 만들기
+
+시그널 처리
+ - 공부
+
+
+아래 허용함수 읽어보고 쓸만한거 쓰기.
+! readline: 터미널에서 사용자로부터 한 줄을 읽어들이는 함수로, 텍스트 입력을 받을 때 사용됩니다.
+
+! rl_clear_history: GNU Readline 라이브러리의 기능으로, 히스토리(입력 기록)를 지우는 함수입니다.
+
+! rl_on_new_line: Readline 라이브러리의 함수로, 새로운 라인에 대한 처리를 수행합니다.
+
+rl_replace_line: Readline 라이브러리의 함수로, 현재 라인을 새로운 문자열로 대체합니다.
+
+rl_redisplay: Readline 라이브러리의 함수로, 터미널에 라인을 다시 표시하도록 요청합니다.
+
+! add_history: GNU Readline 라이브러리의 함수로, 히스토리에 새로운 입력을 추가합니다.
+
+? printf: 텍스트를 형식화된 출력으로 터미널에 출력하는 함수입니다.
+
+! malloc: 동적으로 메모리를 할당하는 함수로, 메모리 관리에 사용됩니다.
+
+! free: 동적으로 할당한 메모리를 해제하는 함수입니다.
+
+! write: 파일 디스크립터로 데이터를 쓰는 함수로, 파일 출력 및 터미널 출력에 사용됩니다.
+
+! access: 파일이나 디렉터리에 접근 가능한지를 확인하는 함수입니다.
+
+! open: 파일을 열거나 생성하는 함수로, 파일 입출력에 사용됩니다.
+
+! read: 파일 디스크립터로부터 데이터를 읽는 함수입니다.
+
+! close: 파일 디스크립터를 닫는 함수입니다.
+
+! fork: 현재 프로세스를 복제하여 새로운 자식 프로세스를 생성하는 함수입니다.
+
+! wait, waitpid, wait3, wait4: 자식 프로세스의 종료를 대기하고 종료 상태를 가져오는 함수입니다.
+
+! signal, sigaction, sigemptyset, sigaddset, kill: 시그널 처리 및 관리를 위한 함수입니다.
+
+! exit: 현재 프로세스를 종료하는 함수입니다.
+
+! getcwd, chdir: 현재 작업 디렉터리를 가져오거나 변경하는 함수입니다.
+
+stat, lstat, fstat: 파일의 메타데이터(속성)를 가져오는 함수입니다.
+
+! unlink: 파일을 삭제하는 함수입니다.
+
+! execve: 새로운 프로세스 이미지를 실행하는 함수입니다.
+
+! dup, dup2: 파일 디스크립터를 복제하는 함수로, 입출력 리디렉션에 사용됩니다.
+
+! pipe: 파이프를 생성하는 함수로, 프로세스 간 통신에 사용됩니다.
+
+opendir, readdir, closedir: 디렉터리 관련 작업을 수행하는 함수입니다.
+
+? strerror, perror: 오류 메시지를 반환하거나 출력하는 함수입니다.
+
+isatty, ttyname, ttyslot: 터미널 관련 정보를 다루는 함수입니다.
+
+ioctl: 입출력 제어를 위한 함수입니다.
+
+? getenv: 환경 변수의 값을 가져오는 함수입니다.
+
+tcsetattr, tcgetattr: 터미널 속성을 설정하거나 가져오는 함수입니다.
+
+tgetent, tgetflag, tgetnum, tgetstr, tgoto, tputs: 터미널 관련 작업에 사용되는 함수들로, 터미널 기능을 다룰 때 사용됩니다.
+
+
+-- 읽고 삭제 --
+signal(int signum, void (*handler)(int)):
+
+이 함수는 특정 시그널 signum을 처리하기 위한 시그널 핸들러 함수 handler를 등록합니다.
+시그널 핸들러 함수는 해당 시그널이 발생했을 때 호출되며, 시그널의 동작을 사용자 정의로 처리할 수 있습니다.
+handler 매개변수에 SIG_DFL을 지정하면 시그널의 기본 동작을 사용하게 되고, SIG_IGN을 지정하면 시그널을 무시하게 됩니다.
+sigaction(int signum, const struct sigaction *act, struct sigaction *oldact):
+
+이 함수는 signal 함수보다 더 강력한 시그널 처리를 위한 함수입니다. 구조체 struct sigaction을 사용하여 시그널 핸들링을 더 세밀하게 제어할 수 있습니다.
+act 매개변수에 설정하려는 시그널 핸들러와 관련된 정보를 설정합니다.
+oldact 매개변수를 제공하면 이전 시그널 핸들러 정보를 저장할 수 있습니다.
+sigemptyset(sigset_t *set) 및 sigfillset(sigset_t *set):
+
+이 함수들은 시그널 집합을 초기화하거나 모든 시그널을 포함하는 집합을 만들 때 사용됩니다.
+sigemptyset은 빈 집합을 만들고, sigfillset은 모든 시그널을 포함하는 집합을 만듭니다.
+sigaddset(sigset_t *set, int signum) 및 sigdelset(sigset_t *set, int signum):
+
+이 함수들은 시그널 집합에 특정 시그널을 추가하거나 제거할 때 사용됩니다.
+kill(pid_t pid, int signum):
+
+이 함수는 특정 프로세스(pid)에 시그널(signum)을 보냅니다. 일반적으로 다른 프로세스나 자신에게 시그널을 보낼 때 사용됩니다.
+raise(int signum):
+
+이 함수는 현재 프로세스에 시그널을 보냅니다. 프로세스 자체에 시그널을 보내는 데 사용됩니다.
+SIGCHLD:
+
+이 시그널은 자식 프로세스의 종료 또는 중지를 알리기 위해 사용됩니다. 주로 wait나 waitpid 함수와 함께 사용하여 자식 프로세스의 종료 상태를 처리합니다.
+SIGINT, SIGTERM, SIGKILL:
+
+SIGINT는 프로세스에 대한 인터럽트 시그널로, 주로 Ctrl+C 키 입력과 관련됩니다. 프로세스를 종료하거나 정지시키는 데 사용됩니다.
+SIGTERM은 프로세스에 종료 시그널로, 우아한 종료를 트리거하는 데 사용됩니다.
+SIGKILL은 프로세스를 강제로 종료시키는 시그널로, 프로세스를 즉시 종료시킵니다.
