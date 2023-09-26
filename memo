@@ -1,7 +1,13 @@
+https://bigpel66.oopy.io/library/42/inner-circle/10
+https://velog.io/@sweetykr/minishell                    읽어보려고 메모
+
 인자 파싱
  - 어떻게 할지
  - 파싱해서 연결리스트로 만들기
- - 
+ - https://velog.io/@sham/minishell%EA%B3%BC-readline(readline 라이브러리에 대해)
+
+터미널 설정(t뭐시기 함수들)
+ -  noncanonical input mode 로 설정해야 sigterm 받아올 수 있음... readline 함수가 제대로 출력하지 않는다면 이 설정을 해줘야할듯.
 
 시그널 처리  <- 그럼 결국 자식 프로세스에서 입력 받는 상황은 히어독(자식 프로세스 만들지도않음). 그럼 그냥 히어독일 때 + c 만 처리? readline이 + d 어떻게 처리하는지 봐야할듯 
  - ctrl + c
@@ -13,7 +19,7 @@
     - 리다이렉션 ("<<")일 때 무반응(IGN)
  - 공부
 
-빌트인
+빌트인 -> 부모 프로세스에서(그럼 시그널처리 편해짐)
  - echo: -n 옵션을 사용할 수 있는 echo
  - cd: 오직 상대 또는 절대경로만 사용하는 cd
  - pwd: 옵션이 없는 pwd
