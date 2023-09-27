@@ -1,0 +1,18 @@
+// 환경변수를 매개인자로 넘겨주면 그 데이터 나오는 함수가 있을 것.
+// 2차원 포인터로 넘겨진 char* (커맨드 + 인자들)를 가지고 활용 할 것. -> execve 함수 두번째 인자 처럼.
+// 이 함수로 넘어온 데이터는 [0]번째에 무조건 "cd"가 있을 것.
+// cd : [1]번째가 NULL일 경우, cd $HOME이 됨.
+// cd 디렉토리 : [1]번째가 디렉토리면 그 뒤에 인자들은 처리 안함(bash)
+// cd . : 현재 폴더로 이동 -> 일단 엑싯 때려보자.
+// cd .. : 이전 폴더로 이동
+
+#include "../minishell.h"
+
+void	cd_func(char **arvs)
+{
+	if (arvs[1] == NULL)
+		return ;
+	if (chdir(arvs[1]) == -1)
+		perror("minishell: cd: ");
+	printf("move\n");
+}

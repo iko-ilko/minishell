@@ -3,13 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jiwkim2 <jiwkim2@student.42seoul.kr>       +#+  +:+       +#+        */
+/*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 19:44:03 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/09/16 19:29:20 by jiwkim2          ###   ########seoul.kr  */
+/*   Updated: 2023/09/27 21:00:54 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "minishell.h"
+
 
 
 void	*ft_memset(void *b, int c, size_t len)
