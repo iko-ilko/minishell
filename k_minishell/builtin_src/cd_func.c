@@ -8,11 +8,52 @@
 
 #include "../minishell.h"
 
-void	cd_func(char **arvs)
+int	get_slash_idx(char *pwd)
+{
+	int	i;
+
+	i = 0;
+	while (pwd[i++])
+		;
+	while (pwd[--i] != '/')
+		;
+	return (i);
+}
+
+void	change_pwd(t_vars *vars, char *dir)
+{
+	int		idx;
+	char	*temp;
+
+	idx = 0;
+	if (dir[0] == '/')
+	{
+		free(vars->pwd);
+		vars->pwd = ft_strdup(dir);
+	}
+	else if (ft_strcmp(dir, "."))
+		return ;
+	else if (ft_strcmp(dir, ".."))
+	{
+		idx = get_slash_idx(vars->pwd);
+		temp = vars->pwd;
+		if (idx == 0)
+			vars->pwd = ft_strdup("/");
+		else
+			vars->pwd = ft_strndup(vars->pwd, idx);
+		free(temp);
+	}
+}
+
+void	cd_func(char **arvs, t_vars *vars)
 {
 	if (arvs[1] == NULL)
 		return ;
 	if (chdir(arvs[1]) == -1)
 		perror("minishell: cd: ");
-	printf("move\n");
+	else
+		change_pwd(vars, arvs[1]);
+	printf("!%s---%p\n", vars->pwd, vars->pwd);
+	printf("?%s---%p\n", getenv("PWD"), getenv("PWD"));
+	system("pwd");
 }
