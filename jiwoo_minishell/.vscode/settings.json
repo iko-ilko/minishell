@@ -1,0 +1,7 @@
+{
+	"files.associations": {
+		"termios.h": "c",
+		"typeinfo": "c",
+		"sstream": "c"
+	}
+}
