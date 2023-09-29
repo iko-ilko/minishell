@@ -20,7 +20,14 @@ int main(int arc, char **arv, char **envp)
     int     pid;
     // do_signal();
     
-	vars.envp = envp;
+            // int k = 0;
+            // while (envp[k])
+            // {
+            //     printf("%s\n", envp[k]);
+            //     k++;
+            // }
+	vars.envl = NULL;
+    envp_to_envl(&vars, envp);
 	vars.pwd = ft_strdup(getenv("PWD"));
     signal(SIGINT, sigint_handler);
     signal(SIGQUIT, sigquit_handler);
@@ -51,7 +58,9 @@ int main(int arc, char **arv, char **envp)
 		// printf("??:%s\n", temp[1]);
 		// printf("??:%s\n", temp[2]);
 		if (ft_strcmp(temp[0], "cd") == 1)
-			cd_func(temp, &vars);
+			cd_func(&vars, temp);
+        if (ft_strcmp(temp[0], "export") == 1)
+            export_func(&vars, temp);
 		if (ft_strcmp(temp[0], "ls") == 1)
 		{
 			int pid = fork();

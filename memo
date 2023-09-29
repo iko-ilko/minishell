@@ -1,10 +1,22 @@
 https://bigpel66.oopy.io/library/42/inner-circle/10
 https://velog.io/@sweetykr/minishell                    읽어보려고 메모
 
+-- todo  - envp_to_envl, add_envl, del_envl, modify_envl, find_envl함수 만들기.
+
+전역변수는 에러처리를 위한 pid값으로 설정.
+
 인자 파싱
  - 어떻게 할지
  - 파싱해서 연결리스트로 만들기
  - https://velog.io/@sham/minishell%EA%B3%BC-readline(readline 라이브러리에 대해)
+ - !!! ~ 이 물결 문자는 쉘 단계에서 확장 시킨다. 파싱에서 ~만 들어오면(따옴표, 큰 따옴표 제외. 즉 strcmp(arvs[0], "~") == 1이면 확장시키기.)
+ - ㄴㄴㄴㄴ하 .. cat, export는 디렉으로 확장 시키는데 echo는 또 안그러네
+ [iko@host_hp13: venv]#cat ~
+cat: /home/iko: Is a directory
+[iko@host_hp13: venv]#cat .
+cat: .: Is a directory
+이건 무슨 개같은 케이스지 ~ -> 확장, $HOME이 없으면 bash 단계에서 $HOME을 찾아서 뱉나보다.
+-> 위 상황은 중요한건 아니니 그냥 ~만 $HOME에 없으면 getenv()함수 쓰는걸로 ! 다 만들고 테스트 해보고 정 안되면 우리만의 쉘이라고 하자.
 
 터미널 설정(t뭐시기 함수들)
  -  noncanonical input mode 로 설정해야 sigterm 받아올 수 있음... readline 함수가 제대로 출력하지 않는다면 이 설정을 해줘야할듯.
@@ -18,12 +30,21 @@ https://velog.io/@sweetykr/minishell                    읽어보려고 메모
  - ctrl + \
     - 리다이렉션 ("<<")일 때 무반응(IGN)
  - 공부
-
+----------- 환경변수는 연결리스트로, flag줘서 $HOME, $PWD는 삭제해도 남아는 있게하자.
 빌트인 -> 부모 프로세스에서(그럼 시그널처리 편해짐)
  - echo: -n 옵션을 사용할 수 있는 echo
  - cd: 오직 상대 또는 절대경로만 사용하는 cd
+      - 과제 번역본 오타긴한데 getcwd()함수로 많은 고민 해결 ..
  - pwd: 옵션이 없는 pwd
+      - 이것도 getcwd()함수 쓰자.
  - export: 옵션이 없는 export
+      - 인자 여러개면 다 적용 시켜야함.
+      - = 문자 기준으로 키벨류 나누고, = 문자 없으면 키만 있는상태.
+ex)   [iko@host_hp13: venv]#export a="b"c d=  h
+      a="bc"
+      d=""
+      h
+      - 아스키코드 오름차순으로 정렬 해야함 ..
  - unset: 옵션이 없는 unset
  - env: 옵션이나 인자값이 없는 env
  - exit: 옵션이 없는 exit

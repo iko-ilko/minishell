@@ -8,6 +8,9 @@ SRCS = signal_func.c \
     ./builtin_src/pwd_func.c \
     ./builtin_src/unset_func.c \
 	\
+	./util_src/env_func.c \
+	./util_src/list_func.c \
+	\
 	./str_src/str_func1.c \
 	./str_src/str_func2.c \
 	\

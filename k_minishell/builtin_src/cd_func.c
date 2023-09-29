@@ -5,7 +5,13 @@
 // cd 디렉토리 : [1]번째가 디렉토리면 그 뒤에 인자들은 처리 안함(bash)
 // cd . : 현재 폴더로 이동 -> 일단 엑싯 때려보자.
 // cd .. : 이전 폴더로 이동
+// cd $없는환경변수 -> cd NULL이기 때문에 홈으로 이동
+// 아무래도 getenv()함수는 시스템 환경변수를 들고오니 pipex에서 썼던 find_path를 다듬어서 써야할듯.
+// 실제 쉘에서 환경변수 지워도 cd ~, ., .. 가 되는 이유는 Tilde Expansion
 
+// unset한 환경변수는 [iko@host_hp13: home]#cd $HOME
+//				-bash: cd: HOME not set 이렇게 출력되는데 mac OS도 그런지 체크하고 그러면 파싱부분에서 cd가 들어오고 없는 환경변수면 -bash: cd: HOME not set 출력 시키기 ..
+// 아마도 빌트인 함수라 바로 실행해서 그런듯 ..
 #include "../minishell.h"
 
 int	get_slash_idx(char *pwd)
@@ -44,16 +50,20 @@ void	change_pwd(t_vars *vars, char *dir)
 		free(temp);
 	}
 }
-
-void	cd_func(char **arvs, t_vars *vars)
+///////////////일단 리스트 함수들 만들고 export, unset, pwd 명령어 구현하고 cd구현 마무리하자.
+//cd $HOME은 파싱 부분에서 확장될것이니까 cd $만 처리하자.
+void	cd_func(t_vars *vars, char **arvs)
 {
 	if (arvs[1] == NULL)
 		return ;
 	if (chdir(arvs[1]) == -1)
 		perror("minishell: cd: ");
-	else
-		change_pwd(vars, arvs[1]);
+	else//vars->envp(연결리스트)로 바꿀것이니 modify함수에서 free 해줄 듯?
+		vars->pwd = getcwd(NULL, 0);//free 필요
+		//modify_envp(vars, "PWD", getcwd(NULL, 0));	
+
+
 	printf("!%s---%p\n", vars->pwd, vars->pwd);
-	printf("?%s---%p\n", getenv("PWD"), getenv("PWD"));
+	printf("?%s---%p\n", getcwd(NULL, 0), getcwd(NULL, 0));
 	system("pwd");
 }

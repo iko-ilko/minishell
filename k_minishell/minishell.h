@@ -19,6 +19,14 @@
 #include <stdlib.h>
 #include <readline/readline.h>
 
+typedef struct	s_envl
+{
+	char			*key;
+	char			*value;
+	struct s_envl	*next;
+}	t_envl;
+
+
 /* linkedlist */
 typedef	struct	s_list
 {
@@ -36,8 +44,10 @@ typedef struct	s_cmd
 //p_i parsing index, j = buff index, i = line index
 typedef struct	s_vars
 {
-	char	**envp;
-	char	*pwd;
+	t_envl	*envl;
+	char	*pwd;//
+
+	int		last_exit_code;
 	int		p_i;
 	int		i;
 	int		j;
@@ -48,8 +58,22 @@ typedef struct	s_vars
 	t_cmd	*content;
 }	t_vars;
 
+int	pid;
+
 /* ./builtin_src/cd_func.c */
-void	cd_func(char **arvs, t_vars *vars);
+void	cd_func(t_vars *vars, char **arvs);
+void    export_func(t_vars *vars, char **arvs);
+
+
+/* util_src/env_func.c */
+void    envp_to_envl(t_vars *vars, char **envp);
+//void	modify_envp(vars, "PWD", getcwd(NULL, 0));->cd에서 쓰이는 특정 환경변수에서 쓰일 듯. 없으면 add_envp 호출진행.
+//void	add_envp(t_vart vars, char *key, char *value);
+//void	remove_envp(t_vars vars, char *key);
+
+/* util.src/list_func.c */
+void	list_add_back(t_envl **lst, char *key, char *value);
+
 
 /* ./str_src/str_func1.c */
 char	**ft_split(char *s, char c);
@@ -59,8 +83,11 @@ int		ft_strlen(char *str);
 int		ft_strcmp(char *s1, char *s2);
 char	*ft_strdup(char *s1);
 char	*ft_strndup(char *s1, int len);
+char    *ft_strchr(char *s, int c);
+
 
 /* ./error_done_src/error.c */
 void	error(char *message, char *reason, int exit_code);
+
 
 #endif

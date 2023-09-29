@@ -7,5 +7,6 @@ void	error(char *message, char *reason, int exit_code)
 	write(2, ": ", 2);
 	write(2, message, ft_strlen(message));
 	write(2, "\n", 1);
-	exit(exit_code);
+	if (pid == 0)
+		exit(exit_code);
 }
