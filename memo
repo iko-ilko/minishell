@@ -5,8 +5,10 @@ https://velog.io/@sweetykr/minishell
 
 -- todo  - envp_to_envl, add_envl, del_envl, modify_envl, find_envl함수 만들기.
 
-전역변수는 에러처리를 위한 pid값으로 설정.
 
+전역변수는 에러처리를 위한 pid값으로 설정.
+- bash와의 사소한 다른 점은, 우리가 bash를 만드는게 아니라 bash를 기준으로 과제항목에 기반한 우리만의 쉘을 만드는것이니 꼭 똑같이는 안함.
+- 그렇다고 해야할것을 안하진않음.
 인자 파싱
  - 어떻게 할지
  - 파싱해서 연결리스트로 만들기

@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 19:30:26 by ilko              #+#    #+#             */
-/*   Updated: 2023/09/28 21:18:05 by ilko             ###   ########.fr       */
+/*   Updated: 2023/09/30 19:00:38 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ typedef struct	s_vars
 	char	*pwd;//
 
 	int		last_exit_code;
+	
 	int		p_i;
 	int		i;
 	int		j;
@@ -58,21 +59,34 @@ typedef struct	s_vars
 	t_cmd	*content;
 }	t_vars;
 
-int	pid;
+extern int	g_pid; 
+
+
+/* init_func.c */
+void	init_exe_data(t_vars *vars, char **envp);
+void    envp_to_envl(t_vars *vars, char **envp);
 
 /* ./builtin_src/cd_func.c */
 void	cd_func(t_vars *vars, char **arvs);
 void    export_func(t_vars *vars, char **arvs);
 
+/* ./builtin_src/exit_func.c */
+void	exit_func(t_vars *vars, int exit_code);
 
-/* util_src/env_func.c */
-void    envp_to_envl(t_vars *vars, char **envp);
-//void	modify_envp(vars, "PWD", getcwd(NULL, 0));->cd에서 쓰이는 특정 환경변수에서 쓰일 듯. 없으면 add_envp 호출진행.
-//void	add_envp(t_vart vars, char *key, char *value);
-//void	remove_envp(t_vars vars, char *key);
+/* ./builtin_src/export_func.c */
+void    export_func(t_vars *vars, char **arvs);
+void	add_env(t_vars *vars, char *key, char *value);
+void	modify_env(t_vars *vars, char *key, char *value);
+t_envl	*find_env(t_vars *vars, char *key);//파싱에서도 쓸 수 있게 노드를 반환
+
+/* util_src/unset_func.c*/
+//void	unset_env(t_vars vars, char *key);
 
 /* util.src/list_func.c */
-void	list_add_back(t_envl **lst, char *key, char *value);
+// void	list_add_back(t_envl **envl, char *key, char *value);
+t_envl	*make_env_node(t_vars *vars, char *key, char *value);
+
+
 
 
 /* ./str_src/str_func1.c */
@@ -84,6 +98,11 @@ int		ft_strcmp(char *s1, char *s2);
 char	*ft_strdup(char *s1);
 char	*ft_strndup(char *s1, int len);
 char    *ft_strchr(char *s, int c);
+
+/* ./str_src/str_func3.c */
+char	*ft_strjoin(char *s1, char *s2);
+int		str_check_space(char *str);
+int		find_index(char *str, char c);
 
 
 /* ./error_done_src/error.c */

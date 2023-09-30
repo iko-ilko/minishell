@@ -37,9 +37,9 @@ void	change_pwd(t_vars *vars, char *dir)
 		free(vars->pwd);
 		vars->pwd = ft_strdup(dir);
 	}
-	else if (ft_strcmp(dir, "."))
+	else if (ft_strcmp(dir, ".") == 0)
 		return ;
-	else if (ft_strcmp(dir, ".."))
+	else if (ft_strcmp(dir, "..") == 0)
 	{
 		idx = get_slash_idx(vars->pwd);
 		temp = vars->pwd;
