@@ -52,7 +52,7 @@ void	change_pwd(t_vars *vars, char *dir)
 }
 ///////////////일단 리스트 함수들 만들고 export, unset, pwd 명령어 구현하고 cd구현 마무리하자.
 //cd $HOME은 파싱 부분에서 확장될것이니까 cd $만 처리하자.
-void	cd_func(t_vars *vars, char **arvs)
+void	cd_exe(t_vars *vars, char **arvs)
 {
 	if (arvs[1] == NULL)
 		return ;

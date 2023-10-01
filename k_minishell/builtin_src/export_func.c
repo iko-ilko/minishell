@@ -97,7 +97,7 @@ static void    print_all_export(t_vars *vars)
 }
 
 //  / //// 무조건 밸류는 큰따옴표임 ㅠㅠ
-void    export_func(t_vars *vars, char **arvs)
+void    export_exe(t_vars *vars, char **arvs)
 {
     int     index;
     char    *key;

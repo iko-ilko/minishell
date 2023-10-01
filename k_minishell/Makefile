@@ -1,5 +1,6 @@
 CC = cc #-Wall -Wextra -Werror
 SRCS = signal_func.c init_func.c \
+	./builtin_src/builtin_main.c \
     ./builtin_src/cd_func.c \
     ./builtin_src/echo_func.c \
     ./builtin_src/env_func.c \

@@ -13,8 +13,12 @@
 
 #include "../minishell.h"
 
-void	exit_func(t_vars *vars, int exit_code)
+//arvs[1]의 엑싯코드로 종료.
+//만약 arvs[2] (즉, 두번째 인자)가 있다면 에러 메세지 출력하고 종료.
+//만약 arvs[1]이 범위가 벗어나거나 숫자가 아니면 에러 메세지 출력하고 종료.
+void	exit_exe(t_vars *vars, char **arvs)
 {
+	int		exit_code = 0;//임시
 	//릭 정리하고
 	exit(exit_code);
 }
