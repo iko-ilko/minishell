@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 19:30:26 by ilko              #+#    #+#             */
-/*   Updated: 2023/09/30 19:00:38 by ilko             ###   ########.fr       */
+/*   Updated: 2023/10/01 20:47:57 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,6 @@ typedef struct	s_vars
 	t_cmd	*content;
 }	t_vars;
 
-extern int	g_pid; 
-
 
 /* init_func.c */
 void	init_exe_data(t_vars *vars, char **envp);
@@ -78,6 +76,10 @@ void    export_func(t_vars *vars, char **arvs);
 void	add_env(t_vars *vars, char *key, char *value);
 void	modify_env(t_vars *vars, char *key, char *value);
 t_envl	*find_env(t_vars *vars, char *key);//파싱에서도 쓸 수 있게 노드를 반환
+
+/* ./builtin_src/echo_func.c */
+void	echo_func(t_vars *vars, char **arvs);
+
 
 /* util_src/unset_func.c*/
 //void	unset_env(t_vars vars, char *key);
@@ -101,7 +103,7 @@ char    *ft_strchr(char *s, int c);
 
 /* ./str_src/str_func3.c */
 char	*ft_strjoin(char *s1, char *s2);
-int		str_check_space(char *str);
+// int		str_check_space(char *str);
 int		find_index(char *str, char c);
 
 

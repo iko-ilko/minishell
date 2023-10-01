@@ -30,7 +30,7 @@ cat: .: Is a directory
     - 리다이렉션 ("<<")일 때 DFL(디폴트) 해보고 차이 다르면 처리해주기.
  - ctrl + d(readline 함수가 알아서 해줌.) 자식프로세스도 쉘 종료(?) |
     - 리다이렉션 ("<<")일 때 [iko@host_hp13: 42]#<< test cat
-    > bash: warning: here-document at line 35 delimited by end-of-file (wanted `test')  <-- 이렇게 나옴
+    > bash: warning: here-document at line 35 delimited by end-of-file (wanted 'test')  <-- 이렇게 나옴
  - ctrl + \
     - 리다이렉션 ("<<")일 때 무반응(IGN)
  - 공부
@@ -51,6 +51,8 @@ ex)   [iko@host_hp13: venv]#export a="b"c d=  h
       - 아스키코드 오름차순으로 정렬 해야함 ..
  - unset: 옵션이 없는 unset
  - env: 옵션이나 인자값이 없는 env
+	  - export 는 밸류가 없어도 출력되는데 env는 아님.
+	  - export 는 아스키기준 정렬이 돼서 출력되는데 env는 아님. -> 우리의 쉘 이니까 env도 정렬한걸 보여주자.
  - exit: 옵션이 없는 exit
 
 

@@ -2,22 +2,19 @@
 
 // 출력을 .... value가 NULL이 아니면 = 문자를 출력하자. = 문자까지 입력했다면 value는 ""(빈 문자열)
 // bash는 export시 declare -x 가 함께 출력되지만 우리 쉘은 declare 커맨드를 쓰지않을거니 출력 안함.
-
+// shell level 처리 .->할거면 따로 set_env함수 만들어서 shell도 바꿔주고 ..하자. 중요하지 않으니 적당히
 
 
 // export 파싱은 지우가 주는 데이터 보고 하자.
-// static int	check_arv(char *str)
-// {
-// 	int	i;
+static int	check_key(char *str)
+{
+	int	i;
 
-// 	i = 0;
-// 	if (!(str[0] >= 'A' && str[0] <= 'Z') || !(str[0] >= 'a' && str[0] <= 'z') || !(str[0] == '_'))
-// 		return (0);
-// 	while (str[i])
-// 	{
-// 		if (str[i] )
-// 	}
-// }
+	i = 0;
+	if ((str[0] >= 'A' && str[0] <= 'Z') || (str[0] >= 'a' && str[0] <= 'z') || (str[0] == '_'))
+		return (0);
+	return (1);
+}
 
 t_envl	*find_env(t_vars *vars, char *key)
 {
@@ -79,7 +76,7 @@ void	add_env(t_vars *vars, char *key, char *value)
 	cur->next = new;
 }
 
-void    print_all_env(t_vars *vars)
+static void    print_all_export(t_vars *vars)
 {
     t_envl  *cur;
 
@@ -88,15 +85,17 @@ void    print_all_env(t_vars *vars)
     {
 		printf("%s", cur->key);
 		if (cur->value != NULL)
-			printf("=");
-		if (str_check_space(cur->value) == 1)
-			printf("\"%s\"\n", cur->value);
-		else if (cur->value != NULL)
-			printf("%s", cur->value);
+			printf("=\"%s\"", cur->value);
+		
+		// if (str_check_space(cur->value) == 1)
+		// 	printf("\"%s\"\n", cur->value);
+		// else if (cur->value != NULL)
+		// 	printf("%s", cur->value);
 		printf("\n");
         cur = cur->next;
     }
 }
+
 //  / //// 무조건 밸류는 큰따옴표임 ㅠㅠ
 void    export_func(t_vars *vars, char **arvs)
 {
@@ -106,7 +105,7 @@ void    export_func(t_vars *vars, char **arvs)
 
     if (arvs[1] == NULL)
     {
-        print_all_env(vars);
+        print_all_export(vars);
         return ;
     }
 	// if (check_arv(arvs[1]) == 1) //export 파싱은 지우가 주는 데이터 보고 하자.
@@ -130,6 +129,12 @@ void    export_func(t_vars *vars, char **arvs)
     // }
     index = find_index(arvs[1], '=');//arvs[1]이 arvs[i]가 되겠지.
     key = ft_strndup(arvs[1], index);
+	printf("key:%s\n", key);
+	if (check_key(key) == 1)
+	{
+		char *temp = ft_strjoin("export: ", arvs[1]);
+		error("not a valid identifier", temp, 1);
+	}
 	if (arvs[1][index] == '\0')//여기서부턴 key value 값 만듬
 		value = NULL;
 	else if(arvs[1][index + 1] == '\0')

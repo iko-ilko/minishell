@@ -1,7 +1,5 @@
 #include "minishell.h"
 
-int	g_pid = 1;
-
 //ANSI 이스케이프 코드도 사용해야할듯 ... 커서 제대로 찍으려면... 허용된 t 뭐시기 함수들 사용해야할듯...
 // 각각 시그널에 맞는 핸들러 함수를 인자로 주거나 IGN, DFL, 주면 될듯?
 void    sigint_handler(int signum)
@@ -19,7 +17,13 @@ int main(int arc, char **arv, char **envp)
 	t_vars	vars;
     char    buf[5];
     char    *line;
-
+	int i = 0;
+	// while (envp[i])
+	// {
+	// 	printf("%s\n", envp[i]);
+	// 	i++;
+	// }
+	// exit(1);
     // do_signal();
     
             // int k = 0;
@@ -28,6 +32,7 @@ int main(int arc, char **arv, char **envp)
             //     printf("%s\n", envp[k]);
             //     k++;
             // }
+	
 	init_exe_data(&vars, envp);
     signal(SIGINT, sigint_handler);
     signal(SIGQUIT, sigquit_handler);
@@ -52,11 +57,12 @@ int main(int arc, char **arv, char **envp)
 			break;
 		char **temp = ft_split(line, ' ');
 		free(line);
+		if (ft_strcmp(arv[0], "./a.our") == 0){printf("!!!!!%s\n", arv[0]);
+			execve("./minishell", temp, envp);}
 		if (temp[0] == NULL)
 			continue;
-		// printf("??:%s\n", temp[0]);
-		// printf("??:%s\n", temp[1]);
-		// printf("??:%s\n", temp[2]);
+		if (if_buitin_func(&vars, temp) == 1)
+			continue ;
 		if (ft_strcmp(temp[0], "cd") == 0)
 			cd_func(&vars, temp);
         if (ft_strcmp(temp[0], "export") == 0)
