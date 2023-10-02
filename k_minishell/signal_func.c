@@ -6,9 +6,12 @@
 //부모 시그인트는 버퍼지우고 개행 .. 부모 시그큍은 무시하게	
 //그리고 각 자식 프로세스 들어갈 때 시그널 핸들링 함수 알맞는거 호출해놓으면 될듯?
 
-void    sigint_handler(int signum)
+void    sigint_handler(int signum)//핸들러 함수는 부모,자식으로 나누지말고 함수별로 나누자 main, here_doc, exe
 {
     write(1, "\n", 1);
+    rl_on_new_line();
+	rl_replace_line("", 0);//readline()함수에 준 문자열 지우기.(엔터 안치고 남아있던 문자열)
+	rl_redisplay();//readline()함수에 준 문자열 출력.
 }
 
 void    sigquit_handler(int signum)
@@ -22,6 +25,7 @@ int main(int arc, char **arv, char **envp)
     char    buf[5];
     char    *line;
 	int i = 0;
+
 	// while (envp[i])
 	// {
 	// 	printf("%s\n", envp[i]);
@@ -61,10 +65,13 @@ int main(int arc, char **arv, char **envp)
 			break;
 		char **temp = ft_split(line, ' ');
 		free(line);
-		if (ft_strcmp(temp[0], "./a.out") == 0){printf("!!!!!%s\n", arv[0]);//쉘레벨 ++하기 
-			execve("./minishell", temp, envp);}
 		if (temp[0] == NULL)
 			continue;
+        save_history(&vars, temp[0]);
+        //save_history(line); <- 이 안에 add_history() 넣자.
+        //a.out 명시하지않고 arv[0] 과 temp[0] 비교해도 될듯?
+        if (if_more_shell(&vars, arv, temp, envp) == 1)
+            continue ;
 		if (if_buitin_func(&vars, temp) == 1)
 			continue ;
 		//빌트인 다음 커맨드 실행
@@ -80,3 +87,4 @@ int main(int arc, char **arv, char **envp)
 		free(temp);
     }
 }
+//함수 잘 빼자 .. if_more_shell() -> shell_child.c , save_history()

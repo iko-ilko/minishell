@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <readline/readline.h>
+#include <readline/history.h>
 
 typedef struct	s_envl
 {
@@ -46,7 +47,9 @@ typedef struct	s_vars
 {
 	t_envl	*envl;
 	char	*pwd;//
+	char	**history;
 
+	int		cur_pid;
 	int		last_exit_code;
 	
 	int		p_i;
@@ -66,30 +69,29 @@ void    envp_to_envl(t_vars *vars, char **envp);
 
 /* ./builtin_src/buitin_func.c */
 int		if_buitin_func(t_vars *vars, char **arvs);
-
-/* ./builtin_src/cd_func.c */
+/* 				cd_func.c */
 void	cd_exe(t_vars *vars, char **arvs);
-
-/* ./builtin_src/exit_func.c */
-void	exit_exe(t_vars *vars, char **arvs);
-
-/* ./builtin_src/export_func.c */
+/* 				exit_func.c */
+void	exit_exe(t_vars *vars, char **arvs);	
+/* 				export_func.c */
 void    export_exe(t_vars *vars, char **arvs);
 void	add_env(t_vars *vars, char *key, char *value);
 void	modify_env(t_vars *vars, char *key, char *value);
 t_envl	*find_env(t_vars *vars, char *key);//파싱에서도 쓸 수 있게 노드를 반환
-
-/* ./builtin_src/env_func.c */
+/* 				env_func.c */
 void	env_exe(t_vars *vars, char **arvs);
-
-/* ./builtin_src/echo_func.c */
+/* 				echo_func.c */
 void	echo_exe(t_vars *vars, char **arvs);
-
-/* util_src/unset_func.c*/
+/* 				unset_func.c*/
 void	unset_exe(t_vars *vars, char *key);
-
-/* util_src/pwd_func.c*/
+/* 				pwd_func.c*/
 void	pwd_exe(t_vars *vars, char **arvs);
+/* 				history.c */
+void    save_history(t_vars *vars, char *line);
+
+/* ./child_process/shell_child.c */
+int if_more_shell(t_vars *vars, char **arv, char **temp, char **envp);
+/* 				execute_child.c */
 
 
 /* util.src/list_func.c */
