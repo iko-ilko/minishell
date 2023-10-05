@@ -55,12 +55,12 @@ void	add_env(t_vars *vars, char *key, char *value)
 
 	new = make_env_node(vars, key, value);
 	if (new == NULL)
-		error("malloc failed\n", NULL, 1);
+		child_error("malloc failed\n", NULL, 1);
 	if (vars->envl == NULL)
 	{
 		vars->envl = new;
 		if (vars->envl == NULL)
-			error("malloc failed\n", NULL, 1);
+			child_error("malloc failed\n", NULL, 1);
 		return ;
 	}
 	if (ft_strcmp(vars->envl->key, key) > 0)
@@ -112,7 +112,7 @@ void    export_exe(t_vars *vars, char **arvs)
 	// {
 	// 	char *temp = ft_srtjoin("export: ", arvs[1]);
 
-	// 	error("not a valid identifier", temp, 1);
+	// 	child_error("not a valid identifier", temp, 1);
 	// }
 
     //만약 export 하려는 key가 이미 존재하는경우 modify_envp함수에서 밸류만 변경.
@@ -133,7 +133,7 @@ void    export_exe(t_vars *vars, char **arvs)
 	if (check_key(key) == 1)
 	{
 		char *temp = ft_strjoin("export: ", arvs[1]);
-		error("not a valid identifier", temp, 1);
+		child_error("not a valid identifier", temp, 1);
 	}
 	if (arvs[1][index] == '\0')//여기서부턴 key value 값 만듬
 		value = NULL;

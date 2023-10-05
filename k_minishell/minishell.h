@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 19:30:26 by ilko              #+#    #+#             */
-/*   Updated: 2023/10/01 23:55:18 by ilko             ###   ########.fr       */
+/*   Updated: 2023/10/05 16:24:42 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+/* env linkedlist */
 typedef struct	s_envl
 {
 	char			*key;
@@ -27,8 +28,16 @@ typedef struct	s_envl
 	struct s_envl	*next;
 }	t_envl;
 
+/* history_linkedlist */
+typedef struct  s_hisl
+{
+	int				index;
+	char            *line;
+	struct s_hisl   *next;
+}	t_hisl;
 
-/* linkedlist */
+
+/* parsing linkedlist */
 typedef	struct	s_list
 {
 	void			*content;
@@ -45,6 +54,7 @@ typedef struct	s_cmd
 //p_i parsing index, j = buff index, i = line index
 typedef struct	s_vars
 {
+	t_hisl	*hisl;
 	t_envl	*envl;
 	char	*pwd;//
 	char	**history;
@@ -88,6 +98,8 @@ void	unset_exe(t_vars *vars, char *key);
 void	pwd_exe(t_vars *vars, char **arvs);
 /* 				history.c */
 void    save_history(t_vars *vars, char *line);
+void	print_history(t_vars *vars, char **arvs);
+
 
 /* ./child_process/shell_child.c */
 int if_more_shell(t_vars *vars, char **arv, char **temp, char **envp);
@@ -97,6 +109,8 @@ int if_more_shell(t_vars *vars, char **arv, char **temp, char **envp);
 /* util.src/list_func.c */
 // void	list_add_back(t_envl **envl, char *key, char *value);
 t_envl	*make_env_node(t_vars *vars, char *key, char *value);
+t_hisl	*find_last_his_node(t_vars *vars);
+
 
 
 
@@ -117,8 +131,10 @@ char	*ft_strjoin(char *s1, char *s2);
 int		find_index(char *str, char c);
 
 
-/* ./error_done_src/error.c */
-void	error(char *message, char *reason, int exit_code);
+/* ./error_done_src/child_error.c */
+void	child_error(char *message, char *reason, int exit_code);
+void	parent_error(char *message, char *reason);
+
 
 
 #endif

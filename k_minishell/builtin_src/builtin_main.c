@@ -21,5 +21,7 @@ int	if_buitin_func(t_vars *vars, char **arvs)
 		env_exe(vars, arvs);
 	else if (ft_strcmp(arvs[0], "exit") == 0)
 		exit_exe(vars, arvs);
+	else if (ft_strcmp(arvs[0], "history") == 0)
+		print_history(vars, arvs);
 	return (0);
 }

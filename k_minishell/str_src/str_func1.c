@@ -85,9 +85,9 @@ char	**ft_split(char *s, char c)
 		s++;
 	res = make_wdspace(s, c, &wdcnt);
 	if (res == 0)
-		error("malloc failed\n", NULL, 1);
+		child_error("malloc failed\n", NULL, 1);
 	res = make_chspace(s, c, res);
 	if (res == 0)
-		error("malloc failed\n", NULL, 1);
+		child_error("malloc failed\n", NULL, 1);
 	return (res);
 }

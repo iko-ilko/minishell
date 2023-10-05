@@ -33,7 +33,7 @@ char	*ft_strdup(char *s1)
 	len = ft_strlen(s1);
 	res = malloc(sizeof(char) * (len + 1));
 	if (res == 0)
-		error("malloc failed\n", NULL, 1);
+		child_error("malloc failed\n", NULL, 1);
 	i = -1;
 	while (++i < len)
 		res[i] = s1[i];
@@ -48,7 +48,7 @@ char	*ft_strndup(char *s1, int len)
 
 	res = malloc(sizeof(char) * (len + 1));
 	if (res == NULL)
-		error("malloc failed\n", NULL, 1);
+		child_error("malloc failed\n", NULL, 1);
 	i = 0;
 	while (i < len)
 	{

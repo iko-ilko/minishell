@@ -9,7 +9,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	all_len = ft_strlen(s1) + ft_strlen(s2);
 	res = malloc(sizeof(char) * (all_len + 1));
 	if (res == 0)
-		error("malloc failed\n", NULL, 1);
+		child_error("malloc failed\n", NULL, 1);
 	i = 0;
 	while (s1 != NULL && *s1)
 		res[i++] = *(s1++);

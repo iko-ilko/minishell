@@ -8,7 +8,7 @@
 
 //     new = (t_envl *)malloc(sizeof(t_envl));
 //     if (new == NULL)
-// 		error("malloc failed\n", NULL, 1);
+// 		child_error("malloc failed\n", NULL, 1);
 //     new->key = key;
 //     new->value = value;
 //     new->next = NULL;
@@ -29,9 +29,21 @@ t_envl	*make_env_node(t_vars *vars, char *key, char *value)
 
 	new = (t_envl *)malloc(sizeof(t_envl));
 	if (new == NULL)
-		error("malloc failed\n", NULL, 1);
+		child_error("malloc failed\n", NULL, 1);
 	new->key = key;
 	new->value = value;
 	new->next = NULL;
 	return (new);
+}
+
+t_hisl	*find_last_his_node(t_vars *vars)
+{
+	t_hisl	*last;
+
+	if (vars->hisl == NULL)
+		return (NULL);
+	last = vars->hisl;
+	while (last->next != NULL)
+		last = last->next;
+	return (last);
 }

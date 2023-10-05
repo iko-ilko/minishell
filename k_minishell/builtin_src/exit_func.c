@@ -20,5 +20,8 @@ void	exit_exe(t_vars *vars, char **arvs)
 {
 	int		exit_code = 0;//임시
 	//릭 정리하고
+	//check_arv_number() 는 숫자인지 체크하고 long long 범위 안넘는지 체크
+	// if (check_arv_number(arvs) == -1)
+	// 	return ;
 	exit(exit_code);
 }
