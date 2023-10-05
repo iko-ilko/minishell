@@ -27,14 +27,15 @@ void	print_history(t_vars *vars, char **arvs)
 {
 	t_hisl	*cur;
 
-	//exit ㅎㅏㅁ수에도 쓰쓰일  check_arv_number() 함수 만들어서 쓰자
-	//check_arv_number() 는 숫자인지 체크하고 long long 범위 안넘는지 체크
 	if (arvs[1] != NULL)
+	{
 		parent_error("too many arguments", "history");
+		return ;
+	}
 	cur = vars->hisl;
 	while (cur != NULL)
 	{
-		printf("%d %s\n", cur->index, cur->line);<- 형식 지정자 잘 쓰거나 write로 잘 때려박거나₩
+		printf("%5d  %2s\n", cur->index, cur->line);
 		cur = cur->next;
 	}
 }

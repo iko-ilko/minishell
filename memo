@@ -3,7 +3,8 @@ https://velog.io/@sweetykr/minishell                    읽어보려고 메모
 https://yeosong1.github.io/%EB%AF%B8%EB%8B%88%EC%89%98%EC%88%98%EB%8F%99%ED%85%8C%EC%8A%A4%ED%8A%B8#cd%20%20%20
 https://velog.io/@sweetykr/minishell
 
--- todo  - envp_to_envl, add_envl, del_envl, modify_envl, find_envl함수 만들기.
+-- todo  - 빌트인 자식 프로세스에서 실행하게 할까 .. exit_code 반환해주고 .. 부모에서 이걸 처리해버리면 exe함수도 아닌데 자식에서 하는걸 부모에서 할 수 있다..
+		- $? 환경변수는 파싱에서 확장 시켜야 하는데 ..if $다음 ?면 구조체의 last_exit_code로 확장하게 하자.
 
 
 전역변수는 에러처리를 위한 pid값으로 설정.

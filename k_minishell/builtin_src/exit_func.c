@@ -19,9 +19,46 @@
 void	exit_exe(t_vars *vars, char **arvs)
 {
 	int		exit_code = 0;//임시
+
+	free_vars(vars);
 	//릭 정리하고
 	//check_arv_number() 는 숫자인지 체크하고 long long 범위 안넘는지 체크
 	// if (check_arv_number(arvs) == -1)
 	// 	return ;
 	exit(exit_code);
+}
+
+void	free_vars(t_vars *vars)
+{
+	t_hisl	*next_his;
+	t_envl	*next_env;
+
+	vars->hisl = vars->hisl;
+	while (vars->hisl != NULL)
+	{
+		next_his = vars->hisl->next;
+		free(vars->hisl->line);
+		free(vars->hisl);
+		vars->hisl = next_his;
+	}
+	while (vars->envl != NULL)
+	{
+		next_env = vars->envl->next;
+		free(vars->envl->key);
+		free(vars->envl->value);
+		free(vars->envl);
+		vars->envl = next_env;
+	}
+	free_dub_str(&vars->history);
+	free_sin_str(&vars->pwd);
+}
+
+void	free_dub_str(char ***str)
+{
+	int	i;
+
+	while (str[i])
+		free(str[i++]);
+	free(str);
+	str = NULL;
 }
