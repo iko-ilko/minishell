@@ -30,16 +30,8 @@ void	exit_exe(t_vars *vars, char **arvs)
 
 void	free_vars(t_vars *vars)
 {
-	t_hisl	*next_his;
 	t_envl	*next_env;
-	vars->hisl = vars->hisl;
-	while (vars->hisl != NULL)
-	{
-		next_his = vars->hisl->next;
-		free(vars->hisl->line);
-		free(vars->hisl);
-		vars->hisl = next_his;
-	}
+
 	while (vars->envl != NULL)
 	{
 		next_env = vars->envl->next;
@@ -48,7 +40,6 @@ void	free_vars(t_vars *vars)
 		free(vars->envl);
 		vars->envl = next_env;
 	}
-	free_dub_str(&vars->history);
 	free_sin_str(&vars->pwd);
 }
 
@@ -59,7 +50,6 @@ void	free_dub_str(char ***str)
 	i = 0;
 	while ((*str)[i])
 		free((*str)[i++]);
-	printf("???\n");
 	free(*str);
 	*str = NULL;
 }

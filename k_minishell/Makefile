@@ -8,7 +8,6 @@ SRCS = minishell.c \
     ./builtin_src/export_func.c \
     ./builtin_src/pwd_func.c \
     ./builtin_src/unset_func.c \
-	./builtin_src/history.c \
 	\
 	./child_process_src/shell_child.c \
 	./child_process_src/execute_child.c \

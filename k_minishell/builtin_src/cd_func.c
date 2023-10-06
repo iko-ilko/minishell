@@ -55,23 +55,31 @@ void	change_pwd(t_vars *vars, char *dir)
 void	cd_exe(t_vars *vars, char **arvs)
 {
 	char	*error_str;
+	char	*cwd_temp;
 
 	error_str = ft_strjoin("minishell: cd: ", arvs[1]);
-	if (arvs[1] == NULL)
+	if (arvs[1] == NULL)//HOME으로
 		return ;
-	find_env(vars, "OLDPWD")->value = getcwd(NULL, 0);
+	cwd_temp = getcwd(NULL, 0);
+	if (cwd_temp != NULL)
+		find_env(vars, "OLDPWD")->value = cwd_temp;
+	else
+		find_env(vars, "OLDPWD")->value = find_env(vars, "PWD")->value;
+	free(cwd_temp);
 	if (chdir(arvs[1]) == -1)
 		perror(error_str);
-	else//vars->envp(연결리스트)로 바꿀것이니 modify함수에서 free 해줄 듯?
+	else if (ft_strcmp(arvs[1], ".") != 0)
 	{
+		cwd_temp = getcwd(NULL, 0);
 		if (find_env(vars, "PWD") == NULL)
-			add_env(vars, "PWD", getcwd(NULL, 0));
+			add_env(vars, "PWD", cwd_temp);
 		else
-			modify_env(vars, "PWD", getcwd(NULL, 0));
+			modify_env(vars, "PWD", cwd_temp);
+		free(cwd_temp);
 	}
 
-	printf("\n$PWD:%s\n", find_env(vars, "PWD")->value);
-	printf("$OLDPWD:%s\n", find_env(vars, "OLDPWD")->value);
+	// printf("\n$PWD:%s\n", find_env(vars, "PWD")->value);
+	// printf("$OLDPWD:%s\n", find_env(vars, "OLDPWD")->value);
 
 	// printf("!%s---%p\n", vars->pwd, vars->pwd);
 	// printf("?%s---%p\n", getcwd(NULL, 0), getcwd(NULL, 0));

@@ -46,10 +46,11 @@ int main(int arc, char **arv, char **envp)
 		if (line == NULL)
 			break;
 		char **temp = ft_split(line, ' ');
-		free(line);
 		if (temp[0] == NULL)
 			continue;
-        save_history(&vars, temp[0]);
+	    add_history(line);
+		free(line);
+        //save_history(&vars, temp[0]);
         //save_history(line); <- 이 안에 add_history() 넣자.
         //a.out 명시하지않고 arv[0] 과 temp[0] 비교해도 될듯?
         if (if_more_shell(&vars, arv, temp, envp) == 1)

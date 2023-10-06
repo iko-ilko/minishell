@@ -39,7 +39,8 @@ void	modify_env(t_vars *vars, char *key, char *value)
 	{
 		if (ft_strcmp(cur->key, key) == 0)
 		{
-			free(cur->value);
+			if (cur->value != NULL)
+				free(cur->value);
 			cur->value = value;
 			return ;
 		}

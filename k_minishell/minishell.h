@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 19:30:26 by ilko              #+#    #+#             */
-/*   Updated: 2023/10/06 15:35:14 by ilko             ###   ########.fr       */
+/*   Updated: 2023/10/06 17:16:36 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,10 +97,6 @@ void	echo_exe(t_vars *vars, char **arvs);
 void	unset_exe(t_vars *vars, char *key);
 /* 				pwd_func.c*/
 void	pwd_exe(t_vars *vars, char **arvs);
-/* 				history.c */
-void    save_history(t_vars *vars, char *line);
-void	print_history(t_vars *vars, char **arvs);
-
 
 /* ./child_process/shell_child.c */
 int if_more_shell(t_vars *vars, char **arv, char **temp, char **envp);

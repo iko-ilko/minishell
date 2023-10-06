@@ -9,6 +9,8 @@ void	pwd_exe(t_vars *vars, char **arvs)
 	char	*pwd;
 
 	pwd = getcwd(NULL, 0);
+	if (pwd == NULL)
+		pwd = ft_strdup(find_env(vars, "PWD")->value);
 	printf("%s\n", pwd);
 	free(pwd);
 }
