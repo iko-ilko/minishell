@@ -7,14 +7,8 @@
 void	pwd_exe(t_vars *vars, char **arvs)
 {
 	char	*pwd;
-	// t_envl	*pwd_env_node;
 
-	// pwd_env_node = find_env(vars, "PWD");
-	// printf("%s\n", pwd_env_node->value);
-	// if (pwd_env_node == NULL)
-		pwd = getcwd(NULL, 0);
-	// else
-	// 	pwd = ft_strdup(pwd_env_node->value);
+	pwd = getcwd(NULL, 0);
 	printf("%s\n", pwd);
 	free(pwd);
 }

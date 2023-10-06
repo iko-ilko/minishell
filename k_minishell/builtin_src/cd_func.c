@@ -54,16 +54,26 @@ void	change_pwd(t_vars *vars, char *dir)
 //cd $HOME은 파싱 부분에서 확장될것이니까 cd $만 처리하자.
 void	cd_exe(t_vars *vars, char **arvs)
 {
+	char	*error_str;
+
+	error_str = ft_strjoin("minishell: cd: ", arvs[1]);
 	if (arvs[1] == NULL)
 		return ;
+	find_env(vars, "OLDPWD")->value = getcwd(NULL, 0);
 	if (chdir(arvs[1]) == -1)
-		perror("minishell: cd: ");
+		perror(error_str);
 	else//vars->envp(연결리스트)로 바꿀것이니 modify함수에서 free 해줄 듯?
-		vars->pwd = getcwd(NULL, 0);//free 필요
-		//modify_envp(vars, "PWD", getcwd(NULL, 0));	
+	{
+		if (find_env(vars, "PWD") == NULL)
+			add_env(vars, "PWD", getcwd(NULL, 0));
+		else
+			modify_env(vars, "PWD", getcwd(NULL, 0));
+	}
 
+	printf("\n$PWD:%s\n", find_env(vars, "PWD")->value);
+	printf("$OLDPWD:%s\n", find_env(vars, "OLDPWD")->value);
 
-	printf("!%s---%p\n", vars->pwd, vars->pwd);
-	printf("?%s---%p\n", getcwd(NULL, 0), getcwd(NULL, 0));
-	system("pwd");
+	// printf("!%s---%p\n", vars->pwd, vars->pwd);
+	// printf("?%s---%p\n", getcwd(NULL, 0), getcwd(NULL, 0));
+	// system("pwd");
 }

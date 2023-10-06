@@ -32,7 +32,6 @@ void	free_vars(t_vars *vars)
 {
 	t_hisl	*next_his;
 	t_envl	*next_env;
-
 	vars->hisl = vars->hisl;
 	while (vars->hisl != NULL)
 	{
@@ -57,8 +56,16 @@ void	free_dub_str(char ***str)
 {
 	int	i;
 
-	while (str[i])
-		free(str[i++]);
-	free(str);
-	str = NULL;
+	i = 0;
+	while ((*str)[i])
+		free((*str)[i++]);
+	printf("???\n");
+	free(*str);
+	*str = NULL;
+}
+
+void	free_sin_str(char **str)
+{
+	free(*str);
+	*str = NULL;
 }

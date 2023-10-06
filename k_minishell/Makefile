@@ -1,5 +1,5 @@
 CC = cc #-Wall -Wextra -Werror
-SRCS = signal_func.c init_func.c \
+SRCS = minishell.c \
 	./builtin_src/builtin_main.c \
     ./builtin_src/cd_func.c \
     ./builtin_src/echo_func.c \
@@ -14,6 +14,8 @@ SRCS = signal_func.c init_func.c \
 	./child_process_src/execute_child.c \
 	\
 	./util_src/list_func.c \
+	./util_src/signal_func.c \
+	./util_src/init_func.c \
 	\
 	./str_src/str_func1.c \
 	./str_src/str_func2.c \

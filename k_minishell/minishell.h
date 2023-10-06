@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 19:30:26 by ilko              #+#    #+#             */
-/*   Updated: 2023/10/05 18:19:32 by ilko             ###   ########.fr       */
+/*   Updated: 2023/10/06 15:35:14 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,16 +73,17 @@ typedef struct	s_vars
 }	t_vars;
 
 
-/* init_func.c */
-void	init_exe_data(t_vars *vars, char **envp);
-void    envp_to_envl(t_vars *vars, char **envp);
 
 /* ./builtin_src/buitin_func.c */
 int		if_buitin_func(t_vars *vars, char **arvs);
 /* 				cd_func.c */
 void	cd_exe(t_vars *vars, char **arvs);
 /* 				exit_func.c */
-void	exit_exe(t_vars *vars, char **arvs);	
+void	exit_exe(t_vars *vars, char **arvs);
+void	free_vars(t_vars *vars);
+void	free_dub_str(char ***str);
+void	free_sin_str(char **str);
+
 /* 				export_func.c */
 void    export_exe(t_vars *vars, char **arvs);
 void	add_env(t_vars *vars, char *key, char *value);
@@ -110,6 +111,13 @@ int if_more_shell(t_vars *vars, char **arv, char **temp, char **envp);
 // void	list_add_back(t_envl **envl, char *key, char *value);
 t_envl	*make_env_node(t_vars *vars, char *key, char *value);
 t_hisl	*find_last_his_node(t_vars *vars);
+/* 			/init_func.c */
+void	init_exe_data(t_vars *vars, char **envp, char *root_file);
+void    envp_to_envl(t_vars *vars, char **envp, char *root_file);
+/* 			/signal_func.c */
+void    sigint_handler(int signum);
+void    sigquit_handler(int signum);
+
 
 
 

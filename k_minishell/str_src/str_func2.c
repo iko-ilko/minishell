@@ -61,16 +61,16 @@ char	*ft_strndup(char *s1, int len)
 
 char    *ft_strchr(char *s, int c)
 {
-        char    t;
+	char    t;
 
-        t = c;
-        while (*s)
-        {
-                if (*s == t)
-                        return ((char *)s);
-                s++;
-        }
-        if (t == '\0')
-                return ((char *)s);
-        return (0);
+	t = c;
+	while (*s)
+	{
+		if (*s == t)
+			return ((char *)s);
+		s++;
+	}
+	if (t == '\0')
+		return ((char *)s);
+	return (0);
 }

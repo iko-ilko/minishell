@@ -7,7 +7,13 @@
 
 void	env_exe(t_vars *vars, char **arvs)
 {
-	return ;
-}
+	t_envl	*cur;
 
-//여기에서 쉘레벨, 실행 된 쉘, OLDPWD..아니 얘는 cd 명령어에서 업데이트 해야할듯
+	cur = vars->envl;
+	while (cur)
+	{
+		if (cur->value != NULL)
+			printf("%s=%s\n", cur->key, cur->value);
+		cur = cur->next;
+	}
+}
