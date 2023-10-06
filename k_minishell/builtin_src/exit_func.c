@@ -27,7 +27,7 @@ void	exit_exe(t_vars *vars, char **arvs)
 	// 	return ;
 	exit(exit_code);
 }
-
+//세그폴트 뜸뜸
 void	free_vars(t_vars *vars)
 {
 	t_envl	*next_env;
@@ -40,10 +40,31 @@ void	free_vars(t_vars *vars)
 		free(vars->envl);
 		vars->envl = next_env;
 	}
-	free_sin_str(&vars->pwd);
+	free_single((void **)&vars->pwd);
 }
 
-void	free_dub_str(char ***str)
+void	free_multi(char **s1, char ***s2, void *p)
+{
+	int	i;
+	
+	if (s1 != NULL)
+	{
+		free(*s1);
+		*s1 = NULL;
+	}
+	i = 0;
+	if (*s2 != NULL)
+	{
+		while ((*s2)[i])
+			free((*s2)[i++]);
+		free(*s2);
+		*s2 = NULL;
+	}
+	if (p != NULL)
+		free(p);
+}
+
+void	free_double(char ***str)
 {
 	int	i;
 
@@ -54,8 +75,8 @@ void	free_dub_str(char ***str)
 	*str = NULL;
 }
 
-void	free_sin_str(char **str)
+void	free_single(void **p)
 {
-	free(*str);
-	*str = NULL;
+	free(*p);
+	*p = NULL;
 }

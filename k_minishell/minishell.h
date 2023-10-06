@@ -13,12 +13,16 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-#include <stdio.h>
-#include <signal.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <readline/readline.h>
-#include <readline/history.h>
+# include <stdio.h>
+# include <signal.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+
+# define ADD 0
+# define DEL 1
+
 
 /* env linkedlist */
 typedef struct	s_envl
@@ -81,11 +85,12 @@ void	cd_exe(t_vars *vars, char **arvs);
 /* 				exit_func.c */
 void	exit_exe(t_vars *vars, char **arvs);
 void	free_vars(t_vars *vars);
-void	free_dub_str(char ***str);
-void	free_sin_str(char **str);
+void	free_double(char ***str);
+void	free_single(void **str);
 
 /* 				export_func.c */
-void    export_exe(t_vars *vars, char **arvs);
+int		check_key(char *str, int unset_flag);
+void    export_exe(t_vars *vars, char **arvs, int idx);
 void	add_env(t_vars *vars, char *key, char *value);
 void	modify_env(t_vars *vars, char *key, char *value);
 t_envl	*find_env(t_vars *vars, char *key);//파싱에서도 쓸 수 있게 노드를 반환
@@ -94,7 +99,7 @@ void	env_exe(t_vars *vars, char **arvs);
 /* 				echo_func.c */
 void	echo_exe(t_vars *vars, char **arvs);
 /* 				unset_func.c*/
-void	unset_exe(t_vars *vars, char *key);
+void	unset_exe(t_vars *vars, char **arvs, int idx);
 /* 				pwd_func.c*/
 void	pwd_exe(t_vars *vars, char **arvs);
 
@@ -135,9 +140,9 @@ char	*ft_strjoin(char *s1, char *s2);
 int		find_index(char *str, char c);
 
 
-/* ./error_done_src/child_error.c */
-void	child_error(char *message, char *reason, int exit_code);
-void	parent_error(char *message, char *reason);
+/* ./error_done_src/exit_error.c */
+void	exit_error(char *message, char *reason, int exit_code);
+void	str_error(char *message, char *reason);
 
 
 

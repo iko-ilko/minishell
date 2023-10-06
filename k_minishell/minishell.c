@@ -64,7 +64,7 @@ int main(int arc, char **arv, char **envp)
 			if (pid == 0)
 				execve("/bin/ls", temp, envp);
 		}
-		free_dub_str(&temp);
+		free_double(&temp);
 		// int i = 0;
 		// while (temp[i])
 		// 	free(temp[i++]);

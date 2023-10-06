@@ -14,9 +14,9 @@ int	if_buitin_func(t_vars *vars, char **arvs)
 	else if (ft_strcmp(arvs[0], "pwd") == 0)
 		pwd_exe(vars, arvs);
 	else if (ft_strcmp(arvs[0], "export") == 0)
-		export_exe(vars, arvs);
+		export_exe(vars, arvs, 1);
 	else if (ft_strcmp(arvs[0], "unset") == 0)
-		unset_exe(vars, arvs[1]);
+		unset_exe(vars, arvs, 1);
 	else if (ft_strcmp(arvs[0], "env") == 0)
 		env_exe(vars, arvs);
 	else if (ft_strcmp(arvs[0], "exit") == 0)
