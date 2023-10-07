@@ -35,13 +35,13 @@ void set_quote(t_parsing *info, char quot, char buffer)
 }
 
 
-static void	push_program(t_parsing *info)
+void	push_args(t_parsing *info)
 {
 	if (*(info->buff) == 0)
 		return ;
-	info->content->program[info->p_i] = ft_strdup((info->buff));
-	info->content->program[info->p_i + 1] = NULL;
-	(info->p_i)++;
+	info->content->args[info->args_i] = ft_strdup((info->buff));
+	info->content->args[info->args_i + 1] = NULL;
+	(info->args_i)++;
 	ft_bzero((info->buff), ft_strlen((info->buff)) + 1);
 	info->j = 0;
 }
@@ -94,31 +94,31 @@ int		count_token(char *input)
 	return (count_token);
 }
 
-void	set_content(t_parsing *info, char *line, t_list *node, int i)
+void		set_content(t_parsing *info, char *line, t_list *node, int i)
 {
 	if (line[info->i + 1] == '>' || line[info->i + 1] == '<')
 		info->i++;
 	info->content->flag = i;
 	if (*(info->buff))
-		push_program(info);
-	if ((info->content->program)[0] == 0 && info->content->flag <= 1)
+		push_args(info);
+	if ((info->content->args)[0] == 0 && info->content->flag <= 1)
 		exit(0);
 	else
 	{
 		ft_lstadd_back(&node, ft_lstnew(info->content));
 		info->content = ft_calloc(1, sizeof(t_cmd));
-		info->content->program = ft_calloc(count_token(line) + 1, sizeof(char *));
+		info->content->args = ft_calloc(count_token(line) + 1, sizeof(char *));
 	}
-	info->p_i = 0;
+	info->args_i = 0;
 }
 
-void		put_program(t_parsing *info)
+void		put_args(t_parsing *info)
 {
 	if (*(info->buff) == 0)
 		return ;
-	info->content->program[(info->p_i)] = ft_strdup(info->buff);
-	info->content->program[(info->p_i) + 1] = NULL;
-	(info->p_i)++;
+	info->content->args[(info->args_i)] = ft_strdup(info->buff);
+	info->content->args[(info->args_i) + 1] = NULL;
+	(info->args_i)++;
 	ft_bzero(info->buff, ft_strlen(info->buff) + 1);
 	info->j = 0;
 }
@@ -170,26 +170,33 @@ char	*ft_strtrim(char const *s1, char const *set)
 
 void parsing_check(char *line, t_parsing *info, t_list *node)
 {
-	if (line[info->i] == info->quote)
-		set_quote(info, 0, line[info->i]);
-	else if (info->quote == 0 && (line[info->i] == '\'' || line[info->i] == '\"'))
-		set_quote(info, line[info->i], line[info->i]);
-	else if (info->quote == 0 && line[info->i] == '|')
-		set_content(info, line, node, PIPE);
-	else if (info->quote == 0 && line[info->i] == ';')
-		set_content(info, line, node, SEMICOLON_NONE);
-	else if (info->quote == 0 && line[info->i] == ' ')
-		put_program(info);
-	else if (info->quote == 0 && line[info->i] == '>' && line[info->i + 1] != '>')
-		set_content(info, line, node, SINGLE_REDIRECTION_RIGHT);
-	else if (info->quote == 0 && line[info->i] == '>' && line[info->i] == '>')
-		set_content(info, line, node, DOUBLE_REDIRECTION_RIGHT);
-	else if (info->quote == 0 && line[info->i] == '<' && line[info->i + 1] != '<')
-		set_content(info, line, node, SINGLE_REDIRECTION_LEFT);
-	else if (info->quote == 0 && line[info->i] == '<' && line[info->i + 1] == '<')
-		set_content(info, line, node, DOUBLE_REDIRECTION_LEFT);
-	else
-		info->buff[info->j++] = line[info->i];
+    if (line[info->i] == info->quote)
+        set_quote(info, 0, line[info->i]);
+    else if (info->quote == 0 && (line[info->i] == '\'' || line[info->i] == '\"'))
+        set_quote(info, line[info->i], line[info->i]);
+    else if (info->quote == 0 && line[info->i] == '|')
+        set_content(info, line, node, PIPE);
+    else if (info->quote == 0 && line[info->i] == ';')
+        set_content(info, line, node, SEMICOLON_NONE);
+    else if (info->quote == 0 && line[info->i] == ' ')
+        put_args(info);
+    else if (info->quote == 0 && line[info->i] == '>' && line[info->i + 1] != '>')
+        set_content(info, line, node, SI_REDI_R);
+    else if (info->quote == 0 && line[info->i] == '>' && line[info->i] == '>')
+        set_content(info, line, node, DOUB_REDI_R);
+    else if (info->quote == 0 && line[info->i] == '<' && line[info->i + 1] != '<')
+        set_content(info, line, node, SI_REDI_L);
+    else if (info->quote == 0 && line[info->i] == '<' && line[info->i + 1] == '<')
+        set_content(info, line, node, DOUB_REDI_L);
+    else if (info->quote != 0 && line[info->i] == '\\')
+    {
+        info->buff[info->j++] = line[info->i];
+        info->i++;
+        info->buff[info->j++] = line[info->i];
+		printf("dd : %s\n", info->buff);
+    }
+    else
+        info->buff[info->j++] = line[info->i];
 }
 static void	*ft_move(void *dst, const void *src, size_t len, size_t i)
 {
@@ -232,15 +239,15 @@ void	*ft_memmove(void *dst, const void *src, size_t len)
 
 void init(t_list **node, t_parsing *info, char *line)
 {
-	info->p_i = 0;
+	info->args_i = 0;
 	info->i = 0;
 	info->j = 0;
-	info->quote = 0;
 	*node = ft_lstnew(NULL);
+	info->head = *node;
+	info->quote = 0;
 	info->buff = (char *)malloc((ft_strlen(line) + 1) * sizeof(char));
 	info->content = (t_cmd *)malloc(sizeof(t_cmd));
-	info->token_count = 0;
-	info->content->program = (char **)malloc((count_token(line) + 2) * sizeof(char*));
+	info->content->args = (char **)malloc((count_token(line) + 2) * sizeof(char*));
 }
 
 
@@ -262,7 +269,7 @@ char		*find_env(char *str, int *i)
 	idx = *i + 1;
 	start = *i + 1;
 	while (str[idx])
-		if (ft_isalnum(str[idx]) || str[idx] == '_')
+		if (ft_isalnum(str[idx]) )
 			idx++;
 		else
 		{
@@ -357,36 +364,55 @@ void parsing_second(t_list *node, char **env)
         cmd = crr->content;
         quote = 0;
         i = 0;
-		while (cmd->program[i])
+		while (cmd->args[i])
         {
             j = 0;
 			k = 0;
-            while (cmd->program[i][j])
+            while (cmd->args[i][j])
             {
-                if (cmd->program[i][j] == quote)
+                if (cmd->args[i][j] == quote)
                     quote = 0;
-                else if (quote == 0 && (cmd->program[i][j] == '\'' || cmd->program[i][j] == '\"'))
-                    quote = cmd->program[i][j];
-                else if (quote == '\"' && cmd->program[i][j] == '\\' && cmd->program[i][j + 1] )
-                    buff[k++] = cmd->program[i][++j];
-                else if (quote == 0 && cmd->program[i][j] == '\\' && cmd->program[i][j + 1])
-                    buff[k++] = cmd->program[i][j];
-                else if (quote != '\'' && cmd->program[i][j] == '$' && cmd->program[i][j + 1])
-                    check_split(&k, set_env_to_buf(env, find_env(cmd->program[i], &j), buff), &idx, quote);
+                else if (quote == 0 && (cmd->args[i][j] == '\'' || cmd->args[i][j] == '\"'))
+                    quote = cmd->args[i][j];
+                else if (quote == '\"' && cmd->args[i][j] == '\\' && cmd->args[i][j + 1] )
+                    buff[k++] = cmd->args[i][++j];
+                else if (quote == 0 && cmd->args[i][j] == '\\' && cmd->args[i][j + 1])
+                    buff[k++] = cmd->args[i][j];
+                else if (quote != '\'' && (cmd->args[i][j] == '$' && cmd->args[i][j + 1]))
+                    check_split(&k, set_env_to_buf(env, find_env(cmd->args[i], &j), buff), &idx, quote);
                 else
-				{
-                    buff[k] = cmd->program[i][j];
-					k++;
-				}
+                    buff[k++] = cmd->args[i][j];
 				j++;
             }
-            cmd->program[i] = ft_strdup(buff);
+            cmd->args[i] = ft_strdup(buff);
             i++;
 			ft_memset(buff, 0, 100000);
         }
         crr = crr->next;
     }
 }
+
+void print_nodes_to_head(t_list *head)
+{
+    t_list *current = head;
+    int node_num = 1;
+    while (current != NULL)
+    {
+        t_cmd *cmd = (t_cmd *)current->content;
+        // printf("Node %d :\n", node_num);
+        if (cmd != NULL) 
+        {
+            for (int i = 0; cmd->args[i] != NULL; i++)
+            {
+                printf("  args : %s\n", cmd->args[i]);
+            }
+            printf("  flag : %d\n", cmd->flag);
+        }
+        current = current->next;
+        node_num++;
+    }
+}
+
 
 t_list *parsing(char *line, char **env)
 {
@@ -404,38 +430,16 @@ t_list *parsing(char *line, char **env)
 	info.buff[info.i] = '\0';
 	info.buff = ft_strtrim(info.buff, " ");
 	if (*(info.buff))
-	{
-		info.content->program[(info.p_i)] = ft_strdup(info.buff);
-		info.content->program[(info.p_i) + 1] = NULL;
-		info.p_i++;
-	}
+		put_args(&info);
 	if (info.quote != 0)
 	{
 		printf("fuck\n");
 		exit(0);
 	}
-	if (info.p_i)
+	if (info.args_i)
 		ft_lstadd_back(&node, ft_lstnew(info.content));
 	parsing_second(node, env);
-	//result
-	t_list *current = node;
-    int node_num = 1;
-
-    while (current != NULL)
-	{
-        t_cmd *cmd = (t_cmd *)current->content;
-        printf("Node %d :\n", node_num);
-        if (cmd != NULL) 
-		{
-            for (int i = 0; cmd->program[i] != NULL; i++)
-			{
-                printf("  program : %s\n", cmd->program[i]);
-            }
-            printf("  flag : %d\n", cmd->flag);
-        }
-        current = current->next;
-        node_num++;
-    }
+	print_nodes_to_head(info.head); //result
 	return(NULL);
 }
 

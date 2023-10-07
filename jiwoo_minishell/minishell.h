@@ -23,10 +23,10 @@
 
 # define SEMICOLON_NONE 0
 # define PIPE 1
-# define SINGLE_REDIRECTION_RIGHT 2
-# define DOUBLE_REDIRECTION_RIGHT 3
-# define SINGLE_REDIRECTION_LEFT 4
-# define DOUBLE_REDIRECTION_LEFT 5
+# define SI_REDI_R 2 // >
+# define DOUB_REDI_R 3 // >> 
+# define SI_REDI_L 4 // <
+# define DOUB_REDI_L 5 // <<
 
 
 typedef	struct	s_list
@@ -38,19 +38,18 @@ typedef	struct	s_list
 typedef struct	s_cmd
 {
 	int		flag;
-	char	**program;
+	char	**args;
 }	t_cmd;
 
 //p_i parsing index, j = buff index, i = line index
 typedef struct	s_parsing
 {
-	int		p_i;
-	int		i;
-	int		j;
-	int		token_count;
+	int		args_i;  // args배열의 인덱스
+	int		i; // cmd의 인덱스. parsing함수에서 사용
+	int		j; // buff의 인덱스. parsing_check함수에서 사용
 	char	quote;
 	char 	*buff;
-	// t_list	*head;
+	t_list	*head;
 	t_cmd	*content;
 }	t_parsing;
 
