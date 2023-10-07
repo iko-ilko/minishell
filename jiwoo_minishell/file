@@ -1,0 +1,14 @@
+total 200
+drwxr-xr-x  13 ilko  2023_seoul    442 10  7 17:22 .
+drwxr-xr-x   9 ilko  2023_seoul    306 10  7 16:48 ..
+drwxr-xr-x   3 ilko  2023_seoul    102  9 30 14:40 .vscode
+-rw-r--r--   1 ilko  2023_seoul    283  9 30 14:40 Makefile
+-rw-r--r--   1 ilko  2023_seoul      0 10  7 17:22 file
+-rw-r--r--   1 ilko  2023_seoul   1573  9 30 14:40 libft_utils.c
+-rw-r--r--   1 ilko  2023_seoul   1480 10  6 16:24 libft_utils.o
+-rw-r--r--   1 ilko  2023_seoul   1741  9 30 14:40 libft_utils_two.c
+-rw-r--r--   1 ilko  2023_seoul   1552 10  6 16:24 libft_utils_two.o
+-rw-r--r--   1 ilko  2023_seoul  10136 10  7 17:05 main.c
+-rw-r--r--   1 ilko  2023_seoul  11180 10  7 16:59 main.o
+-rwxr-xr-x   1 ilko  2023_seoul  51352 10  7 16:59 minishell
+-rw-r--r--   1 ilko  2023_seoul   3154 10  7 16:32 minishell.h
