@@ -96,9 +96,15 @@ int		count_token(char *input)
 
 void		set_content(t_parsing *info, char *line, t_list *node, int i)
 {
-	if (line[info->i + 1] == '>' || line[info->i + 1] == '<')
+	if (line[info->i] == '>' && line[info->i + 1] == '>' || line[info->i] == '<' && \
+		line[info->i + 1] == '<')
 		info->i++;
-
+	if (line[info->i + 1] != '\0' && (line[info->i + 1] == '>' || line[info->i + 1] == '<' || \
+		line[info->i + 1] == '|' || line[info->i + 1] == ';'))
+	{
+		printf("syn error\n");
+		exit(1);	
+	}
 	info->content->flag = i;
 	if (*(info->buff))
 		push_args(info);
@@ -197,12 +203,7 @@ void parsing_check(char *line, t_parsing *info, t_list *node)
     }
     else
         info->buff[info->j++] = line[info->i];
-	if (line[info->i + 1] != '\0' && (line[info->i + 1] == '>' || line[info->i + 1] == '<' || \
-		line[info->i + 1] == '|' || line[info->i + 1] == ';'))
-	{
-		printf("syn err\n");
-		exit(1);	
-	}
+
 }
 
 static void	*ft_move(void *dst, const void *src, size_t len, size_t i)

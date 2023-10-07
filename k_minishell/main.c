@@ -98,7 +98,6 @@ void		set_content(t_parsing *info, char *line, t_list *node, int i)
 {
 	if (line[info->i + 1] == '>' || line[info->i + 1] == '<')
 		info->i++;
-
 	info->content->flag = i;
 	if (*(info->buff))
 		push_args(info);
@@ -189,22 +188,16 @@ void parsing_check(char *line, t_parsing *info, t_list *node)
         set_content(info, line, node, SI_REDI_L);
     else if (info->quote == 0 && line[info->i] == '<' && line[info->i + 1] == '<')
         set_content(info, line, node, DOUB_REDI_L);
-    else if (info->quote == '\"' && line[info->i] == '\\')
+    else if (info->quote != 0 && line[info->i] == '\\')
     {
         info->buff[info->j++] = line[info->i];
         info->i++;
         info->buff[info->j++] = line[info->i];
+		printf("dd : %s\n", info->buff);
     }
     else
         info->buff[info->j++] = line[info->i];
-	if (line[info->i + 1] != '\0' && (line[info->i + 1] == '>' || line[info->i + 1] == '<' || \
-		line[info->i + 1] == '|' || line[info->i + 1] == ';'))
-	{
-		printf("syn err\n");
-		exit(1);	
-	}
 }
-
 static void	*ft_move(void *dst, const void *src, size_t len, size_t i)
 {
 	unsigned char	*a;
@@ -254,7 +247,7 @@ void init(t_list **node, t_parsing *info, char *line)
 	info->quote = 0;
 	info->buff = (char *)malloc((ft_strlen(line) + 1) * sizeof(char));
 	info->content = (t_cmd *)malloc(sizeof(t_cmd));
-	info->content->args = (char **)malloc((count_token(line) + 1) * sizeof(char*));
+	info->content->args = (char **)malloc((count_token(line) + 2) * sizeof(char*));
 }
 
 
@@ -384,12 +377,8 @@ void parsing_second(t_list *node, char **env)
                 else if (quote == '\"' && cmd->args[i][j] == '\\' && cmd->args[i][j + 1] )
                     buff[k++] = cmd->args[i][++j];
                 else if (quote == 0 && cmd->args[i][j] == '\\' && cmd->args[i][j + 1])
-				{
-					j++;
-					if (j != 0 && cmd->args[i][j] == '$')
-                    	buff[k++] = cmd->args[i][j];
-				}
-				else if (quote != '\'' && (cmd->args[i][j] == '$' && cmd->args[i][j + 1]))
+                    buff[k++] = cmd->args[i][j];
+                else if (quote != '\'' && (cmd->args[i][j] == '$' && cmd->args[i][j + 1]))
                     check_split(&k, set_env_to_buf(env, find_env(cmd->args[i], &j), buff), &idx, quote);
                 else
                     buff[k++] = cmd->args[i][j];
@@ -417,7 +406,7 @@ void print_nodes_to_head(t_list *head)
             {
                 printf("  args : %s\n", cmd->args[i]);
             }
-            printf("  flag : %d\n\n", cmd->flag);
+            printf("  flag : %d\n", cmd->flag);
         }
         current = current->next;
         node_num++;
