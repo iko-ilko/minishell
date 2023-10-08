@@ -35,16 +35,6 @@ void set_quote(t_parsing *info, char quot, char buffer)
 }
 
 
-void	push_args(t_parsing *info)
-{
-	if (*(info->buff) == 0)
-		return ;
-	info->content->args[info->args_i] = ft_strdup((info->buff));
-	info->content->args[info->args_i + 1] = NULL;
-	(info->args_i)++;
-	ft_bzero((info->buff), ft_strlen((info->buff)) + 1);
-	info->j = 0;
-}
 
 
 char	*ft_strtok(char *str, char sepa)
@@ -94,6 +84,42 @@ int		count_token(char *input)
 	return (count_token);
 }
 
+char *ft_size_check(char *line)
+{
+	int i;
+	int j;
+	char *res;
+
+	i = 0;
+	j = 0;
+	while ((line[i] && (line[i] == '|' ) && line[i] == ';' && (line[i] == '>' && line[i + 1] != '>') && \
+		(line[i] == '>' && line[i + 1] == '>') && (line[i] == '<' && line[i + 1] != '<') && \
+	 	(line[i] == '<' && line[i + 1] == '<')))
+			j++;
+	while (line[j] && (line[j] != '|' ) && line[j] != ';' && (!(line[j] == '>' && line[j + 1] != '>')) && \
+		(!(line[j] == '>' && line[j + 1] == '>')) && (!(line[j] == '<' && line[j + 1] != '<')) && \
+	 	(!(line[j] == '<' && line[j + 1] == '<')))
+		{
+			i++;
+			j++;
+		}
+	printf("sdds %d\n", i);
+	res = (char *)malloc((i + 1) * sizeof(char));
+	return (res);
+}
+
+void	push_args(t_parsing *info, char *line )
+{
+	if (*(info->buff) == 0)
+		return ;
+	info->content->args[info->args_i] = ft_strdup((info->buff));
+	info->content->args[info->args_i + 1] = NULL;
+	(info->args_i)++;
+	ft_bzero((info->buff), ft_strlen((info->buff)) + 1);
+	info->buff = ft_size_check(&line[info->i]);
+	info->j = 0;
+}
+
 void		set_content(t_parsing *info, char *line, t_list *node, int i)
 {
 	if (line[info->i] == '>' && line[info->i + 1] == '>' || line[info->i] == '<' && \
@@ -107,7 +133,7 @@ void		set_content(t_parsing *info, char *line, t_list *node, int i)
 	}
 	info->content->flag = i;
 	if (*(info->buff))
-		push_args(info);
+		push_args(info, line);
 	if ((info->content->args)[0] == 0 && info->content->flag <= 1)
 		exit(0);
 	else
@@ -123,7 +149,8 @@ void		put_args(t_parsing *info)
 {
 	if (*(info->buff) == 0)
 		return ;
-	info->content->args[(info->args_i)] = ft_strdup(info->buff);
+	if (!(info->content->args[(info->args_i)] = ft_strdup(info->buff)))
+		return ;
 	info->content->args[(info->args_i) + 1] = NULL;
 	(info->args_i)++;
 	ft_bzero(info->buff, ft_strlen(info->buff) + 1);
@@ -243,8 +270,6 @@ void	*ft_memmove(void *dst, const void *src, size_t len)
 	return (ft_move(dst, src, len, i));
 }
 
-
-
 void init(t_list **node, t_parsing *info, char *line)
 {
 	info->args_i = 0;
@@ -253,7 +278,7 @@ void init(t_list **node, t_parsing *info, char *line)
 	*node = ft_lstnew(NULL);
 	info->head = *node;
 	info->quote = 0;
-	info->buff = (char *)malloc((ft_strlen(line) + 1) * sizeof(char));
+	info->buff = ft_size_check(line);
 	info->content = (t_cmd *)malloc(sizeof(t_cmd));
 	info->content->args = (char **)malloc((count_token(line) + 1) * sizeof(char*));
 }
@@ -277,7 +302,7 @@ char		*find_env(char *str, int *i)
 	idx = *i + 1;
 	start = *i + 1;
 	while (str[idx])
-		if (ft_isalnum(str[idx]) )
+		if (ft_isalnum(str[idx]))
 			idx++;
 		else
 		{
@@ -319,7 +344,8 @@ size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 int			check_unset(char *str, char *envv)
 {
 	int		i;
-
+	printf("envv = %s\n", envv);
+	printf("str = %s\n", str);
 	i = 0;
 	while (str[i] && envv[i] && (str[i] == envv[i]) && (envv[i] != '='))
 		i++;
@@ -333,13 +359,14 @@ int			set_env_to_buf(char **envv, char *env, char *buf)
 	int		i;
 
 	i = -1;
+
 	while (envv[++i])
 	{
 		if (check_unset(env, (char*)envv[i]))
 		{
-			ft_strlcat(buf,
+			 printf("cat = %zu\n", ft_strlcat(buf,
 						(char*)envv[i] + ft_strlen(env) + 1,
-						ft_strlen(envv[i]) + ft_strlen(buf));
+						ft_strlen(envv[i]) + ft_strlen(buf)));
 			break ;
 		}
 	}
@@ -354,6 +381,7 @@ void		check_split(int *j, int z, int *idx, char quote)
 		*idx = 1;
 }
 
+
 void parsing_second(t_list *node, char **env)
 {
     t_list *crr;
@@ -367,6 +395,7 @@ void parsing_second(t_list *node, char **env)
 
     cmd = NULL;
     crr = node->next;
+	// *buff = ft_set_buff(crr, cmd, env);
     while (crr != NULL)
     {
         cmd = crr->content;
@@ -411,7 +440,7 @@ void print_nodes_to_head(t_list *head)
     while (current != NULL)
     {
         t_cmd *cmd = (t_cmd *)current->content;
-        // printf("Node %d :\n", node_num);
+        printf("Node %d :\n", node_num);
         if (cmd != NULL) 
         {
             for (int i = 0; cmd->args[i] != NULL; i++)

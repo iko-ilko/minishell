@@ -71,34 +71,3 @@ void	ft_lstadd_back(t_list **lst, t_list *new);
 
 #endif
 
-
-// char		*word_parsing_splitting(char **prgm, int *idx,
-// 									const char **envp, char *buf)
-// {
-// 	char	quote;
-// 	int		j;
-// 	int		i;
-
-// 	init_word_parsing(&quote, &j, &i);
-// 	printf("sss: %s\n", prgm[0]);
-// 	while (prgm[0][++i])
-// 		if (prgm[0][i] == quote)
-// 			quote = 0;
-// 		else if (quote == 0 && (prgm[0][i] == '\'' || prgm[0][i] == '\"'))
-// 			quote = prgm[0][i];
-// 		else if (quote == '\"' && prgm[0][i] == '\\' && prgm[0][i + 1] &&
-// 				double_quote_escape(prgm[0][i + 1]))
-// 			buf[j++] = prgm[0][++i];
-// 		else if (quote == 0 && prgm[0][i] == '\\' && prgm[0][i + 1])
-// 			buf[j++] = prgm[0][++i];
-// 		else if (quote != '\'' && prgm[0][i] == '$' && prgm[0][i + 1])
-// 			// if (prgm[0][i + 1] == '?' && (i += 2))
-// 			// 	set_exit_status_to_buf(buf, &j, &i);
-// 			// else
-// 				check_split(&j, set_env_to_buf(envp,
-// 						find_env(prgm[0], &i), buf), idx, quote);
-// 		else
-// 			buf[j++] = prgm[0][i];
-// 	free(prgm[0]);
-// 	return (ft_strdup(buf));
-// }
