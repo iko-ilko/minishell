@@ -24,72 +24,25 @@ int	check_key(char *str, int unset_flag)
 	return (0);
 }
 
-t_envl	*find_env(t_vars *vars, char *key)
+int	find_index(char *str, char c)
 {
-	t_envl	*cur;
+    int     i;
 
-	cur = vars->envl;
-	while (cur)
-	{
-		if (ft_strcmp(cur->key, key) == 0)
-			return (cur);
-		cur = cur->next;
-	}
-	return (NULL);
+    i = 0;
+    while (str[i])
+    {
+        if (str[i] == c)
+            return (i);
+        i++;
+    }
+    return (0);
 }
 
-void	modify_env(t_vars *vars, char *key, char *value)
-{
-	t_envl	*cur;
-
-	cur = vars->envl;
-	while (cur)
-	{
-		if (ft_strcmp(cur->key, key) == 0)
-		{
-			if (cur->value != NULL)
-				free(cur->value);
-			cur->value = value;
-			return ;
-		}
-		cur = cur->next;
-	}
-	add_env(vars, key, value);
-}
-
-void	add_env(t_vars *vars, char *key, char *value)
-{
-	t_envl	*cur;
-	t_envl	*new;
-
-	new = make_env_node(vars, key, value);
-	if (new == NULL)
-		exit_error("malloc failed\n", NULL, 1);//
-	if (vars->envl == NULL)
-	{
-		vars->envl = new;
-		if (vars->envl == NULL)
-			exit_error("malloc failed\n", NULL, 1);//
-		return ;
-	}
-	if (ft_strcmp(vars->envl->key, key) > 0)
-	{
-		new->next = vars->envl;
-		vars->envl = new;
-		return ;
-	}
-	cur = vars->envl;
-	while (cur->next && ft_strcmp(cur->next->key, key) < 0)
-		cur = cur->next;
-	new->next = cur->next;
-	cur->next = new;
-}
-
-static void    print_all_export(t_vars *vars)
+static void    print_all_export(t_data *data)
 {
     t_envl  *cur;
 
-    cur = vars->envl;
+    cur = data->envl;
     while (cur)
     {
 		printf("%s", cur->key);
@@ -106,7 +59,7 @@ static void    print_all_export(t_vars *vars)
 }
 //음 ...함수 빼야하네 ..재귀 안쓰면 수정이 꽤 있을것같으니 재귀는 냅두자 ..
 //  / //// 무조건 밸류는 큰따옴표임 ㅠㅠ
-void    export_exe(t_vars *vars, char **arvs, int idx)
+void    export_exe(t_data *data, char **arvs, int idx)
 {
     int     index;
     char    *key;
@@ -114,7 +67,7 @@ void    export_exe(t_vars *vars, char **arvs, int idx)
 
     if (arvs[1] == NULL)
     {
-        print_all_export(vars);
+        print_all_export(data);
         return ;
     }
 	if (arvs[idx] == NULL)
@@ -127,10 +80,10 @@ void    export_exe(t_vars *vars, char **arvs, int idx)
 	// }
 
     //만약 export 하려는 key가 이미 존재하는경우 modify_envp함수에서 밸류만 변경.
-    //if (find_env(vars, arvs[1]) != NULL)
-    //    modify_envp(vars, arvs[1], arvs[2]);
+    //if (find_key(data->envl, arvs[1]) != NULL)
+    //    modify_envp(data, arvs[1], arvs[2]);
     //else
-    //    add_envp(vars, arvs[1], arvs[2]);
+    //    add_envp(data, arvs[1], arvs[2]);
 
     // int i = 0;
     // while (arvs[i])
@@ -153,10 +106,10 @@ void    export_exe(t_vars *vars, char **arvs, int idx)
 			value = ft_strdup("");
 		else
     	    value = ft_strdup(arvs[idx] + index + 1);
-		if (find_env(vars, key) != NULL)
-			modify_env(vars, key, value);
+		if (find_key(data, key) != NULL)
+			modify_env(data, key, value);
 		else
-			add_env(vars, key, value);
+			add_env(data, key, value);
 		// printf("%s", key);//여기서부턴 출력
 		// if (value != NULL)
 		// 	printf("=");
@@ -166,7 +119,7 @@ void    export_exe(t_vars *vars, char **arvs, int idx)
 		// 	printf("%s", value);
 		// printf("\n");
 	}
-	export_exe(vars, arvs, ++idx);
+	export_exe(data, arvs, ++idx);
     
     // if (index == -2)
     //     key = ft_strdup(arvs[idx]);

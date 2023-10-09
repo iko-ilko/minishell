@@ -26,7 +26,7 @@ int	get_slash_idx(char *pwd)
 	return (i);
 }
 
-void	change_pwd(t_vars *vars, char *dir)
+void	change_pwd(t_data *data, char *dir)
 {
 	int		idx;
 	char	*temp;
@@ -34,26 +34,26 @@ void	change_pwd(t_vars *vars, char *dir)
 	idx = 0;
 	if (dir[0] == '/')
 	{
-		free(vars->pwd);
-		vars->pwd = ft_strdup(dir);
+		free(data->pwd);
+		data->pwd = ft_strdup(dir);
 	}
 	else if (ft_strcmp(dir, ".") == 0)
 		return ;
 	else if (ft_strcmp(dir, "..") == 0)
 	{
-		idx = get_slash_idx(vars->pwd);
-		temp = vars->pwd;
+		idx = get_slash_idx(data->pwd);
+		temp = data->pwd;
 		if (idx == 0)
-			vars->pwd = ft_strdup("/");
+			data->pwd = ft_strdup("/");
 		else
-			vars->pwd = ft_strndup(vars->pwd, idx);
+			data->pwd = ft_strndup(data->pwd, idx);
 		free(temp);
 	}
 }
 ///////////////일단 리스트 함수들 만들고 export, unset, pwd 명령어 구현하고 cd구현 마무리하자.
 //cd $HOME은 파싱 부분에서 확장될것이니까 cd $만 처리하자.
 // ㄷㅓ브ㄹ프리남 cd .. 해ㅛㅆㄴㅇ릃 ㄸ깨
-void	cd_exe(t_vars *vars, char **arvs)
+void	cd_exe(t_data *data, char **arvs)
 {
 	char	*error_str;
 	char	*cwd_temp;
@@ -63,26 +63,26 @@ void	cd_exe(t_vars *vars, char **arvs)
 		return ;
 	cwd_temp = getcwd(NULL, 0);
 	if (cwd_temp != NULL)
-		find_env(vars, "OLDPWD")->value = cwd_temp;
+		find_key(data, "OLDPWD")->value = cwd_temp;
 	else
-		find_env(vars, "OLDPWD")->value = find_env(vars, "PWD")->value;
+		find_key(data, "OLDPWD")->value = find_key(data, "PWD")->value;
 	free(cwd_temp);
 	if (chdir(arvs[1]) == -1)
 		perror(error_str);
 	else if (ft_strcmp(arvs[1], ".") != 0)
 	{
 		cwd_temp = getcwd(NULL, 0);
-		if (find_env(vars, "PWD") == NULL)
-			add_env(vars, "PWD", cwd_temp);
+		if (find_key(data, "PWD") == NULL)
+			add_env(data, "PWD", cwd_temp);
 		else
-			modify_env(vars, "PWD", cwd_temp);
+			modify_env(data, "PWD", cwd_temp);
 		free(cwd_temp);
 	}
 
-	// printf("\n$PWD:%s\n", find_env(vars, "PWD")->value);
-	// printf("$OLDPWD:%s\n", find_env(vars, "OLDPWD")->value);
+	// printf("\n$PWD:%s\n", find_key(data, "PWD")->value);
+	// printf("$OLDPWD:%s\n", find_key(data, "OLDPWD")->value);
 
-	// printf("!%s---%p\n", vars->pwd, vars->pwd);
+	// printf("!%s---%p\n", data->pwd, data->pwd);
 	// printf("?%s---%p\n", getcwd(NULL, 0), getcwd(NULL, 0));
 	// system("pwd");
 }

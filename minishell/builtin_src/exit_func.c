@@ -16,11 +16,11 @@
 //arvs[1]의 엑싯코드로 종료.
 //만약 arvs[2] (즉, 두번째 인자)가 있다면 에러 메세지 출력하고 종료.
 //만약 arvs[1]이 범위가 벗어나거나 숫자가 아니면 에러 메세지 출력하고 종료.
-void	exit_exe(t_vars *vars, char **arvs)
+void	exit_exe(t_data *data, char **arvs)
 {
 	int		exit_code = 0;//임시
 
-	free_vars(vars);
+	free_vars(data);
 	//릭 정리하고
 	//check_arv_number() 는 숫자인지 체크하고 long long 범위 안넘는지 체크
 	// if (check_arv_number(arvs) == -1)
@@ -28,19 +28,19 @@ void	exit_exe(t_vars *vars, char **arvs)
 	exit(exit_code);
 }
 //세그폴트 뜸뜸
-void	free_vars(t_vars *vars)
+void	free_vars(t_data *data)
 {
 	t_envl	*next_env;
 
-	while (vars->envl != NULL)
+	while (data->envl != NULL)
 	{
-		next_env = vars->envl->next;
-		free(vars->envl->key);
-		free(vars->envl->value);
-		free(vars->envl);
-		vars->envl = next_env;
+		next_env = data->envl->next;
+		free(data->envl->key);
+		free(data->envl->value);
+		free(data->envl);
+		data->envl = next_env;
 	}
-	free_single((void **)&vars->pwd);
+	free_single((void **)&data->pwd);
 }
 
 void	free_multi(char **s1, char ***s2, void *p)
@@ -70,7 +70,10 @@ void	free_double(char ***str)
 
 	i = 0;
 	while ((*str)[i])
-		free((*str)[i++]);
+	{
+		free((*str)[i]);
+		(*str)[i++] = NULL;
+	}
 	free(*str);
 	*str = NULL;
 }

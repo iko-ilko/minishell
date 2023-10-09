@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-void	unset_exe(t_vars *vars, char **arvs, int idx)
+void	unset_exe(t_data *data, char **arvs, int idx)
 {
 	t_envl	*cur;
 	t_envl	*pre;
@@ -14,14 +14,14 @@ void	unset_exe(t_vars *vars, char **arvs, int idx)
 	}
 	else
 	{
-		cur = vars->envl;
+		cur = data->envl;
 		pre = NULL;
 		while (cur)
 		{
 			if (ft_strcmp(cur->key, arvs[idx]) == 0)
 			{
 				if (pre == NULL)
-					vars->envl = cur->next;
+					data->envl = cur->next;
 				else
 					pre->next = cur->next;
 				free_single((void **)&cur->key);
@@ -33,5 +33,5 @@ void	unset_exe(t_vars *vars, char **arvs, int idx)
 			cur = cur->next;
 		}
 	}
-	unset_exe(vars, arvs, ++idx);
+	unset_exe(data, arvs, ++idx);
 }

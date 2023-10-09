@@ -30,6 +30,8 @@ char	*ft_strdup(char *s1)
 	int		len;
 	int		i;
 
+	if (s1 == NULL)
+		return (NULL);
 	len = ft_strlen(s1);
 	res = malloc(sizeof(char) * (len + 1));
 	if (res == 0)
@@ -46,6 +48,8 @@ char	*ft_strndup(char *s1, int len)
 	char	*res;
 	int		i;
 
+	if (s1 == NULL)
+		return (NULL);
 	res = malloc(sizeof(char) * (len + 1));
 	if (res == NULL)
 		exit_error("malloc failed\n", NULL, 1);
@@ -61,16 +65,13 @@ char	*ft_strndup(char *s1, int len)
 
 char    *ft_strchr(char *s, int c)
 {
-	char    t;
-
-	t = c;
 	while (*s)
 	{
-		if (*s == t)
+		if (*s == c)
 			return ((char *)s);
 		s++;
 	}
-	if (t == '\0')
-		return ((char *)s);
+	if (c == '\0')
+		return ((char*)s);
 	return (0);
 }

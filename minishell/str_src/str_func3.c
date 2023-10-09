@@ -19,31 +19,61 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (res);
 }
 
-int	str_check_space(char *str)
+// int	str_check_space(char *str)
+// {
+// 	int	i;
+
+// 	if (str == NULL)
+// 		return (0);
+// 	i = -1;
+// 	while (str[++i])
+// 	{
+// 		if (str[i] == ' ')
+// 			return (1);
+// 	}
+// 	return (0);
+// }
+
+void	ft_bzero(void *s, size_t n)
+{
+	size_t i;
+
+	i = 0;
+	while (i < n)
+	{
+		*(char*)(s + i) = '\0';
+		i++;
+	}
+}
+
+char	*ft_strcpy(char *dest, char *src)
 {
 	int	i;
 
-	if (str == NULL)
-		return (0);
-	i = -1;
-	while (str[++i])
+	i = 0;
+	while (*(src + i) != '\0')
 	{
-		if (str[i] == ' ')
-			return (1);
+		*(dest + i) = *(src + i);
+		i++;
 	}
-	return (0);
+	dest[i] = '\0';
+	return (dest);
 }
 
-int	find_index(char *str, char c)
-{
-    int     i;
 
-    i = 0;
-    while (str[i])
-    {
-        if (str[i] == c)
-            return (i);
-        i++;
-    }
-    return (1);
+void	*ft_calloc(size_t count, size_t size)
+{
+	char	*p;
+	size_t	i;
+
+	i = 0;
+	p = (char *)malloc(size * count);
+	if (p == NULL)
+		return (NULL);
+	while (i < size * count)
+	{
+		p[i] = 0;
+		i++;
+	}
+	return ((void *)p);
 }

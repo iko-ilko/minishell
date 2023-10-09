@@ -4,13 +4,13 @@
 
 #include "../minishell.h"
 
-void	pwd_exe(t_vars *vars, char **arvs)
+void	pwd_exe(t_data *data, char **arvs)
 {
 	char	*pwd;
 
 	pwd = getcwd(NULL, 0);
 	if (pwd == NULL)
-		pwd = ft_strdup(find_env(vars, "PWD")->value);
+		pwd = ft_strdup(find_key(data, "PWD")->value);
 	printf("%s\n", pwd);
 	free(pwd);
 }

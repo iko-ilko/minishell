@@ -5,11 +5,72 @@
 
 #include "../minishell.h"
 
-void	env_exe(t_vars *vars, char **arvs)
+t_envl	*find_key(t_data *data, char *key)
 {
 	t_envl	*cur;
 
-	cur = vars->envl;
+	cur = data->envl;
+	while (cur)
+	{
+		if (ft_strcmp(cur->key, key) == 0)
+			return (cur);
+		cur = cur->next;
+	}
+	return (NULL);
+}
+
+void	modify_env(t_data *data, char *key, char *value)
+{
+	t_envl	*cur;
+
+	cur = data->envl;
+	while (cur)
+	{
+		if (ft_strcmp(cur->key, key) == 0)
+		{
+			if (cur->value != NULL)
+				free(cur->value);
+			cur->value = value;
+			return ;
+		}
+		cur = cur->next;
+	}
+	add_env(data, key, value);
+}
+
+void	add_env(t_data *data, char *key, char *value)
+{
+	t_envl	*cur;
+	t_envl	*new;
+
+	new = make_env_node(data, key, value);
+	if (new == NULL)
+		exit_error("malloc failed\n", NULL, 1);//
+	if (data->envl == NULL)
+	{
+		data->envl = new;
+		if (data->envl == NULL)
+			exit_error("malloc failed\n", NULL, 1);//
+		return ;
+	}
+	if (ft_strcmp(data->envl->key, key) > 0)
+	{
+		new->next = data->envl;
+		data->envl = new;
+		return ;
+	}
+	cur = data->envl;
+	while (cur->next && ft_strcmp(cur->next->key, key) < 0)
+		cur = cur->next;
+	new->next = cur->next;
+	cur->next = new;
+}
+
+void	env_exe(t_data *data, char **arvs)
+{
+	t_envl	*cur;
+
+	cur = data->envl;
 	while (cur)
 	{
 		if (cur->value != NULL)

@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-void	echo_exe(t_vars *vars, char **arvs)
+void	echo_exe(t_data *data, char **arvs)
 {
 	int	i;
 	int	n_flag;

@@ -2,73 +2,46 @@
 
 int main(int arc, char **arv, char **envp)
 {
-	t_vars	vars;
-    char    buf[5];
+	t_info	info;
+	t_data	data;
     char    *line;
 	int i = 0;
 
-	// while (envp[i])
-	// {
-	// 	printf("%s\n", envp[i]);
-	// 	i++;
-	// }
-	// exit(1);
+	if (arv[1] != NULL)
+		exit_error("No such file or directory", arv[1], 127);
     // do_signal();
-    
-            // int k = 0;
-            // while (envp[k])
-            // {
-            //     printf("%s\n", envp[k]);
-            //     k++;
-            // }
-	
-	init_exe_data(&vars, envp, arv[0]);
+	init_exe_data(&data, envp, arv[0]);
     signal(SIGINT, sigint_handler);
     signal(SIGQUIT, SIG_IGN);
-    // pid = fork();
-    // {
-    //     if (pid == 0)
-    //     {
-    //         printf("child start\n");
-    //         signal(SIGQUIT, sigquit_handler);
-    //         sleep(10);
-    //         exit(0);
-    //     }
-    //     else if(pid > 0)
-    //         signal(SIGQUIT, SIG_DFL);
-
-    // }
     // signal()
 	// 빌트인 커맨드 단독 일 때만 부모 프로세스에서 빌트인 실행
     while(1)
     {
         line = readline("minishell$ ");
 		if (line == NULL)
-			break;
-		char **temp = ft_split(line, ' ');
-		if (temp[0] == NULL)
-			continue;
-	    add_history(line);
-		free(line);
-        //save_history(&vars, temp[0]);
-        //save_history(line); <- 이 안에 add_history() 넣자.
-        //a.out 명시하지않고 arv[0] 과 temp[0] 비교해도 될듯?
-        if (if_more_shell(&vars, arv, temp, envp) == 1)
-            continue ;
-		if (if_buitin_func(&vars, temp) == 1)
+			break ;
+		if (ft_strlen(line) == 0)
 			continue ;
-		//빌트인 다음 커맨드 실행
-		if (ft_strcmp(temp[0], "ls") == 0)
-		{
-			int pid = fork();
-			if (pid == 0)
-				execve("/bin/ls", temp, envp);
-		}
-		free_double(&temp);
-		// int i = 0;
-		// while (temp[i])
-		// 	free(temp[i++]);
-		// free(temp);
+	    add_history(line);
+		parsing(&info, line, envp);//리스트에서 바꾼 2차원 배열로
+		data.arvl = info.head;
+		free(line);
+		printf("----------end parsing\n");
+		exe_data(&data, envp, arv[0]);
+		//free_all();//with line
+
     }
 }
 //함수 잘 빼자 .. if_more_shell() -> shell_child.c , save_history()
+
+
+
+// ft_set_buf
+
+// set_env_to_buf
+
+
+// int		set_env_to_buf(char **envv, char *key, char *buf);
+// int 	env_size(char **envv, char *key, int k);
+// char	*ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env);
+// void	parsing_second(t_arvl *node, char **env);

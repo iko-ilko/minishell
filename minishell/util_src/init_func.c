@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-void    envp_to_envl(t_vars *vars, char **envp, char *root_file)
+void    envp_to_envl(t_data *data, char **envp, char *root_file)
 {
     int     i;
     char    *key;
@@ -15,14 +15,14 @@ void    envp_to_envl(t_vars *vars, char **envp, char *root_file)
 			value = ft_strdup(root_file);
 		else
     	    value = ft_strdup(ft_strchr(envp[i], '=') + 1);
-		add_env(vars, key, value);
+		add_env(data, key, value);
         i++;
     }
-	add_env(vars, "OLDPWD", NULL);
+	add_env(data, "OLDPWD", NULL);
 }
 
-void	init_exe_data(t_vars *vars, char **envp, char *root_file)
+void	init_exe_data(t_data *data, char **envp, char *root_file)
 {
-	vars->envl = NULL;
-    envp_to_envl(vars, envp, root_file);
+	data->envl = NULL;
+    envp_to_envl(data, envp, root_file);
 }

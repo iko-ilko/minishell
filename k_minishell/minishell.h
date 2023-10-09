@@ -52,7 +52,7 @@ typedef	struct	s_list
 typedef struct	s_cmd
 {
 	int		flag;
-	char	**program;
+	char	**args;
 }	t_cmd;
 
 //p_i parsing index, j = buff index, i = line index

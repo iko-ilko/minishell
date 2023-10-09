@@ -23,7 +23,7 @@
 //     }
 // }
 
-t_envl	*make_env_node(t_vars *vars, char *key, char *value)
+t_envl	*make_env_node(t_data *data, char *key, char *value)
 {
 	t_envl	*new;
 
@@ -36,14 +36,35 @@ t_envl	*make_env_node(t_vars *vars, char *key, char *value)
 	return (new);
 }
 
-t_hisl	*find_last_his_node(t_vars *vars)
-{
-	t_hisl	*last;
 
-	if (vars->hisl == NULL)
-		return (NULL);
-	last = vars->hisl;
-	while (last->next != NULL)
-		last = last->next;
-	return (last);
+t_arvl	*ft_lstnew(void *content)
+{
+	t_arvl	*res;
+
+	res = (t_arvl *)malloc(sizeof(t_arvl));
+	if (res == 0)
+		return (0);
+	res->content = content;
+	res->next = NULL;
+	return (res);
+}
+
+t_arvl	*ft_lstlast(t_arvl *lst)
+{
+	while (lst && lst->next != NULL)
+		lst = lst->next;
+	return (lst);
+}
+
+void	ft_lstadd_back(t_arvl **lst, t_arvl *new)
+{
+	t_arvl	*last;
+
+	if (!*lst)
+	{
+		*lst = new;
+		return ;
+	}
+	last = ft_lstlast(*lst);
+	last->next = new;
 }

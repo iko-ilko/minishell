@@ -1,5 +1,5 @@
 CC = cc #-Wall -Wextra -Werror
-SRCS = minishell.c \
+SRCS = minishell.c parsing.c execute.c \
 	./builtin_src/builtin_main.c \
     ./builtin_src/cd_func.c \
     ./builtin_src/echo_func.c \
@@ -21,7 +21,7 @@ SRCS = minishell.c \
 	./str_src/str_func3.c \
 	\
 	./error_done_src/error.c
-NAME = a.out #minishell_test
+NAME = minishell
 OBJS = $(SRCS:.c=.o)
 
 
