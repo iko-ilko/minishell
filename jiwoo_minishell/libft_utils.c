@@ -61,7 +61,6 @@ void	ft_lstadd_back(t_list **lst, t_list *new)
 	if (!*lst)
 	{
 		*lst = new;
-		printf("444\n");
 		return ;
 	}
 	last = ft_lstlast(*lst);
