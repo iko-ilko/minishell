@@ -94,21 +94,21 @@ char *ft_size_check(char *line)
 
 	i = 0;
 	j = 0;
-	while ((line[i] && (line[i] == '|' ) && line[i] == ';' && (line[i] == '>' && line[i + 1] != '>') && \
-		(line[i] == '>' && line[i + 1] == '>') && (line[i] == '<' && line[i + 1] != '<') && \
-	 	(line[i] == '<' && line[i + 1] == '<')))
-			j++;
-	while (line[j] && (line[j] != '|' ) && line[j] != ';' && (!(line[j] == '>' && line[j + 1] != '>')) && \
-		(!(line[j] == '>' && line[j + 1] == '>')) && (!(line[j] == '<' && line[j + 1] != '<')) && \
-	 	(!(line[j] == '<' && line[j + 1] == '<')))
-		{
-			printf("%c\n", line[j]);
-			i++;
-			j++;
-		}
-	printf("===============%s %d\n", line, i);
-	res = (char *)malloc((i + 1) * sizeof(char));
-	res[i + 1] = '\0';
+	printf("line = %s\n", line);
+	while (line[i] && ((line[i] >= 0 && line[i] <= 32) || (line[i] == '|') || ( line[i] == ';') || \
+			(line[i] == '>') || (line[i] == '>')))
+	{
+		i++;
+	}
+	while (line[i] && ((line[i] != ' ') && (line[i] != '|') && ( line[i] != ';') && (line[i] != '>' && \
+			(line[i] != '<'))))
+	{
+		i++;
+		j++;
+	}
+	res = (char *)malloc((j + 1) * sizeof(char));
+	printf("buff size = %d\n", j);
+	res[j] = '\0';
 	return (res);
 }
 
@@ -116,15 +116,13 @@ void	push_args(t_parsing *info, char *line)
 {
 	if (*(info->buff) == 0)
 		return ;
-	printf("infoofofofo->bufff %s\n", info->buff);
-	info->content->args[info->args_i] = ft_strdup((info->buff));
+	printf("00000 = %s\n", info->buff);
+	info->content->args[info->args_i] = ft_strdup(info->buff);
 	info->content->args[info->args_i + 1] = NULL;
-	printf("infoofofofo-argsss %s\n", info->content->args[info->args_i]);
+	printf("jwikim2 %s\n", info->content->args[info->args_i]);
 	(info->args_i)++;
-	printf("infoofofofo->bufff %s\n", info->buff);
 	free(info->buff);
-	ft_bzero((info->buff), ft_strlen((info->buff)) + 1);
-	printf("infoofofofo->bufff %s\n", info->buff);
+	ft_memset(info->buff, 0, ft_strlen(info->buff) + 1);
 	info->buff = ft_size_check(&line[info->i]);
 	info->j = 0;
 }
@@ -225,11 +223,15 @@ void parsing_check(char *line, t_parsing *info)
     else if (info->quote == '\"' && line[info->i] == '\\')
     {
         info->buff[info->j++] = line[info->i];
-        info->i++;
+        info->i++; 
         info->buff[info->j++] = line[info->i];
     }
     else
+	{
+		printf("line[jkjfksdjfkd]   ==== %c\n", line[info->i]);
         info->buff[info->j++] = line[info->i];
+		printf("linelineline =- %s\n", info->buff);
+	}
 }
 
 static void	*ft_move(void *dst, const void *src, size_t len, size_t i)
@@ -374,9 +376,9 @@ int			set_env_to_buf(char **envv, char *env, char *buf)
 	return ((int)ft_strlen(buf));
 }
 
-void		check_split(int *j, int z, int *idx, char quote)
+void		check_split(int *k, int z, int *idx, char quote)
 {
-	*j = z;
+	*k = z;
 	if (quote != '\"')
 		*idx = 1;
 }
@@ -443,7 +445,6 @@ char *ft_set_buff(t_cmd *cmd, t_list *crr, int idx, char **env)
                 else if (quote != '\'' && cmd->args[i][j] == '$' && cmd->args[i][j + 1])
 				{
                     k = env_size(env, find_env(cmd->args[i], &j), k);
-					printf("dd = %d\n", k);
 				}
 				else
                 {
@@ -453,7 +454,6 @@ char *ft_set_buff(t_cmd *cmd, t_list *crr, int idx, char **env)
             }
             i++;
         }
-    printf(" k = %d\n", k); //ls | "$USER"
     buff = (char *)malloc((k + 1) * (sizeof(char)));
     return (buff);
 }
@@ -474,7 +474,6 @@ void parsing_second(t_list *node, char **env)
         cmd = crr->content;
         quote = 0;
         i = 0;
-        // buff = ft_set_buff(cmd, crr, idx, env);
         while (cmd->args[i])
         {
             buff = ft_set_buff(cmd, crr, idx, env);
@@ -501,7 +500,8 @@ void parsing_second(t_list *node, char **env)
             }
             cmd->args[i] = ft_strdup(buff);
             i++;
-            free(buff);
+			free(buff);
+			ft_memset(buff, 0, ft_strlen(buff));
         }
         crr = crr->next;
     }
