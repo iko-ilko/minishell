@@ -73,6 +73,7 @@ typedef struct	s_data
 {
 	t_arvl	*arvl;
 	t_envl	*envl;
+	char	**envp;
 	char	*pwd;//
 	char	**history;
 
@@ -90,7 +91,6 @@ int		count_token(char *input);
 char 	*ft_size_check(char *line);
 void	push_args(t_info *info, char *line);
 void	set_content(t_info *info, char *line, t_arvl **node, int i);
-void	put_args(t_info *info);
 char	*ft_substr(char *s, unsigned int start, size_t len);
 char	*ft_strtrim(char *s1, char *set);
 void 	parsing_check(char *line, t_info *info);
@@ -120,9 +120,6 @@ int		if_buitin_func(t_data *data, char **arvs);
 void	cd_exe(t_data *data, char **arvs);
 /* 				exit_func.c */
 void	exit_exe(t_data *data, char **arvs);
-void	free_vars(t_data *data);
-void	free_double(char ***str);
-void	free_single(void **str);
 
 /* 				export_func.c */
 int		check_key(char *str, int unset_flag);
@@ -143,7 +140,7 @@ void	unset_exe(t_data *data, char **arvs, int idx);
 void	pwd_exe(t_data *data, char **arvs);
 
 /* ./child_process/shell_child.c */
-void	 more_shell(t_data *data, char **arvs, char *root_file_name, char **envp);
+void	more_shell(t_data *data, char **arvs, char **envp);
 /* 				execute_child.c */
 
 
@@ -152,15 +149,20 @@ t_envl	*make_env_node(t_data *data, char *key, char *value);
 t_arvl	*ft_lstnew(void *content);
 t_arvl	*ft_lstlast(t_arvl *lst);
 void	ft_lstadd_back(t_arvl **lst, t_arvl *new);
+int		get_lstsize(t_envl *cur);
 
 /* 			/init_func.c */
 void	init_exe_data(t_data *data, char **envp, char *root_file);
 void    envp_to_envl(t_data *data, char **envp, char *root_file);
+void	update_envp(t_data *data, t_envl *cur);
 /* 			/signal_func.c */
 void    sigint_handler(int signum);
 void    sigquit_handler(int signum);
-
-
+/*			/free_func.c */
+void	free_vars(t_data *data);
+void	free_double(char ***str);
+void	free_single(void **str);
+//구조체, 또는 노드 전체, 또는 노드 하나 프리하는 함수
 
 /* ./str_src/str_func1.c */
 char	**ft_split(char *s, char c);
@@ -177,7 +179,6 @@ char	*ft_strjoin(char *s1, char *s2);
 void	ft_bzero(void *s, size_t n);
 char	*ft_strcpy(char *dest, char *src);
 void	*ft_calloc(size_t count, size_t size);
-
 
 
 // int		str_check_space(char *str);

@@ -15,6 +15,7 @@ SRCS = minishell.c parsing.c execute.c \
 	./util_src/list_func.c \
 	./util_src/signal_func.c \
 	./util_src/init_func.c \
+	./util_src/free_func.c \
 	\
 	./str_src/str_func1.c \
 	./str_src/str_func2.c \
@@ -26,6 +27,7 @@ OBJS = $(SRCS:.c=.o)
 
 
 all: $(NAME)
+	
 
 $(NAME): $(OBJS)
 	$(CC) $(OBJS) -lreadline -o $(NAME)
@@ -38,5 +40,7 @@ clean:
 
 fclean: clean
 	rm -rf $(NAME)
-
 re: fclean all
+###############temp
+and: re clean
+#####################

@@ -20,10 +20,10 @@ int main(int arc, char **arv, char **envp)
         line = readline("minishell$ ");
 		if (line == NULL)
 			break ;
-		if (ft_strlen(line) == 0)
-			continue ;
+		// if (ft_strlen(line) == 0)
+		// 	continue ;
 	    add_history(line);
-		parsing(&info, line, envp);//리스트에서 바꾼 2차원 배열로
+		parsing(&info, line, data.envp);//리스트에서 바꾼 2차원 배열로
 		data.arvl = info.head;
 		free(line);
 		printf("----------end parsing\n");

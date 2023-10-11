@@ -92,6 +92,8 @@ void    export_exe(t_data *data, char **arvs, int idx)
     //     i++;
     // }
     index = find_index(arvs[idx], '=');//arvs[idx]이 arvs[i]가 되겠지.
+	if (index == 0 && arvs[idx][index] != '=')
+		index = ft_strlen(arvs[idx]);
     key = ft_strndup(arvs[idx], index);
 	if (check_key(key, ADD) == -1)
 	{
@@ -120,6 +122,12 @@ void    export_exe(t_data *data, char **arvs, int idx)
 		// printf("\n");
 	}
 	export_exe(data, arvs, ++idx);
+	if (idx == 2)
+	{
+		printf("update envp!\n");
+		free_double(&data->envp);
+		update_envp(data, data->envl);
+	}
     
     // if (index == -2)
     //     key = ft_strdup(arvs[idx]);

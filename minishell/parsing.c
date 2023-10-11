@@ -20,6 +20,8 @@ void set_quote(t_info *info, char quot, char buffer)
 {
 	info->quote = quot;
 	info->buff[info->j++] = buffer;
+	if (info->quote == 0)
+		info->buff[info->j] = '\0';
 }
 
 
@@ -80,19 +82,21 @@ char *ft_size_check(char *line)
 
 	i = 0;
 	j = 0;
-	while ((line[i] && (line[i] == '|' ) && line[i] == ';' && (line[i] == '>' && line[i + 1] != '>') && \
-		(line[i] == '>' && line[i + 1] == '>') && (line[i] == '<' && line[i + 1] != '<') && \
-	 	(line[i] == '<' && line[i + 1] == '<')))
-			j++;
-	while (line[j] && (line[j] != '|' ) && line[j] != ';' && (!(line[j] == '>' && line[j + 1] != '>')) && \
-		(!(line[j] == '>' && line[j + 1] == '>')) && (!(line[j] == '<' && line[j + 1] != '<')) && \
-	 	(!(line[j] == '<' && line[j + 1] == '<')))
+	printf("line = %s\n", line);
+	while (line[i] && ((line[i] >= 0 && line[i] <= 32) || (line[i] == '|') || ( line[i] == ';') || \
+			(line[i] == '>') || (line[i] == '>')))
+	{
+		i++;
+	}
+	while (line[i] && ((line[i] != ' ') && (line[i] != '|') && ( line[i] != ';') && (line[i] != '>' && \
+			(line[i] != '<'))))
 		{
 			i++;
 			j++;
 		}
-	printf("sdds %d\n", i);
-	res = (char *)malloc((i + 1) * sizeof(char));
+	res = (char *)malloc((j + 1) * sizeof(char));
+	printf("buff size = %d\n", j);
+	res[j] = '\0';
 	return (res);
 }
 
@@ -100,10 +104,13 @@ void	push_args(t_info *info, char *line)
 {
 	if (*(info->buff) == 0)
 		return ;
-	info->content->args[info->args_i] = ft_strdup((info->buff));
+	// printf("00000 = %s\n", info->buff);
+	info->content->args[info->args_i] = ft_strdup(info->buff);
 	info->content->args[info->args_i + 1] = NULL;
+	// printf("jwikim2 %s\n", info->content->args[info->args_i]);
 	(info->args_i)++;
-	ft_bzero((info->buff), ft_strlen((info->buff)) + 1);
+	free(info->buff);
+	ft_memset(info->buff, 0, ft_strlen(info->buff) + 1);
 	info->buff = ft_size_check(&line[info->i]);
 	info->j = 0;
 }
@@ -120,7 +127,7 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 		exit(1);	
 	}
 	info->content->flag = i;
-	if (*(info->buff))
+	if (*(info->buff) != 0)
 		push_args(info, line);
 	if ((info->content->args)[0] == 0 && info->content->flag <= 1)
 		exit(0);
@@ -133,17 +140,6 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 	info->args_i = 0;
 }
 
-void		put_args(t_info *info)
-{
-	if (*(info->buff) == 0)
-		return ;
-	if (!(info->content->args[(info->args_i)] = ft_strdup(info->buff)))
-		return ;
-	info->content->args[(info->args_i) + 1] = NULL;
-	(info->args_i)++;
-	ft_bzero(info->buff, ft_strlen(info->buff) + 1);
-	info->j = 0;
-}
 
 
 char	*ft_substr(char *s, unsigned int start, size_t len)
@@ -201,7 +197,7 @@ void parsing_check(char *line, t_info *info)
     else if (info->quote == 0 && line[info->i] == ';')
         set_content(info, line, &info->head, SEMICOLON_NONE);
     else if (info->quote == 0 && line[info->i] == ' ')
-        put_args(info);
+        push_args(info, line);
     else if (info->quote == 0 && line[info->i] == '>' && line[info->i + 1] != '>')
         set_content(info, line, &info->head, SI_REDI_R);
     else if (info->quote == 0 && line[info->i] == '>' && line[info->i] == '>')
@@ -429,7 +425,9 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
                 else if (quote == 0 && cmd->args[i][j] == '\\' && cmd->args[i][j + 1])
                     k++;
                 else if (quote != '\'' && cmd->args[i][j] == '$' && cmd->args[i][j + 1])
-                    k += env_size(env, find_env(cmd->args[i], &j), k);
+				{
+                    k = env_size(env, find_env(cmd->args[i], &j), k);
+				}
                 else
                 {
                     k++;
@@ -454,7 +452,7 @@ void parsing_second(t_arvl *node, char **env)
     int k = 0;
     int idx = -1;
     cmd = NULL;
-    crr = node->next;
+    crr = node;
     while (crr != NULL)
     {
         cmd = crr->content;
@@ -488,6 +486,7 @@ void parsing_second(t_arvl *node, char **env)
             cmd->args[i] = ft_strdup(buff);
             i++;
             free(buff);
+			ft_memset(buff, 0, ft_strlen(buff));
         }
         crr = crr->next;
     }
@@ -528,9 +527,8 @@ printf("1\n");
 	}
 	info->buff[info->i] = '\0';
 	info->buff = ft_strtrim(info->buff, " ");
-printf("2\n");
 	if (*(info->buff))
-		put_args(info);
+		push_args(info, line);
 	if (info->quote != 0)
 	{
 		printf("fuck\n");

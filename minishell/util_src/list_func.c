@@ -68,3 +68,16 @@ void	ft_lstadd_back(t_arvl **lst, t_arvl *new)
 	last = ft_lstlast(*lst);
 	last->next = new;
 }
+
+int	get_lstsize(t_envl *cur)//나중에 다른 구조체에서 쓰인다면 void*와 플래그로
+{
+	int	i;
+
+	i = 0;
+	while (cur != NULL)
+	{
+		i++;
+		cur = cur->next;
+	}
+	return (i);
+}
