@@ -59,6 +59,7 @@ static void    print_all_export(t_data *data)
 }
 //음 ...함수 빼야하네 ..재귀 안쓰면 수정이 꽤 있을것같으니 재귀는 냅두자 ..
 //  / //// 무조건 밸류는 큰따옴표임 ㅠㅠ
+//반복문으로 바꾸자 ..
 void    export_exe(t_data *data, char **arvs, int idx)
 {
     int     index;

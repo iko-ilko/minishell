@@ -82,7 +82,7 @@ char *ft_size_check(char *line)
 
 	i = 0;
 	j = 0;
-	printf("line = %s\n", line);
+	// printf("line = %s\n", line);
 	while (line[i] && ((line[i] >= 0 && line[i] <= 32) || (line[i] == '|') || ( line[i] == ';') || \
 			(line[i] == '>') || (line[i] == '>')))
 	{
@@ -329,8 +329,8 @@ size_t	ft_strlcat(char *dst, char *src, size_t dstsize)
 int			check_unset(char *str, char *envv)
 {
 	int		i;
-	printf("envv = %s\n", envv);
-	printf("str = %s\n", str);
+	// printf("envv = %s\n", envv);
+	// printf("str = %s\n", str);
 	i = 0;
 	while (str[i] && envv[i] && (str[i] == envv[i]) && (envv[i] != '='))
 		i++;
@@ -453,14 +453,20 @@ void parsing_second(t_arvl *node, char **env)
     int idx = -1;
     cmd = NULL;
     crr = node;
+
+	for (int z = 0; env[z]; z++)
+		printf("%s\n", env[z]);
     while (crr != NULL)
     {
         cmd = crr->content;
         quote = 0;
         i = 0;
         // buff = ft_set_buff(cmd, crr, idx, env);
+		printf("4-1\n");
+		printf("%s\n", cmd->args[i]);
         while (cmd->args[i])
         {
+		printf("4-2\n");
             buff = ft_set_buff(cmd, crr, idx, env);
             j = 0;
             k = 0;
@@ -525,8 +531,9 @@ printf("1\n");
 		parsing_check(cmd, info);
 		info->i++;
 	}
-	info->buff[info->i] = '\0';
-	info->buff = ft_strtrim(info->buff, " ");
+	printf("2\n");
+	//info->buff[info->i] = '\0';
+	// info->buff = ft_strtrim(info->buff, " ");
 	if (*(info->buff))
 		push_args(info, line);
 	if (info->quote != 0)
@@ -534,10 +541,11 @@ printf("1\n");
 		printf("fuck\n");
 		exit(0);
 	}
+printf("3\n");
 	if (info->args_i)
 		ft_lstadd_back(&info->head, ft_lstnew(info->content));
+printf("4\n");	
 	parsing_second(info->head, env);
-printf("3\n");
-
+printf("5\n");
 	print_nodes_to_head(info->head); //result
 }

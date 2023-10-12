@@ -15,7 +15,7 @@ void	more_shell(t_data *data, char **arvs, char **envp)
 	else if (pid == 0)
 	{
 		//리스트->배열 envp를 execve에 넣어줘야함.
-		if (execve(arvs[0], arvs, envp) == -1)
+		if (execve(arvs[0], arvs, data->envp) == -1)
 			exit_error("execve error", "execve", 127);
 	}
 	wait(NULL);

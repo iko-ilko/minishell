@@ -42,5 +42,5 @@ fclean: clean
 	rm -rf $(NAME)
 re: fclean all
 ###############temp
-and: re clean
+and: all clean
 #####################
