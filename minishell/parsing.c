@@ -349,9 +349,9 @@ int			set_env_to_buf(char **envv, char *env, char *buf)
 	{
 		if (check_unset(env, (char*)envv[i]))
 		{
-			 printf("cat = %zu\n", ft_strlcat(buf,
-						(char*)envv[i] + ft_strlen(env) + 1,
-						ft_strlen(envv[i]) + ft_strlen(buf)));
+			//  printf("cat = %zu\n", ft_strlcat(buf,
+			// 			(char*)envv[i] + ft_strlen(env) + 1,
+			// 			ft_strlen(envv[i]) + ft_strlen(buf)));
 			break ;
 		}
 	}
@@ -489,6 +489,7 @@ void parsing_second(t_arvl *node, char **env)
                 }
                 j++;
             }
+			buff[k] = '\0';
             cmd->args[i] = ft_strdup(buff);
             i++;
             free(buff);

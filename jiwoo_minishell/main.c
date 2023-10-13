@@ -498,6 +498,7 @@ void parsing_second(t_list *node, char **env)
                 }
                 j++;
             }
+			buff[k] = '\0';
             cmd->args[i] = ft_strdup(buff);
             i++;
 			free(buff);
@@ -543,6 +544,8 @@ t_list *parsing(char *line, char **env)
 	}
 	// info.buff[info.i] = '\0';
 	info.buff = ft_strtrim(info.buff, " ");
+	char *pppp = malloc(100);
+	pppp = ft_memset(pppp, 'p', 100);
 	if (*(info.buff))
 		push_args(&info, line);
 	if (info.quote != 0)

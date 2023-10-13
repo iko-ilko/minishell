@@ -38,5 +38,7 @@ clean:
 
 fclean: clean
 	rm -rf $(NAME)
-
 re: fclean all
+#####
+and: re clean
+#####

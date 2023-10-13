@@ -1,15 +1,15 @@
 #include "minishell.h"
 
-int main(int arc, char **arv, char **envp)
+int main(int arc, char **arv, char **env)
 {
 	t_vars	vars;
     char    buf[5];
     char    *line;
 	int i = 0;
 
-	// while (envp[i])
+	// while (env[i])
 	// {
-	// 	printf("%s\n", envp[i]);
+	// 	printf("%s\n", env[i]);
 	// 	i++;
 	// }
 	// exit(1);
@@ -22,7 +22,7 @@ int main(int arc, char **arv, char **envp)
             //     k++;
             // }
 	
-	init_exe_data(&vars, envp, arv[0]);
+	init_exe_data(&vars, env, arv[0]);
     signal(SIGINT, sigint_handler);
     signal(SIGQUIT, SIG_IGN);
     // pid = fork();
@@ -53,7 +53,7 @@ int main(int arc, char **arv, char **envp)
         //save_history(&vars, temp[0]);
         //save_history(line); <- 이 안에 add_history() 넣자.
         //a.out 명시하지않고 arv[0] 과 temp[0] 비교해도 될듯?
-        if (if_more_shell(&vars, arv, temp, envp) == 1)
+        if (if_more_shell(&vars, arv, temp, env) == 1)
             continue ;
 		if (if_buitin_func(&vars, temp) == 1)
 			continue ;
@@ -62,7 +62,7 @@ int main(int arc, char **arv, char **envp)
 		{
 			int pid = fork();
 			if (pid == 0)
-				execve("/bin/ls", temp, envp);
+				execve("/bin/ls", temp, env);
 		}
 		free_double(&temp);
 		// int i = 0;

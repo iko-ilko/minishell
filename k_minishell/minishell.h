@@ -19,6 +19,7 @@
 # include <stdlib.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <string.h>
 
 # define ADD 0
 # define DEL 1
@@ -61,6 +62,7 @@ typedef struct	s_vars
 	t_hisl	*hisl;
 	t_envl	*envl;
 	char	*pwd;//
+	char	**envp;
 	char	**history;
 
 	int		cur_pid;
