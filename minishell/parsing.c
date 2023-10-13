@@ -82,7 +82,6 @@ char *ft_size_check(char *line)
 
 	i = 0;
 	j = 0;
-	// printf("line = %s\n", line);
 	while (line[i] && ((line[i] >= 0 && line[i] <= 32) || (line[i] == '|') || ( line[i] == ';') || \
 			(line[i] == '>') || (line[i] == '>')))
 	{
@@ -95,7 +94,6 @@ char *ft_size_check(char *line)
 			j++;
 		}
 	res = (char *)malloc((j + 1) * sizeof(char));
-	printf("buff size = %d\n", j);
 	res[j] = '\0';
 	return (res);
 }
@@ -104,10 +102,8 @@ void	push_args(t_info *info, char *line)
 {
 	if (*(info->buff) == 0)
 		return ;
-	// printf("00000 = %s\n", info->buff);
 	info->content->args[info->args_i] = ft_strdup(info->buff);
 	info->content->args[info->args_i + 1] = NULL;
-	// printf("jwikim2 %s\n", info->content->args[info->args_i]);
 	(info->args_i)++;
 	free(info->buff);
 	ft_memset(info->buff, 0, ft_strlen(info->buff) + 1);
@@ -150,6 +146,7 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	if (len == 0)
 	{
 		res = malloc(sizeof(char));
+		//if (res == 0) exit_error("mal ", 1)
 		*res = 0;
 		return (res);
 	}
@@ -212,49 +209,18 @@ void parsing_check(char *line, t_info *info)
         info->i++;
         info->buff[info->j++] = line[info->i];
     }
+	else if (info->quote == 0 && line[info->i] == '\\')
+    {
+        info->i++;
+        info->buff[info->j++] = line[info->i];
+    }
     else
         info->buff[info->j++] = line[info->i];
 
 }
 
-static void	*ft_move(void *dst, void *src, size_t len, size_t i)
-{
-	unsigned char	*a;
-	unsigned char	*b;
 
-	a = (unsigned char *)dst;
-	b = (unsigned char *)src;
-	if (dst < src)
-	{
-		while (i < len)
-		{
-			a[i] = b[i];
-			i++;
-		}
-	}
-	else
-	{
-		i = len;
-		while (i)
-		{
-			a [i - 1] = b [i - 1];
-			i--;
-		}
-	}
-	return (dst);
-}
-
-void	*ft_memmove(void *dst, void *src, size_t len)
-{
-	size_t	i;
-
-	i = 0;
-	if (dst == 0 && src == 0)
-		return (dst);
-	return (ft_move(dst, src, len, i));
-}
-
-void init(t_arvl **node, t_info *info, char *line)
+void parsing_init(t_arvl **node, t_info *info, char *line)
 {
 	info->args_i = 0;
 	info->i = 0;
@@ -325,12 +291,11 @@ size_t	ft_strlcat(char *dst, char *src, size_t dstsize)
 		return (ft_strlen(src) + a);
 }
 
-
-int			check_unset(char *str, char *envv)
+/* key만큼 실제 buf */
+int	check_unset(char *str, char *envv)
 {
 	int		i;
-	// printf("envv = %s\n", envv);
-	// printf("str = %s\n", str);
+
 	i = 0;
 	while (str[i] && envv[i] && (str[i] == envv[i]) && (envv[i] != '='))
 		i++;
@@ -338,7 +303,7 @@ int			check_unset(char *str, char *envv)
 		return (1);
 	return (0);
 }
-
+/* lcat에서 실제로 환경변수가 확장돼서 나온다. */
 int			set_env_to_buf(char **envv, char *env, char *buf)
 {
 	int		i;
@@ -347,11 +312,10 @@ int			set_env_to_buf(char **envv, char *env, char *buf)
 
 	while (envv[++i])
 	{
-		if (check_unset(env, (char*)envv[i]))
+		if (check_unset(env, envv[i]))
 		{
-			//  printf("cat = %zu\n", ft_strlcat(buf,
-			// 			(char*)envv[i] + ft_strlen(env) + 1,
-			// 			ft_strlen(envv[i]) + ft_strlen(buf)));
+			ft_strlcat(buf, \
+			envv[i] + ft_strlen(env) + 1, ft_strlen(envv[i]) + ft_strlen(buf));
 			break ;
 		}
 	}
@@ -366,7 +330,7 @@ void		check_split(int *j, int z, int *idx, char quote)
 		*idx = 1;
 }
 
-
+/* key의 길이를 리턴 */
 int         check_unset_sub(char *str, char *envv)
 {
     int     i;
@@ -380,6 +344,7 @@ int         check_unset_sub(char *str, char *envv)
     }
     return (0);
 }
+/* 버퍼 만들 때 밸류의 길이 k: value의 길이*/
 int env_size(char **envv, char *env, int k)
 {
     int i;
@@ -401,6 +366,7 @@ int env_size(char **envv, char *env, int k)
     }
     return(k);
 }
+/* second_parsing() 함수에서 호출하고, 마지막으로 찐 버퍼 설정해주는 함수 */
 char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
 {
     int quote;
@@ -436,11 +402,10 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
             }
             i++;
         }
-    printf(" k = %d\n", k);
     buff = (char *)malloc((k + 1) * (sizeof(char)));
     return (buff);
 }
-
+/* 구분자 등 일차적인 파싱을 끝내고, 환경변수 확장 해줌.(이미 만든 cmd->args를) */
 void parsing_second(t_arvl *node, char **env)
 {
     t_arvl *crr;
@@ -454,19 +419,13 @@ void parsing_second(t_arvl *node, char **env)
     cmd = NULL;
     crr = node;
 
-	for (int z = 0; env[z]; z++)
-		printf("%s\n", env[z]);
     while (crr != NULL)
     {
         cmd = crr->content;
         quote = 0;
         i = 0;
-        // buff = ft_set_buff(cmd, crr, idx, env);
-		printf("4-1\n");
-		printf("%s\n", cmd->args[i]);
         while (cmd->args[i])
         {
-		printf("4-2\n");
             buff = ft_set_buff(cmd, crr, idx, env);
             j = 0;
             k = 0;
@@ -506,14 +465,14 @@ void print_nodes_to_head(t_arvl *head)
     while (current != NULL)
     {
         t_cmd *cmd = (t_cmd *)current->content;
-        printf("Node %d :\n", node_num);
+        printf("Node %d:", node_num);
         if (cmd != NULL) 
         {
             for (int i = 0; cmd->args[i] != NULL; i++)
             {
-                printf("  args : %s\n", cmd->args[i]);
+                printf("\targs[%d] : %s ", i, cmd->args[i]);
             }
-            printf("  flag : %d\n\n", cmd->flag);
+            printf("\nflag : %d\n", cmd->flag);
         }
         current = current->next;
         node_num++;
@@ -524,17 +483,15 @@ void print_nodes_to_head(t_arvl *head)
 void	parsing(t_info *info, char *line, char **env)
 {
 	char *cmd;
-printf("1\n");
 	cmd = ft_strtrim(line, " ");
-	init(&info->head, info, line);
+	parsing_init(&info->head, info, line);
 	while (cmd[info->i])
 	{
 		parsing_check(cmd, info);
 		info->i++;
 	}
-	printf("2\n");
-	//info->buff[info->i] = '\0';
-	// info->buff = ft_strtrim(info->buff, " ");
+	//info->buff[info->i] = '\0'; -> 이거랑
+	// info->buff = ft_strtrim(info->buff, " "); -> 이거 마지막에 논리구조 확인해보고 뺴도 되는지 체크하기
 	if (*(info->buff))
 		push_args(info, line);
 	if (info->quote != 0)
@@ -542,11 +499,11 @@ printf("1\n");
 		printf("fuck\n");
 		exit(0);
 	}
-printf("3\n");
+	/* print parsing check args */
+	print_nodes_to_head(info->head); //result
+	printf("------------parsing check done--------------\n");
 	if (info->args_i)
 		ft_lstadd_back(&info->head, ft_lstnew(info->content));
-printf("4\n");	
 	parsing_second(info->head, env);
-printf("5\n");
 	print_nodes_to_head(info->head); //result
 }

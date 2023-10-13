@@ -226,6 +226,11 @@ void parsing_check(char *line, t_parsing *info)
         info->i++; 
         info->buff[info->j++] = line[info->i];
     }
+	else if (info->quote == 0 && line[info->i] == '\\')
+    {
+        info->i++;
+        info->buff[info->j++] = line[info->i];
+    }
     else
 	{
 		printf("line[jkjfksdjfkd]   ==== %c\n", line[info->i]);
@@ -234,42 +239,6 @@ void parsing_check(char *line, t_parsing *info)
 	}
 }
 
-static void	*ft_move(void *dst, const void *src, size_t len, size_t i)
-{
-	unsigned char	*a;
-	unsigned char	*b;
-
-	a = (unsigned char *)dst;
-	b = (unsigned char *)src;
-	if (dst < src)
-	{
-		while (i < len)
-		{
-			a[i] = b[i];
-			i++;
-		}
-	}
-	else
-	{
-		i = len;
-		while (i)
-		{
-			a [i - 1] = b [i - 1];
-			i--;
-		}
-	}
-	return (dst);
-}
-
-void	*ft_memmove(void *dst, const void *src, size_t len)
-{
-	size_t	i;
-
-	i = 0;
-	if (dst == 0 && src == 0)
-		return (dst);
-	return (ft_move(dst, src, len, i));
-}
 
 void init(t_list **node, t_parsing *info, char *line)
 {
@@ -364,11 +333,10 @@ int			set_env_to_buf(char **envv, char *env, char *buf)
 
 	while (envv[++i])
 	{
-		if (check_unset(env, (char*)envv[i]))
+		if (check_unset(env, envv[i]))
 		{
-			 printf("cat = %zu\n", ft_strlcat(buf,
-						(char*)envv[i] + ft_strlen(env) + 1,
-						ft_strlen(envv[i]) + ft_strlen(buf)));
+				ft_strlcat(buf, \
+				envv[i] + ft_strlen(env) + 1, ft_strlen(envv[i]) + ft_strlen(buf));
 			break ;
 		}
 	}
@@ -543,9 +511,8 @@ t_list *parsing(char *line, char **env)
 		info.i++;
 	}
 	// info.buff[info.i] = '\0';
-	info.buff = ft_strtrim(info.buff, " ");
-	char *pppp = malloc(100);
-	pppp = ft_memset(pppp, 'p', 100);
+	//info.buff = ft_strtrim(info.buff, " ");//일단 빼놨다
+
 	if (*(info.buff))
 		push_args(&info, line);
 	if (info.quote != 0)

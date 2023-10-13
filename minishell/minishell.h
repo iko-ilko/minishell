@@ -50,6 +50,7 @@ typedef	struct	s_arvl
 }	t_arvl;
 
 /* command token */
+/* flag는 현재 구분자의 flag로 사용되고 있지만 후에 파일을 오픈한 fd값으로도 활용하려면 -1을 곱해줘서 음수로 만든다음 실행에서는 음수값을 양수로 바꿔서 활용 */
 typedef struct	s_cmd
 {
 	int		flag;
@@ -94,8 +95,7 @@ void	set_content(t_info *info, char *line, t_arvl **node, int i);
 char	*ft_substr(char *s, unsigned int start, size_t len);
 char	*ft_strtrim(char *s1, char *set);
 void 	parsing_check(char *line, t_info *info);
-void	*ft_memmove(void *dst, void *src, size_t len);
-void	init(t_arvl **node, t_info *info, char *line);
+void	parsing_init(t_arvl **node, t_info *info, char *line);
 int		ft_isalnum(int c);
 char	*p_find_env(char *str, int *i);
 size_t	ft_strlcat(char *dst, char *src, size_t dstsize);
