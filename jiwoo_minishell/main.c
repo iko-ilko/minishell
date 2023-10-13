@@ -226,11 +226,11 @@ void parsing_check(char *line, t_parsing *info)
         info->i++; 
         info->buff[info->j++] = line[info->i];
     }
-	else if (info->quote == 0 && line[info->i] == '\\')
-    {
-        info->i++;
-        info->buff[info->j++] = line[info->i];
-    }
+	// else if (info->quote == 0 && line[info->i] == '\\')
+    // {
+    //     info->i++;
+    //     info->buff[info->j++] = line[info->i];
+    // }
     else
 	{
 		printf("line[jkjfksdjfkd]   ==== %c\n", line[info->i]);
@@ -315,8 +315,7 @@ size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 int			check_unset(char *str, char *envv)
 {
 	int		i;
-	printf("envv = %s\n", envv);
-	printf("str = %s\n", str);
+
 	i = 0;
 	while (str[i] && envv[i] && (str[i] == envv[i]) && (envv[i] != '='))
 		i++;
@@ -337,6 +336,7 @@ int			set_env_to_buf(char **envv, char *env, char *buf)
 		{
 				ft_strlcat(buf, \
 				envv[i] + ft_strlen(env) + 1, ft_strlen(envv[i]) + ft_strlen(buf));
+				printf("bub111111 = %s\n", buf);
 			break ;
 		}
 	}
@@ -423,6 +423,7 @@ char *ft_set_buff(t_cmd *cmd, t_list *crr, int idx, char **env)
             i++;
         }
     buff = (char *)malloc((k + 1) * (sizeof(char)));
+	buff[k] = '\0';
     return (buff);
 }
 void parsing_second(t_list *node, char **env)
@@ -457,13 +458,22 @@ void parsing_second(t_list *node, char **env)
                     buff[k++] = cmd->args[i][++j];
                 else if (quote == 0 && cmd->args[i][j] == '\\' && cmd->args[i][j + 1])
                     buff[k++] = cmd->args[i][j];
-                else if (quote != '\'' && cmd->args[i][j] == '$' && cmd->args[i][j + 1])
-                    check_split(&k, set_env_to_buf(env, find_env(cmd->args[i], &j), buff), &idx, quote);
-                else
+                else if (quote == 0 && ((cmd->args[i][j] == '|') || cmd->args[i][j] == '>') || (cmd->args[i][j] == '<') || \
+							(cmd->args[i][j] == ';'))
+				{
+					break;
+				}
+				else if (quote != '\'' && cmd->args[i][j] == '$' && cmd->args[i][j + 1])
+                {
+					check_split(&k, set_env_to_buf(env, find_env(cmd->args[i], &j), buff), &idx, quote);
+					if (quote == 0)
+						j--;
+				}
+				else
                 {
                     buff[k] = cmd->args[i][j];
                     k++;
-                }
+				}
                 j++;
             }
 			buff[k] = '\0';
@@ -511,7 +521,7 @@ t_list *parsing(char *line, char **env)
 		info.i++;
 	}
 	// info.buff[info.i] = '\0';
-	//info.buff = ft_strtrim(info.buff, " ");//일단 빼놨다
+	// info.buff = ft_strtrim(info.buff, " ");//일단 빼놨다
 
 	if (*(info.buff))
 		push_args(&info, line);
