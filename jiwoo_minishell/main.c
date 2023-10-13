@@ -450,6 +450,9 @@ void parsing_second(t_list *node, char **env)
             k = 0;
             while (cmd->args[i][j])
             {
+				//여기서 args찍어보면 $USER aa 일 경우 args : $USER, args : aa 이렇게 나오는데 환경변수 확장하고 그 뒤에 aa 까지 while문 돌아서 buff에 넣어줌
+				//parsing second 들어오기 전에 결과 출력해보면 이상없어
+				printf("args =  %s\n", cmd->args[i]);
                 if (cmd->args[i][j] == quote)
                     quote = 0;
                 else if (quote == 0 && (cmd->args[i][j] == '\'' || cmd->args[i][j] == '\"'))
@@ -458,16 +461,21 @@ void parsing_second(t_list *node, char **env)
                     buff[k++] = cmd->args[i][++j];
                 else if (quote == 0 && cmd->args[i][j] == '\\' && cmd->args[i][j + 1])
                     buff[k++] = cmd->args[i][j];
+				//$USER aa , $USER | "$USER" , $USER ; $USER 등 이런거 처리
                 else if (quote == 0 && ((cmd->args[i][j] == '|') || cmd->args[i][j] == '>') || (cmd->args[i][j] == '<') || \
 							(cmd->args[i][j] == ';'))
 				{
+					printf("fddd\n");
 					break;
 				}
+				//
 				else if (quote != '\'' && cmd->args[i][j] == '$' && cmd->args[i][j + 1])
                 {
 					check_split(&k, set_env_to_buf(env, find_env(cmd->args[i], &j), buff), &idx, quote);
+					//여기도
 					if (quote == 0)
 						j--;
+					//
 				}
 				else
                 {
