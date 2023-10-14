@@ -132,6 +132,7 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 		ft_lstadd_back(node, ft_lstnew(info->content));
 		info->content = ft_calloc(1, sizeof(t_cmd));
 		info->content->args = ft_calloc(count_token(line) + 1, sizeof(char *));
+		info->content->flag = 0;
 	}
 	info->args_i = 0;
 }
@@ -143,6 +144,7 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	int		i;
 	char	*res;
 
+	printf("ft_substr() start:%d, len:%d\n", start, (int)len);
 	if (len == 0)
 	{
 		res = malloc(sizeof(char));
@@ -159,6 +161,7 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 			res[i++] = s[start++];
 	}
 	res[i] = '\0';
+	printf("ft_substr() i:%dres:%s\n", i, res);
 	return (res);
 }
 
@@ -192,9 +195,9 @@ void parsing_check(char *line, t_info *info)
     else if (info->quote == 0 && line[info->i] == '|')
         set_content(info, line, &info->head, PIPE);
     else if (info->quote == 0 && line[info->i] == ';')
-        set_content(info, line, &info->head, SEMICOLON_NONE);
+        set_content(info, line, &info->head, SEMICOLON_NONE);//같은 이유가 뭘까
     else if (info->quote == 0 && line[info->i] == ' ')
-        push_args(info, line);
+        push_args(info, line); 
     else if (info->quote == 0 && line[info->i] == '>' && line[info->i + 1] != '>')
         set_content(info, line, &info->head, SI_REDI_R);
     else if (info->quote == 0 && line[info->i] == '>' && line[info->i] == '>')
@@ -209,11 +212,11 @@ void parsing_check(char *line, t_info *info)
         info->i++;
         info->buff[info->j++] = line[info->i];
     }
-	else if (info->quote == 0 && line[info->i] == '\\')
-    {
-        info->i++;
-        info->buff[info->j++] = line[info->i];
-    }
+	// else if (info->quote == 0 && line[info->i] == '\\')
+    // {
+    //     info->i++;
+        //     info->buff[info->j++] = line[info->i];
+    // }
     else
         info->buff[info->j++] = line[info->i];
 
@@ -232,6 +235,7 @@ void parsing_init(t_arvl **node, t_info *info, char *line)
 	info->buff = ft_size_check(line);
 	info->content = (t_cmd *)malloc(sizeof(t_cmd));
 	info->content->args = (char **)malloc((count_token(line) + 1) * sizeof(char*));
+	info->content->flag = 0;
 }
 
 
@@ -244,14 +248,28 @@ int	ft_isalnum(int c)
 		return (0);
 }
 
-char		*find_env(char *str, int *i)
+/* key의 길이 + 1($문자) 만큼 인덱스를 밀어주면서, $를 제외한 키의 문자열을 반환 *//* i는 달러 위치 */
+/* e.x)  $USER *i의 값은 + 5만큼 해주고 USER를 반환 */
+/* parsing env key of args */
+char		*find_env(char *str, int *j)
 {
+	// char	*res;
+
+	// *j += ft_strlen(str + 1) + 1;
+	// res = ft_strdup(str + 1);
+	// printf("find_env() j:%dres:%s\n", *j, res);
+	// return (res);
+	// // return (ft_strdup(str + 1));
+
+
+
+	
 	char	*ret;
 	int		start;
 	int		idx;
 
-	idx = *i + 1;
-	start = *i + 1;
+	idx = *j + 1;
+	start = *j + 1;
 	while (str[idx])
 		if (ft_isalnum(str[idx]))
 			idx++;
@@ -260,36 +278,58 @@ char		*find_env(char *str, int *i)
 			idx--;
 			break ;
 		}
-	*i = idx;
-	ret = ft_substr(str, start, idx - start + 1);
+	*j = idx;
+	ret = ft_substr(str, start, idx - start);
+	printf("find_env()idx:%d, ret:%s, str:%sidx-start+1:%d\n", idx, ret, str, idx - start);
 	return (ret);
 }
 
-
-size_t	ft_strlcat(char *dst, char *src, size_t dstsize)
+size_t  ft_strlcat(char *dst, char *src, size_t dstsize)
 {
-	size_t	a;
-	size_t	b;
-	char	*c;
+        size_t  i;
+        size_t  dst_len;
+        size_t  src_len;
+	printf("dst:%s src:%s dstsize:%d\n", dst, src, (int)dstsize);
 
-	a = 0;
-	b = 0;
-	c = (char *)src;
-	if (dstsize == 0)
-		return (ft_strlen(src) + dstsize);
-	while (dst[a] != '\0')
-		a++;
-	while (c[b] != '\0' && a + b + 1 < dstsize)
-	{
-		dst[a + b] = c[b];
-		b++;
-	}
-	dst[a + b] = '\0';
-	if (dstsize <= ft_strlen(dst))
-		return (ft_strlen(src) + dstsize);
-	else
-		return (ft_strlen(src) + a);
+        src_len = ft_strlen(src);
+        if (dstsize == 0)
+                return (src_len);
+        dst_len = ft_strlen(dst);
+        if (dst_len + 1 > dstsize)
+                return (src_len + dstsize);
+        i = 0;
+        while (dst_len + i < dstsize - 1 && src[i])
+        {
+                dst[dst_len + i] = src[i];
+                i++;
+        }
+        dst[dst_len + i] = '\0';
+        return (src_len + dst_len);
 }
+// size_t	ft_strlcat(char *dst, char *src, size_t dstsize)
+// {
+// 	size_t	a;
+// 	size_t	b;
+// 	char	*c;
+// 	printf("dst:%s src:%s dstsize:%d\n", dst, src, (int)dstsize);
+// 	a = 0;
+// 	b = 0;
+// 	c = (char *)src;
+// 	if (dstsize == 0)
+// 		return (ft_strlen(src) + dstsize);
+// 	while (dst[a] != '\0')
+// 		a++;
+// 	while (c[b] != '\0' && a + b + 1 < dstsize)
+// 	{
+// 		dst[a + b] = c[b];
+// 		b++;
+// 	}
+// 	dst[a + b] = '\0';
+// 	if (dstsize <= ft_strlen(dst))
+// 		return (ft_strlen(src) + dstsize);
+// 	else
+// 		return (ft_strlen(src) + a);
+// }
 
 /* key만큼 실제 buf */
 int	check_unset(char *str, char *envv)
@@ -309,23 +349,26 @@ int			set_env_to_buf(char **envv, char *env, char *buf)
 	int		i;
 
 	i = -1;
+	printf("확장전 buf 길이:%dbuf:%s\n", (int)ft_strlen(buf), buf);
 
 	while (envv[++i])
 	{
 		if (check_unset(env, envv[i]))
 		{
+			printf("set_env_to_buf() env:%s\n", env);
 			ft_strlcat(buf, \
 			envv[i] + ft_strlen(env) + 1, ft_strlen(envv[i]) + ft_strlen(buf));
 			break ;
 		}
 	}
 	free(env);
+	printf("확장하고 나온 buf 길이:%dbuf:%s\n", (int)ft_strlen(buf), buf);
 	return ((int)ft_strlen(buf));
 }
 
-void		check_split(int *j, int z, int *idx, char quote)
+void		check_split(int *k, int z, int *idx, char quote)
 {
-	*j = z;
+	*k = z;
 	if (quote != '\"')
 		*idx = 1;
 }
@@ -364,9 +407,11 @@ int env_size(char **envv, char *env, int k)
         }
         i++;
     }
+	printf("env_size() k:%denv:%s\n", k, env);
     return(k);
 }
 /* second_parsing() 함수에서 호출하고, 마지막으로 찐 버퍼 설정해주는 함수 */
+/* k: 확장된 키의 밸류의 인덱스를 올리기위한 변수 */
 char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
 {
     int quote;
@@ -402,7 +447,9 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
             }
             i++;
         }
+	printf("ft_set_buff()k:%d\n", k);
     buff = (char *)malloc((k + 1) * (sizeof(char)));
+	buff[k] = '\0';
     return (buff);
 }
 /* 구분자 등 일차적인 파싱을 끝내고, 환경변수 확장 해줌.(이미 만든 cmd->args를) */
@@ -431,6 +478,8 @@ void parsing_second(t_arvl *node, char **env)
             k = 0;
             while (cmd->args[i][j])
             {
+//여기서 args찍어보면 $USER aa 일 경우 args : $USER, args : aa 이렇게 나오는데 환경변수 확장하고 그 뒤에 aa 까지 while문 돌아서 buff에 넣어줌
+				//parsing second 들어오기 전에 결과 출력해보면 이상없어
                 if (cmd->args[i][j] == quote)
                     quote = 0;
                 else if (quote == 0 && (cmd->args[i][j] == '\'' || cmd->args[i][j] == '\"'))
@@ -439,8 +488,19 @@ void parsing_second(t_arvl *node, char **env)
                     buff[k++] = cmd->args[i][++j];
                 else if (quote == 0 && cmd->args[i][j] == '\\' && cmd->args[i][j + 1])
                     buff[k++] = cmd->args[i][j];
+//$USER aa , $USER | "$USER" , $USER ; $USER 등 이런거 처리
+                else if (quote == 0 && ((cmd->args[i][j] == '|') || cmd->args[i][j] == '>') || (cmd->args[i][j] == '<') || \
+							(cmd->args[i][j] == ';'))
+				{
+					break;
+				}
                 else if (quote != '\'' && cmd->args[i][j] == '$' && cmd->args[i][j + 1])
-                    check_split(&k, set_env_to_buf(env, find_env(cmd->args[i], &j), buff), &idx, quote);
+{
+                    check_split(&k, set_env_to_buf(env, find_env(cmd->args[i], &j), buff), &idx, quote); 
+					//여기도
+					if (quote == 0)
+						j--;
+				}
                 else
                 {
                     buff[k] = cmd->args[i][j];
@@ -452,7 +512,7 @@ void parsing_second(t_arvl *node, char **env)
             cmd->args[i] = ft_strdup(buff);
             i++;
             free(buff);
-			ft_memset(buff, 0, ft_strlen(buff));
+			buff = NULL;
         }
         crr = crr->next;
     }
@@ -487,23 +547,27 @@ void	parsing(t_info *info, char *line, char **env)
 	parsing_init(&info->head, info, line);
 	while (cmd[info->i])
 	{
+		write(1, &cmd[info->i], 1);
+		write(1, "  ", 2);
 		parsing_check(cmd, info);
 		info->i++;
+		if (cmd[info->i] == '\0')
+			push_args(info, line);
 	}
 	//info->buff[info->i] = '\0'; -> 이거랑
 	// info->buff = ft_strtrim(info->buff, " "); -> 이거 마지막에 논리구조 확인해보고 뺴도 되는지 체크하기
-	if (*(info->buff))
-		push_args(info, line);
+	// if (*(info->buff))
+	// 	push_args(info, line);
 	if (info->quote != 0)
 	{
 		printf("fuck\n");
 		exit(0);
 	}
 	/* print parsing check args */
-	print_nodes_to_head(info->head); //result
-	printf("------------parsing check done--------------\n");
 	if (info->args_i)
 		ft_lstadd_back(&info->head, ft_lstnew(info->content));
+	print_nodes_to_head(info->head); //result
+	printf("------------parsing check done--------------\n");
 	parsing_second(info->head, env);
 	print_nodes_to_head(info->head); //result
 }

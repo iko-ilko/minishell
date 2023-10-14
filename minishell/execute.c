@@ -7,13 +7,13 @@ void	exe_data(t_data *data, char **envp, char *root_file_name)
     t_cmd	*cmd;
 
 	cur = data->arvl;
-	if (cur == NULL)//<-메인에서 컨틴뉴 주석하고 테스트 해보기
-	{
-		for (int i = 0; data->envp[i]; i++)
-		{
-			printf("%s\n", data->envp[i]);
-		}
-	}
+	// if (cur == NULL)//<-메인에서 컨틴뉴 주석하고 테스트 해보기
+	// {
+	// 	for (int i = 0; data->envp[i]; i++)
+	// 	{
+	// 		printf("%s\n", data->envp[i]);
+	// 	}
+	// }
 	while (cur != NULL)
 	{
 		cmd = (t_cmd *)cur->content;

@@ -30,7 +30,7 @@ all: $(NAME)
 	
 
 $(NAME): $(OBJS)
-	$(CC) $(OBJS) -lreadline -o $(NAME)
+	$(CC) -fsanitize=address $(OBJS) -lreadline -o $(NAME)
 
 %.o:%.c
 	$(CC) -c $< -o $@
