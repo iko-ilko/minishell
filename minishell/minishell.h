@@ -103,7 +103,7 @@ int		check_unset(char *str, char *envv);
 int		set_env_to_buf(char **envv, char *env, char *buf);
 void	check_split(int *k, int z, int *idx, char quote);
 int     check_unset_sub(char *str, char *envv);
-int 	env_size(char **envv, char *env, int k);
+void 	move_env_size(char **envv, char *env, int *k);
 char	*ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env);
 void	parsing_second(t_arvl *node, char **env);
 void	print_nodes_to_head(t_arvl *head);
@@ -179,6 +179,8 @@ char	*ft_strjoin(char *s1, char *s2);
 void	ft_bzero(void *s, size_t n);
 char	*ft_strcpy(char *dest, char *src);
 void	*ft_calloc(size_t count, size_t size);
+int		ft_strncmp(char *s1, char *s2, int n);
+
 
 
 // int		str_check_space(char *str);

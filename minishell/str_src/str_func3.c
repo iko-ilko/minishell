@@ -77,3 +77,19 @@ void	*ft_calloc(size_t count, size_t size)
 	}
 	return ((void *)p);
 }
+
+int	ft_strncmp(char *s1, char *s2, int n)
+{
+	int		i;
+
+	if (n == 0)
+		return (0);
+	i = 0;
+	while (s1[i] && s2[i] && i < n - 1)
+	{
+		if (s1[i] != s2[i])
+			return (s1[i] - s2[i]);
+		i++;
+	}
+	return (s1[i] - s2[i]);
+}

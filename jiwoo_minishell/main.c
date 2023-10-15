@@ -150,6 +150,7 @@ void		set_content(t_parsing *info, char *line, t_list **node, int i)
 		ft_lstadd_back(node, ft_lstnew(info->content));
 		info->content = ft_calloc(1, sizeof(t_cmd));
 		info->content->args = ft_calloc(count_token(line) + 1, sizeof(char *));
+		info->content->flag = 0;//<- 지우야 플래그 초기화 추가했어
 
 	}
 	info->args_i = 0;
@@ -252,6 +253,8 @@ void init(t_list **node, t_parsing *info, char *line)
 	info->buff = ft_size_check(line);
 	info->content = (t_cmd *)malloc(sizeof(t_cmd));
 	info->content->args = (char **)malloc((count_token(line) + 1) * sizeof(char*));
+	info->content->flag = 0;//<-지우야 이거 플래그 초기화 추가했어
+
 }
 
 
@@ -358,7 +361,7 @@ int         check_unset_sub(char *str, char *envv)
     i = 0;
     while (str[i] && envv[i] && (str[i] == envv[i]) && (envv[i] != '='))
         i++;
-    if ((str[i] == '\0') && (envv[i] == '='))
+    if (/*(str[i] == '\0') && */envv[i] == '=')//<- 지우야 널 문자일 땐 0을 리턴하게 수정
     {
         i++;
         return (i);
@@ -542,7 +545,9 @@ t_list *parsing(char *line, char **env)
 	{
 		ft_lstadd_back(&info.head, ft_lstnew(info.content));
 	}
+	printf("parsing second()확장 전  buf len:%d\n", ft_strlen(info.buff));
 	parsing_second(info.head, env);
+	printf("parsing second()확장 후  buf len:%d\n", ft_strlen(info.buff));
 	print_nodes_to_head(info.head); //result
 	return(NULL);
 }

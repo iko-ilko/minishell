@@ -1,4 +1,5 @@
 #include "minishell.h"
+//	printf("env_size() envv[i]:%s\n", envv[i]); <- 이거 인자로 넣으면 세그폴트 왜?
 
 void	*ft_memset(void *b, int c, size_t len)
 {
@@ -144,7 +145,6 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	int		i;
 	char	*res;
 
-	printf("ft_substr() start:%d, len:%d\n", start, (int)len);
 	if (len == 0)
 	{
 		res = malloc(sizeof(char));
@@ -161,7 +161,6 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 			res[i++] = s[start++];
 	}
 	res[i] = '\0';
-	printf("ft_substr() i:%dres:%s\n", i, res);
 	return (res);
 }
 
@@ -253,35 +252,48 @@ int	ft_isalnum(int c)
 /* parsing env key of args */
 char		*find_env(char *str, int *j)
 {
-	// char	*res;
+	char	*res;
+	int		i;
 
-	// *j += ft_strlen(str + 1) + 1;
-	// res = ft_strdup(str + 1);
-	// printf("find_env() j:%dres:%s\n", *j, res);
-	// return (res);
-	// // return (ft_strdup(str + 1));
+	(*j)++;
+	i = *j;
+	printf("pre_find_env() j:%di:%dstr[*j]:%s\n", *j, i, str + *j);
+	while (str[i] && str[i] != '$' && ft_isalnum(str[i]))
+		i++;
+	i--;
+	res = ft_strndup(str + *j, i - *j + 1);
+	printf("find_env() j:%di:%dres:%s\n", *j, i, res);
+	*j = i;
+	return (res);
+	// return (ft_strdup(str + 1));
 
 
 
 	
-	char	*ret;
-	int		start;
-	int		idx;
+	// char	*ret;
+	// int		start;
 
-	idx = *j + 1;
-	start = *j + 1;
-	while (str[idx])
-		if (ft_isalnum(str[idx]))
-			idx++;
-		else
-		{
-			idx--;
-			break ;
-		}
-	*j = idx;
-	ret = ft_substr(str, start, idx - start);
-	printf("find_env()idx:%d, ret:%s, str:%sidx-start+1:%d\n", idx, ret, str, idx - start);
-	return (ret);
+	// (*j)++;
+	// start = *j;
+	// // for (int z = 0; str[z]; z++)
+	// // 	write(1, &str[z], 1);
+	// // while (str[*j] && str[*j] != '$')
+	// // {
+	// // 	write(1, &str[*j], 1);
+	// // 	(*j)++;
+	// // }
+	// while (str[*j])
+	// 	if (ft_isalnum(str[*j]))
+	// 		(*j)++;
+	// 	else
+	// 	{
+	// 		(*j)--;
+	// 		break ;
+	// 	}
+	// printf("find_env()*j:%d\n", *j);
+	// ret = ft_substr(str, start, *j - start + 1);
+	// // printf("find_env()*j:%d, ret:%s, str:%s*j-start+1:%d\n", *j, ret, str, *j - start + 1);
+	// return (ret);
 }
 
 size_t  ft_strlcat(char *dst, char *src, size_t dstsize)
@@ -289,7 +301,6 @@ size_t  ft_strlcat(char *dst, char *src, size_t dstsize)
         size_t  i;
         size_t  dst_len;
         size_t  src_len;
-	printf("dst:%s src:%s dstsize:%d\n", dst, src, (int)dstsize);
 
         src_len = ft_strlen(src);
         if (dstsize == 0)
@@ -300,36 +311,14 @@ size_t  ft_strlcat(char *dst, char *src, size_t dstsize)
         i = 0;
         while (dst_len + i < dstsize - 1 && src[i])
         {
+			printf("strlcat()dst:%c, src:%c\n", dst[dst_len + i], src[i]);
                 dst[dst_len + i] = src[i];
                 i++;
         }
         dst[dst_len + i] = '\0';
         return (src_len + dst_len);
 }
-// size_t	ft_strlcat(char *dst, char *src, size_t dstsize)
-// {
-// 	size_t	a;
-// 	size_t	b;
-// 	char	*c;
-// 	printf("dst:%s src:%s dstsize:%d\n", dst, src, (int)dstsize);
-// 	a = 0;
-// 	b = 0;
-// 	c = (char *)src;
-// 	if (dstsize == 0)
-// 		return (ft_strlen(src) + dstsize);
-// 	while (dst[a] != '\0')
-// 		a++;
-// 	while (c[b] != '\0' && a + b + 1 < dstsize)
-// 	{
-// 		dst[a + b] = c[b];
-// 		b++;
-// 	}
-// 	dst[a + b] = '\0';
-// 	if (dstsize <= ft_strlen(dst))
-// 		return (ft_strlen(src) + dstsize);
-// 	else
-// 		return (ft_strlen(src) + a);
-// }
+
 
 /* key만큼 실제 buf */
 int	check_unset(char *str, char *envv)
@@ -349,20 +338,18 @@ int			set_env_to_buf(char **envv, char *env, char *buf)
 	int		i;
 
 	i = -1;
-	printf("확장전 buf 길이:%dbuf:%s\n", (int)ft_strlen(buf), buf);
 
 	while (envv[++i])
 	{
 		if (check_unset(env, envv[i]))
 		{
-			printf("set_env_to_buf() env:%s\n", env);
+			printf("set_env_to_buf() env:%sbuf:%s\n", env, buf);
 			ft_strlcat(buf, \
 			envv[i] + ft_strlen(env) + 1, ft_strlen(envv[i]) + ft_strlen(buf));
 			break ;
 		}
 	}
 	free(env);
-	printf("확장하고 나온 buf 길이:%dbuf:%s\n", (int)ft_strlen(buf), buf);
 	return ((int)ft_strlen(buf));
 }
 
@@ -373,7 +360,7 @@ void		check_split(int *k, int z, int *idx, char quote)
 		*idx = 1;
 }
 
-/* key의 길이를 리턴 */
+/* key의 길이를 리턴 */ /* 리턴값은 키의 '=' 다음의 인덱스, str은 $를 제외한 키의 문자열. '='를 찾지 못하고 널문자 만나면 0리턴해서 확장 안되게 하자*/
 int         check_unset_sub(char *str, char *envv)
 {
     int     i;
@@ -388,27 +375,27 @@ int         check_unset_sub(char *str, char *envv)
     return (0);
 }
 /* 버퍼 만들 때 밸류의 길이 k: value의 길이*/
-int env_size(char **envv, char *env, int k)
+void move_env_size(char **envv, char *env, int *k)
 {
-    int i;
-    int j;
-    i = 0;
-    j = 0;
-    while (envv[i])
-    {
-        j = check_unset_sub(env, (char*)envv[i]);
-        if (j != 0)
-        {
-            while (envv[i][j])
-            {
-                j++;
-                k++;
-            }
-        }
-        i++;
-    }
-	printf("env_size() k:%denv:%s\n", k, env);
-    return(k);
+	int	i;
+	int	env_len;
+
+	i = 0;
+	env_len = ft_strlen(env);
+	while (envv[i])
+	{
+		if (ft_strncmp(envv[i], env, env_len) == 0)
+		{
+			if (envv[i][env_len] == '=')
+			{
+				*k += ft_strlen(envv[i] + env_len + 1);
+				printf("env_size()k:%dvalue:%s\n", *k, envv[i] + env_len + 1);
+			}
+			break ;
+		}
+		i++;
+	}
+	free(env);
 }
 /* second_parsing() 함수에서 호출하고, 마지막으로 찐 버퍼 설정해주는 함수 */
 /* k: 확장된 키의 밸류의 인덱스를 올리기위한 변수 */
@@ -425,8 +412,12 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
         {
             j = 0;
             k = 0;
+			printf("ft_set_buff()cmd->args[i]:%s\n", cmd->args[i]);
             while (cmd->args[i][j])
             {
+				write(1, &cmd->args[i][j], 1);
+				write(1, "  ", 2);
+				printf("1ft_set_buff()k:%d\n", k);
                 if (cmd->args[i][j] == quote)
                     k++;
                 else if (quote == 0 && (cmd->args[i][j] == '\'' || cmd->args[i][j] == '\"'))
@@ -435,9 +426,11 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
                     k++;
                 else if (quote == 0 && cmd->args[i][j] == '\\' && cmd->args[i][j + 1])
                     k++;
-                else if (quote != '\'' && cmd->args[i][j] == '$' && cmd->args[i][j + 1])
+                else if (quote != '\'' && cmd->args[i][j] == '$' && cmd->args[i][j + 1])//이 조건만 아니면 모두 k++하는거 아닌ㄴ가?
 				{
-                    k = env_size(env, find_env(cmd->args[i], &j), k);
+					k--;
+                    move_env_size(env, find_env(cmd->args[i], &j), &k);// <-여기 댕글링 포인터 처리하려면 줄수 나눠야해 <-여기 달러문자 인덱스 잘못돼서 잘못된 k값 넘겨줌.
+					continue ;
 				}
                 else
                 {
@@ -478,6 +471,9 @@ void parsing_second(t_arvl *node, char **env)
             k = 0;
             while (cmd->args[i][j])
             {
+			write(1, "!!!", 3);
+			write(1, &cmd->args[i][j], 1);
+			write(1, "!!!\n", 4);
 //여기서 args찍어보면 $USER aa 일 경우 args : $USER, args : aa 이렇게 나오는데 환경변수 확장하고 그 뒤에 aa 까지 while문 돌아서 buff에 넣어줌
 				//parsing second 들어오기 전에 결과 출력해보면 이상없어
                 if (cmd->args[i][j] == quote)
@@ -495,8 +491,10 @@ void parsing_second(t_arvl *node, char **env)
 					break;
 				}
                 else if (quote != '\'' && cmd->args[i][j] == '$' && cmd->args[i][j + 1])
-{
+				{
+					buff[k] = '\0';//!!!!!!! 
                     check_split(&k, set_env_to_buf(env, find_env(cmd->args[i], &j), buff), &idx, quote); 
+					j++;
 					//여기도
 					if (quote == 0)
 						j--;
