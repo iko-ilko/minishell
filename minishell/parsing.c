@@ -257,43 +257,16 @@ char		*find_env(char *str, int *j)
 
 	(*j)++;
 	i = *j;
-	printf("pre_find_env() j:%di:%dstr[*j]:%s\n", *j, i, str + *j);
+	// printf("pre_find_env() j:%di:%dstr[*j]:%s\n", *j, i, str + *j);
 	while (str[i] && str[i] != '$' && ft_isalnum(str[i]))
 		i++;
 	i--;
 	res = ft_strndup(str + *j, i - *j + 1);
-	printf("find_env() j:%di:%dres:%s\n", *j, i, res);
+	// printf("find_env() j:%di:%dres:%s\n", *j, i, res);
 	*j = i;
 	return (res);
 	// return (ft_strdup(str + 1));
 
-
-
-	
-	// char	*ret;
-	// int		start;
-
-	// (*j)++;
-	// start = *j;
-	// // for (int z = 0; str[z]; z++)
-	// // 	write(1, &str[z], 1);
-	// // while (str[*j] && str[*j] != '$')
-	// // {
-	// // 	write(1, &str[*j], 1);
-	// // 	(*j)++;
-	// // }
-	// while (str[*j])
-	// 	if (ft_isalnum(str[*j]))
-	// 		(*j)++;
-	// 	else
-	// 	{
-	// 		(*j)--;
-	// 		break ;
-	// 	}
-	// printf("find_env()*j:%d\n", *j);
-	// ret = ft_substr(str, start, *j - start + 1);
-	// // printf("find_env()*j:%d, ret:%s, str:%s*j-start+1:%d\n", *j, ret, str, *j - start + 1);
-	// return (ret);
 }
 
 size_t  ft_strlcat(char *dst, char *src, size_t dstsize)
@@ -311,7 +284,7 @@ size_t  ft_strlcat(char *dst, char *src, size_t dstsize)
         i = 0;
         while (dst_len + i < dstsize - 1 && src[i])
         {
-			printf("strlcat()dst:%c, src:%c\n", dst[dst_len + i], src[i]);
+			// printf("strlcat()dst:%c, src:%c\n", dst[dst_len + i], src[i]);
                 dst[dst_len + i] = src[i];
                 i++;
         }
@@ -343,7 +316,7 @@ int			set_env_to_buf(char **envv, char *env, char *buf)
 	{
 		if (check_unset(env, envv[i]))
 		{
-			printf("set_env_to_buf() env:%sbuf:%s\n", env, buf);
+			// printf("set_env_to_buf() env:%sbuf:%s\n", env, buf);
 			ft_strlcat(buf, \
 			envv[i] + ft_strlen(env) + 1, ft_strlen(envv[i]) + ft_strlen(buf));
 			break ;
@@ -389,7 +362,7 @@ void move_env_size(char **envv, char *env, int *k)
 			if (envv[i][env_len] == '=')
 			{
 				*k += ft_strlen(envv[i] + env_len + 1);
-				printf("env_size()k:%dvalue:%s\n", *k, envv[i] + env_len + 1);
+				// printf("env_size()k:%dvalue:%s\n", *k, envv[i] + env_len + 1);
 			}
 			break ;
 		}
@@ -412,12 +385,12 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
         {
             j = 0;
             k = 0;
-			printf("ft_set_buff()cmd->args[i]:%s\n", cmd->args[i]);
+			// printf("ft_set_buff()cmd->args[i]:%s\n", cmd->args[i]);
             while (cmd->args[i][j])
             {
-				write(1, &cmd->args[i][j], 1);
-				write(1, "  ", 2);
-				printf("1ft_set_buff()k:%d\n", k);
+				// write(1, &cmd->args[i][j], 1);
+				// write(1, "  ", 2);
+				// printf("1ft_set_buff()k:%d\n", k);
                 if (cmd->args[i][j] == quote)
                     k++;
                 else if (quote == 0 && (cmd->args[i][j] == '\'' || cmd->args[i][j] == '\"'))
@@ -440,7 +413,7 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
             }
             i++;
         }
-	printf("ft_set_buff()k:%d\n", k);
+	// printf("ft_set_buff()k:%d\n", k);
     buff = (char *)malloc((k + 1) * (sizeof(char)));
 	buff[k] = '\0';
     return (buff);
@@ -471,9 +444,9 @@ void parsing_second(t_arvl *node, char **env)
             k = 0;
             while (cmd->args[i][j])
             {
-			write(1, "!!!", 3);
-			write(1, &cmd->args[i][j], 1);
-			write(1, "!!!\n", 4);
+			// write(1, "!!!", 3);
+			// write(1, &cmd->args[i][j], 1);
+			// write(1, "!!!\n", 4);
 //여기서 args찍어보면 $USER aa 일 경우 args : $USER, args : aa 이렇게 나오는데 환경변수 확장하고 그 뒤에 aa 까지 while문 돌아서 buff에 넣어줌
 				//parsing second 들어오기 전에 결과 출력해보면 이상없어
                 if (cmd->args[i][j] == quote)
@@ -545,8 +518,8 @@ void	parsing(t_info *info, char *line, char **env)
 	parsing_init(&info->head, info, line);
 	while (cmd[info->i])
 	{
-		write(1, &cmd[info->i], 1);
-		write(1, "  ", 2);
+		// write(1, &cmd[info->i], 1);
+		// write(1, "  ", 2);
 		parsing_check(cmd, info);
 		info->i++;
 		if (cmd[info->i] == '\0')
