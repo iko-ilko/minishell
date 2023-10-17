@@ -33,17 +33,25 @@ char	*ft_strjoin(char *s1, char *s2)
 // 	}
 // 	return (0);
 // }
-
-void	ft_bzero(void *s, size_t n)
+// cat $USER \f | cat
+char	*ft_strtrim(char *s1, char *set)
 {
-	size_t i;
+	size_t	start;
+	size_t	end;
+	char	*res;
 
-	i = 0;
-	while (i < n)
-	{
-		*(char*)(s + i) = '\0';
-		i++;
-	}
+	start = 0;
+	if (s1 == 0 || set == 0)
+		return (0);
+	end = ft_strlen(s1);
+	while (s1[start] && ft_strchr(set, s1[start]))
+			start++;
+	while (end > 0 && s1[end - 1] && ft_strchr(set, s1[end - 1]))
+			end--;
+	if (start > end)
+		return (ft_strdup(""));
+	res = ft_substr(s1, start, end - start);
+	return (res);
 }
 
 char	*ft_strcpy(char *dest, char *src)
@@ -59,7 +67,6 @@ char	*ft_strcpy(char *dest, char *src)
 	dest[i] = '\0';
 	return (dest);
 }
-
 
 void	*ft_calloc(size_t count, size_t size)
 {

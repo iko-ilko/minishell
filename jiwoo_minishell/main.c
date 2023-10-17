@@ -122,7 +122,8 @@ void	push_args(t_parsing *info, char *line)
 	printf("jwikim2 %s\n", info->content->args[info->args_i]);
 	(info->args_i)++;
 	free(info->buff);
-	ft_memset(info->buff, 0, ft_strlen(info->buff) + 1);
+	ft_memset(info->buff, 0, ft_strlen(info->buff) + 1);//여기 프리 한 다음에 써서 웬만하면 세그폴트
+	//info->buff = NULL;
 	info->buff = ft_size_check(&line[info->i]);
 	info->j = 0;
 }
@@ -193,7 +194,7 @@ char	*ft_strtrim(char const *s1, char const *set)
 	end = ft_strlen(s1);
 	while (s1[start] && ft_strchr(set, s1[start]))
 			start++;
-	while (s1[end - 1] && ft_strchr(set, s1[end - 1]))
+	while (s1[end - 1] && ft_strchr(set, s1[end - 1]))//지우야 빈 문자열이 들어오면 end = 0이 되서 -1이 되어서 segfault
 			end--;
 	if (start > end)
 		return (ft_strdup(""));
@@ -252,7 +253,7 @@ void init(t_list **node, t_parsing *info, char *line)
 	info->quote = 0;
 	info->buff = ft_size_check(line);
 	info->content = (t_cmd *)malloc(sizeof(t_cmd));
-	info->content->args = (char **)malloc((count_token(line) + 1) * sizeof(char*));
+	info->content->args = (char **)malloc((count_token(line) + 1) * sizeof(char*));//지우야 각 노드에 맞는 개수를 해줘야할것같은데 fasanitize붙이면 버퍼 계속 터져서 수정법 찾아야해 ..
 	info->content->flag = 0;//<-지우야 이거 플래그 초기화 추가했어
 
 }
@@ -339,7 +340,7 @@ int			set_env_to_buf(char **envv, char *env, char *buf)
 		{
 				ft_strlcat(buf, \
 				envv[i] + ft_strlen(env) + 1, ft_strlen(envv[i]) + ft_strlen(buf));
-				printf("bub111111 = %s\n", buf);
+				printf("bub111111 = %s\n", buf);//지우야 여기서 힙오버플로 뜨는데 널 문자 다시 체크해보고 해결되면 이 문장은 없어져있을것이야.
 			break ;
 		}
 	}

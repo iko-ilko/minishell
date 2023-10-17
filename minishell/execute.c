@@ -19,7 +19,6 @@ void	exe_data(t_data *data, char **envp, char *root_file_name)
 		cmd = (t_cmd *)cur->content;
 //		if (cur->content->flag)
 
-printf("arvs: %s\n", cmd->args[0]);
 		if (ft_strcmp(root_file_name, cmd->args[0]) == 0)//more shell도 그냥 pipex에서 했던 실행에 인자 넣어줘도 될지 체크. 되면 파이프 있는지 체크하고 다른 함수 호출.
 			more_shell(data, cmd->args, envp);
 		else if (if_buitin_func(data, cmd->args) == 1)

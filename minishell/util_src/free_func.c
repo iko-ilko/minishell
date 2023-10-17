@@ -8,8 +8,8 @@ void	free_vars(t_data *data)
 	while (data->envl != NULL)
 	{
 		next_env = data->envl->next;
-		free(data->envl->key);
-		free(data->envl->value);
+		free_single((void *)&data->envl->key);
+		free_single((void *)&data->envl->value);
 		free(data->envl);
 		data->envl = next_env;
 	}
@@ -32,6 +32,8 @@ void	free_double(char ***str)
 
 void	free_single(void **p)
 {
+	if (*p != NULL)
+		return ;
 	free(*p);
 	*p = NULL;
 }

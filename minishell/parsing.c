@@ -103,11 +103,10 @@ void	push_args(t_info *info, char *line)
 {
 	if (*(info->buff) == 0)
 		return ;
-	info->content->args[info->args_i] = ft_strdup(info->buff);
+	info->content->args[info->args_i] = ft_strdup(info->buff);여기 args는 결국엔 한 노드(파이프 등 구분자로 나눠진)의 배열이니 args_i와 args배열은 구분자있으면 매번 초기화(새로 사이즈 재고 말록, 0초기화)해야하지 않나?
 	info->content->args[info->args_i + 1] = NULL;
 	(info->args_i)++;
-	free(info->buff);
-	ft_memset(info->buff, 0, ft_strlen(info->buff) + 1);
+	free_single((void *)&info->buff);
 	info->buff = ft_size_check(&line[info->i]);
 	info->j = 0;
 }
@@ -133,6 +132,7 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 		ft_lstadd_back(node, ft_lstnew(info->content));
 		info->content = ft_calloc(1, sizeof(t_cmd));
 		info->content->args = ft_calloc(count_token(line) + 1, sizeof(char *));
+		printf("count_line:%d\n", count_token(line));
 		info->content->flag = 0;
 	}
 	info->args_i = 0;
@@ -165,25 +165,6 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 }
 
 
-char	*ft_strtrim(char *s1, char *set)
-{
-	size_t	start;
-	size_t	end;
-	char	*res;
-
-	start = 0;
-	if (s1 == 0 || set == 0)
-		return (0);
-	end = ft_strlen(s1);
-	while (s1[start] && ft_strchr(set, s1[start]))
-			start++;
-	while (s1[end - 1] && ft_strchr(set, s1[end - 1]))
-			end--;
-	if (start > end)
-		return (ft_strdup(""));
-	res = ft_substr(s1, start, end - start);
-	return (res);
-}
 
 void parsing_check(char *line, t_info *info)
 {
@@ -222,18 +203,17 @@ void parsing_check(char *line, t_info *info)
 }
 
 
-void parsing_init(t_arvl **node, t_info *info, char *line)
+void make_first_init(t_info *info, char *line)
 {
 	info->args_i = 0;
 	info->i = 0;
 	info->j = 0;
-	*node = NULL;
-	//*node = ft_lstnew(NULL);
-	// info->head = *node;
 	info->quote = 0;
+	info->head = NULL;
 	info->buff = ft_size_check(line);
 	info->content = (t_cmd *)malloc(sizeof(t_cmd));
 	info->content->args = (char **)malloc((count_token(line) + 1) * sizeof(char*));
+	printf("return val count_token:%d\n", count_token(line));
 	info->content->flag = 0;
 }
 
@@ -515,7 +495,9 @@ void	parsing(t_info *info, char *line, char **env)
 {
 	char *cmd;
 	cmd = ft_strtrim(line, " ");
-	parsing_init(&info->head, info, line);
+	if (cmd == NULL)
+		return ;
+	make_first_init(info, line);
 	while (cmd[info->i])
 	{
 		// write(1, &cmd[info->i], 1);
@@ -534,9 +516,11 @@ void	parsing(t_info *info, char *line, char **env)
 		printf("fuck\n");
 		exit(0);
 	}
-	/* print parsing check args */
+	printf("info->args_i:%d\n", info->args_i);
 	if (info->args_i)
 		ft_lstadd_back(&info->head, ft_lstnew(info->content));
+	printf("??%s??\n", info->content->args[0]);
+	// free_single((void *)&info->buff);
 	print_nodes_to_head(info->head); //result
 	printf("------------parsing check done--------------\n");
 	parsing_second(info->head, env);

@@ -34,7 +34,7 @@ $(NAME): $(OBJS)
 #	$(CC) -g3 $(OBJS) -lreadline -o $(NAME)
 
 %.o:%.c
-	$(CC) -g3 -c $< -o $@
+	$(CC) -fsanitize=address -c $< -o $@
 
 clean:
 	rm -rf $(OBJS)

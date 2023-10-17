@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-void    envp_to_envl(t_data *data, char **envp, char *root_file)
+void    envp_to_envl(t_data *data, char **envp, char *rootfile)
 {
     int     i;
     char    *key;
@@ -12,7 +12,7 @@ void    envp_to_envl(t_data *data, char **envp, char *root_file)
     {
         key = ft_strndup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
 		if (ft_strcmp(key, "SHELL") == 0)
-			value = ft_strdup(root_file);
+			value = ft_strdup(rootfile);
 		else
     	    value = ft_strdup(ft_strchr(envp[i], '=') + 1);
 		add_env(data, key, value);
@@ -46,10 +46,13 @@ void	update_envp(t_data *data, t_envl *cur)
 	data->envp[i] = NULL;
 }
 
-void	init_exe_data(t_data *data, char **envp, char *root_file)
+void	init_exe_data(t_info *info, t_data *data, char **envp, char *rootfile)
 {
+	info->buff = NULL;
+	info->head = NULL;
+	info->content = NULL;
 	data->envl = NULL;
 	data->envp = NULL;
-    envp_to_envl(data, envp, root_file);
+	data->arvl = NULL; envp_to_envl(data, envp, rootfile);
 	update_envp(data, data->envl);
 }

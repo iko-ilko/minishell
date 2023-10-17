@@ -10,7 +10,7 @@ int main(int arc, char **arv, char **envp)
 	if (arv[1] != NULL)
 		exit_error("No such file or directory", arv[1], 127);
     // do_signal();
-	init_exe_data(&data, envp, arv[0]);
+	init_exe_data(&info, &data, envp, arv[0]);
     signal(SIGINT, sigint_handler);
     signal(SIGQUIT, SIG_IGN);
     // signal()

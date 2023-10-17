@@ -76,7 +76,7 @@ typedef struct	s_data
 	t_envl	*envl;
 	char	**envp;
 	char	*pwd;//
-	char	**history;
+	char	**history;//
 
 	int		cur_pid;
 	int		last_exit_code;
@@ -95,7 +95,7 @@ void	set_content(t_info *info, char *line, t_arvl **node, int i);
 char	*ft_substr(char *s, unsigned int start, size_t len);
 char	*ft_strtrim(char *s1, char *set);
 void 	parsing_check(char *line, t_info *info);
-void	parsing_init(t_arvl **node, t_info *info, char *line);
+void	make_first_init(t_info *info, char *line);
 int		ft_isalnum(int c);
 char	*find_env(char *str, int *j);
 size_t	ft_strlcat(char *dst, char *src, size_t dstsize);
@@ -152,8 +152,8 @@ void	ft_lstadd_back(t_arvl **lst, t_arvl *new);
 int		get_lstsize(t_envl *cur);
 
 /* 			/init_func.c */
-void	init_exe_data(t_data *data, char **envp, char *root_file);
-void    envp_to_envl(t_data *data, char **envp, char *root_file);
+void	init_exe_data(t_info *info, t_data *data, char **envp, char *rootfile);
+void	envp_to_envl(t_data *data, char **envp, char *rootfile);
 void	update_envp(t_data *data, t_envl *cur);
 /* 			/signal_func.c */
 void    sigint_handler(int signum);
@@ -176,10 +176,12 @@ char    *ft_strchr(char *s, int c);
 
 /* ./str_src/str_func3.c */
 char	*ft_strjoin(char *s1, char *s2);
-void	ft_bzero(void *s, size_t n);
+char	*ft_strtrim(char *s1, char *set);
 char	*ft_strcpy(char *dest, char *src);
 void	*ft_calloc(size_t count, size_t size);
 int		ft_strncmp(char *s1, char *s2, int n);
+
+/* ./str_src/str_func4.c */
 
 
 
