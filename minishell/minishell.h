@@ -88,6 +88,8 @@ typedef struct	s_data
 /* parsing.c */
 void 	set_quote(t_info *info, char quot, char buffer);
 char	*ft_strtok(char *str, char sepa);
+int		check_sepa(char c);
+char	*get_pre_sepa_str(char *input, int sepa_idx);
 int		count_token(char *input);
 char 	*ft_size_check(char *line);
 void	push_args(t_info *info, char *line);
@@ -182,6 +184,8 @@ void	*ft_calloc(size_t count, size_t size);
 int		ft_strncmp(char *s1, char *s2, int n);
 
 /* ./str_src/str_func4.c */
+char	*ft_strtok(char *str, char sepa);
+
 
 
 

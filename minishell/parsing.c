@@ -24,53 +24,54 @@ void set_quote(t_info *info, char quot, char buffer)
 	if (info->quote == 0)
 		info->buff[info->j] = '\0';
 }
-
-
-
-
-char	*ft_strtok(char *str, char sepa)
+int	check_sepa(char c)
 {
-	static char	*stock = NULL;
-	char		*p;
-	int			i;
+	if (c == '|' || c == ';' || c == '>' || c == '<' || c == '\0')
+		return (1);
+	return (0);
+}
+char	*get_pre_sepa_str(char *input, int sepa_idx)
+{
+	char	*res;
+	int		i;
 
+	res = ft_calloc(sepa_idx + 1, sizeof(char));
 	i = 0;
-	p = NULL;
-	if (str != NULL)
-		stock = ft_strdup(str);
-	while (*stock != '\0')
+	while (i < sepa_idx)
 	{
-		if (i == 0 && *stock != sepa)
-		{
-			i = 1;
-			p = stock;
-		}
-		else if (i == 1 && *stock == sepa)
-		{
-			*stock = '\0';
-			stock += 1;
-			break ;
-		}
-		stock++;
+		res[i] = input[i];
+		i++;
 	}
-	return (p);
+	res[i] = '\0';
+	return (res);
 }
 
-
-int		count_token(char *input)
+//파이프 등 구분자 전 문자열을 공백으로 나누고 그 개수를 리턴(각 노드의 args배열의 크기)
+int		count_token(char *input)//이 함수 작성자가 이렇게 구현한 이유가 있을텐데 흠 ..
 {
 	int		count_token;
+	int		sepa_idx;
 	char	*p;
 
+	// p = ft_calloc(ft_strlen(input) + 1, sizeof(char));
+	// ft_strcpy(p, input);
+	sepa_idx = 0;
+	while (check_sepa(input[sepa_idx]) == 0)
+		sepa_idx++;
+	while (input[sepa_idx] != '\0' && input[sepa_idx] != '|' && input[sepa_idx] != ';' && \
+			input[sepa_idx] != '>' && input[sepa_idx] != '<')
+		sepa_idx++;
+	// if (sepa_idx == 0)
+	// 	exit_error("syntax error near unexpected token", NULL, 258);//이 에러로 핸들링 하면 좋은데 호출이 꽤 늦은 함수라 여기서 되는지는 일단 엑싯 박아놓고 테스트 해보자.
+	p = get_pre_sepa_str(input, sepa_idx);//이 함수는 말록을 해줘야함(이 함수에서 말록)
 	count_token = 1;
-	if (!(p = ft_calloc(ft_strlen(input) + 1, sizeof(char))))
-		return (0);
-	ft_strcpy(p, input);
-	if (ft_strtok(p, ' ') != NULL)
+	printf("count_token()p:%s\n", p);
+	if (ft_strtok(p, ' ') != NULL)//여기 strtok은 매번 말록함
 	{
 		while (ft_strtok(NULL, ' ') != NULL)
 			count_token++;
 	}
+	printf("count_token:%d\n", count_token);
 	free(p);
 	return (count_token);
 }
@@ -91,10 +92,12 @@ char *ft_size_check(char *line)
 	while (line[i] && ((line[i] != ' ') && (line[i] != '|') && ( line[i] != ';') && (line[i] != '>' && \
 			(line[i] != '<'))))
 		{
+			// printf("line[i]:%c\n", line[i]);
 			i++;
 			j++;
 		}
 	res = (char *)malloc((j + 1) * sizeof(char));
+	printf("ft_size_check()j:%d\n", j);
 	res[j] = '\0';
 	return (res);
 }
@@ -103,11 +106,17 @@ void	push_args(t_info *info, char *line)
 {
 	if (*(info->buff) == 0)
 		return ;
-	info->content->args[info->args_i] = ft_strdup(info->buff);여기 args는 결국엔 한 노드(파이프 등 구분자로 나눠진)의 배열이니 args_i와 args배열은 구분자있으면 매번 초기화(새로 사이즈 재고 말록, 0초기화)해야하지 않나?
-	info->content->args[info->args_i + 1] = NULL;
+	printf("info->buff in push args:%s\n", info->buff);
+	info->content->args[info->args_i] = ft_strdup(info->buff);//여기 args는 결국엔 한 노드(파이프 등 구분자로 나눠진)의 배열이니 args_i와 args배열은 구분자있으면 매번 초기화(새로 사이즈 재고 말록, 0초기화)해야하지 않나?
+	printf("info->buff:%s\n", info->buff);
+	printf("args_i:%d\n", info->args_i);
+	info->content->args[info->args_i + 1] = NULL;//이건 나중에 하자 -> 이거 인덱스랑 헷갈린것같아 체클해보자
 	(info->args_i)++;
 	free_single((void *)&info->buff);
-	info->buff = ft_size_check(&line[info->i]);
+	if (check_sepa(line[info->i]) == 1)
+		info->buff = NULL;
+	else
+		info->buff = ft_size_check(&line[info->i]);
 	info->j = 0;
 }
 
@@ -123,19 +132,22 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 		exit(1);	
 	}
 	info->content->flag = i;
-	if (*(info->buff) != 0)
-		push_args(info, line);
-	if ((info->content->args)[0] == 0 && info->content->flag <= 1)
+	// printf("info->buff:%s,%d\n", info->buff, info->buff[0]);
+	// // if (*(info->buff) != 0)
+	// // 	push_args(info, line);
+	// printf("line[info->i + 1]:%c\tline[info->i]:%ci:%d\n", line[info->i + 1], line[info->i], info->i);
+	if ((info->content->args)[0] == 0 && info->content->flag <= 1)//여긴 뭐 하는곳?
 		exit(0);
-	else
+	else if (check_sepa(line[info->i + 1]) != 1)
 	{
 		ft_lstadd_back(node, ft_lstnew(info->content));
 		info->content = ft_calloc(1, sizeof(t_cmd));
-		info->content->args = ft_calloc(count_token(line) + 1, sizeof(char *));
-		printf("count_line:%d\n", count_token(line));
+		info->content->args = ft_calloc(count_token(line + info->i + 1) + 1, sizeof(char *));
+		// printf("count_line:%d\n", count_token(line + info->i + 1));
 		info->content->flag = 0;
 	}
 	info->args_i = 0;
+	//free and init
 }
 
 
@@ -199,6 +211,8 @@ void parsing_check(char *line, t_info *info)
     // }
     else
         info->buff[info->j++] = line[info->i];
+	// if (line[info->i + 1] == '\0')//마지막을 여기서 체크. 밖에서 quote가 열려있으면 에러처리
+	// 	push_args(info, line);
 
 }
 
@@ -212,8 +226,9 @@ void make_first_init(t_info *info, char *line)
 	info->head = NULL;
 	info->buff = ft_size_check(line);
 	info->content = (t_cmd *)malloc(sizeof(t_cmd));
-	info->content->args = (char **)malloc((count_token(line) + 1) * sizeof(char*));
-	printf("return val count_token:%d\n", count_token(line));
+	int count = count_token(line);
+	info->content->args = (char **)malloc((count + 1) * sizeof(char*));
+	printf("return val count_token:%d\n", count);
 	info->content->flag = 0;
 }
 
@@ -497,15 +512,15 @@ void	parsing(t_info *info, char *line, char **env)
 	cmd = ft_strtrim(line, " ");
 	if (cmd == NULL)
 		return ;
-	make_first_init(info, line);
+	make_first_init(info, cmd);
 	while (cmd[info->i])
 	{
 		// write(1, &cmd[info->i], 1);
 		// write(1, "  ", 2);
 		parsing_check(cmd, info);
 		info->i++;
-		if (cmd[info->i] == '\0')
-			push_args(info, line);
+		// if (cmd[info->i] == '\0')
+		// 	push_args(info, cmd);
 	}
 	//info->buff[info->i] = '\0'; -> 이거랑
 	// info->buff = ft_strtrim(info->buff, " "); -> 이거 마지막에 논리구조 확인해보고 뺴도 되는지 체크하기

@@ -41,7 +41,7 @@ void set_quote(t_parsing *info, char quot, char buffer)
 
 char	*ft_strtok(char *str, char sepa)
 {
-	static char	*stock = NULL;
+	static char	*stock = NULL;//지우야 여기 static으로 돼있는거보니 전역변수처럼 써서 포인터 늘릴라한것같은데 안돼서 수정예정
 	char		*p;
 	int			i;
 

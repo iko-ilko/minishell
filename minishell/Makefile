@@ -20,6 +20,7 @@ SRCS = minishell.c parsing.c execute.c \
 	./str_src/str_func1.c \
 	./str_src/str_func2.c \
 	./str_src/str_func3.c \
+	./str_src/str_func4.c \
 	\
 	./error_done_src/error.c
 NAME = minishell
