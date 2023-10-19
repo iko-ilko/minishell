@@ -1,6 +1,6 @@
 #include "minishell.h"
 //	printf("env_size() envv[i]:%s\n", envv[i]); <- 이거 인자로 넣으면 세그폴트 왜?
-
+int	node_cnt = 1;
 void	*ft_memset(void *b, int c, size_t len)
 {
 	unsigned char	*p;
@@ -109,16 +109,17 @@ void	push_args(t_info *info, char *line)
 	printf("info->buff in push args:%sline[info->i]:\"%c\"\n", info->buff, line[info->i]);
 	printf("info->buff:%s\n", info->buff);
 	printf("args_i:%d\n", info->args_i);
-	if (check_sepa(line[info->i]) == 0 )//여기가 힙 버퍼 오버플로우 원인. 마지막에 + 1에 NULL박았었음
-	{
+	// if (check_sepa(line[info->i]) == 0 )//여기가 힙 버퍼 오버플로우 원인. 마지막에 + 1에 NULL박았었음
+	// {
+	
 		info->content->args[info->args_i] = ft_strdup(info->buff);//여기 args는 결국엔 한 노드(파이프 등 구분자로 나눠진)의 배열이니 args_i와 args배열은 구분자있으면 매번 초기화(새로 사이즈 재고 말록, 0초기화)해야하지 않나?
 		info->buff = ft_size_check(&line[info->i]);
-	}
-	else
-	{
-		info->content->args[info->args_i] = NULL;//여기에 널 박는게 아니라 
-		info->buff = NULL;
-	}
+		info->content->args[info->args_i + 1] = NULL;
+	// }
+	// else
+	// {
+		//info->buff = NULL;
+	// }
 	(info->args_i)++;
 	free_single((void *)&info->buff);
 	info->j = 0;
@@ -137,23 +138,24 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 	}
 	info->content->flag = i;
 	// printf("info->buff:%s,%d\n", info->buff, info->buff[0]);
-	if (*(info->buff) != 0)
+	if (check_sepa(line[info->i + 1]) == 1)
 		push_args(info, line);
 	// printf("line[info->i + 1]:%c\tline[info->i]:%ci:%d\n", line[info->i + 1], line[info->i], info->i);
 		printf("넣어지는 arvs:%s\n", info->content->args[0]);
 		ft_lstadd_back(node, ft_lstnew(info->content));//아래 조건문에서 밖으로 뺌
+	printf("node_cnt: %d\n", node_cnt++);
 	/*if ((info->content->args)[0] == 0 && info->content->flag <= 1)//여긴 뭐 하는곳?
 		exit(0);
-	else */if (check_sepa(line[info->i + 1]) != 1)->공간 안만들어지는듯?
-	{
+	else */if (check_sepa(line[info->i + 1]) != 1)
+	{printf("new node 넣어지는 arvs:%s\n", info->content->args[0]);
 		info->content = ft_calloc(1, sizeof(t_cmd));
 		info->content->args = ft_calloc(count_token(line + info->i + 1) + 1, sizeof(char *));
 		// printf("count_line:%d\n", count_token(line + info->i + 1));
 		info->content->flag = 0;
 	}
 	info->args_i = 0;
-	while (line[info->i] != ' ' && line[info->i] != '\0')//구분자 끝나고 노드 넣고 공백 밀어주는 곳
-		info->i++;
+	// while (line[info->i] != ' ' && line[info->i + 1] != '\0')//구분자 끝나고 노드 넣고 공백 밀어주는 곳
+	// 	info->i++;
 	//free and init
 }
 
@@ -190,7 +192,6 @@ void parsing_check(char *line, t_info *info)
 	write(1, &line[info->i], 1);
 	write(1, "  ", 2);
 	//마지막을 여기서 체크. 밖에서 quote가 열려있으면 에러처리. 맨 위에서 하는게 위험할것같아서 아래에서 했더니 안되던거 올리니 되네... 검증 해야하는 함수
-	
     if (line[info->i] == info->quote)
         set_quote(info, 0, line[info->i]);
     else if (info->quote == 0 && (line[info->i] == '\'' || line[info->i] == '\"'))
@@ -204,6 +205,7 @@ void parsing_check(char *line, t_info *info)
 		// if (line[info->i + 1] == '\0')//마지막인경우
 		// 	set_content(info, line, &info->head, SEMICOLON_NONE);
 		// else
+		printf("ㅇㅕ기?\n");
 	        push_args(info, line);
 	} 
     else if (info->quote == 0 && line[info->i] == '>' && line[info->i + 1] != '>')
@@ -227,10 +229,12 @@ void parsing_check(char *line, t_info *info)
     // }
     else{
         info->buff[info->j++] = line[info->i]; write(1, "??\n", 3);}
-
-	if (line[info->i + 1] == '\0' && info->args_i)//마지막 넣어주기
+	printf("info->args_i:%d\n", info->args_i);
+	if (line[info->i + 1] == '\0')//마지막 넣어주기
+	{write(1, "????\n", 5);
+		set_content(info, line, &info->head, SEMICOLON_NONE);
 		ft_lstadd_back(&info->head, ft_lstnew(info->content));
-
+	}
 }
 
 
