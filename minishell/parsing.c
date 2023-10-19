@@ -137,14 +137,15 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 	}
 	info->content->flag = i;
 	// printf("info->buff:%s,%d\n", info->buff, info->buff[0]);
-	// // if (*(info->buff) != 0)
-	// // 	push_args(info, line);
+	if (*(info->buff) != 0)
+		push_args(info, line);
 	// printf("line[info->i + 1]:%c\tline[info->i]:%ci:%d\n", line[info->i + 1], line[info->i], info->i);
+		printf("넣어지는 arvs:%s\n", info->content->args[0]);
+		ft_lstadd_back(node, ft_lstnew(info->content));//아래 조건문에서 밖으로 뺌
 	/*if ((info->content->args)[0] == 0 && info->content->flag <= 1)//여긴 뭐 하는곳?
 		exit(0);
-	else */if (check_sepa(line[info->i + 1]) != 1)
+	else */if (check_sepa(line[info->i + 1]) != 1)->공간 안만들어지는듯?
 	{
-		ft_lstadd_back(node, ft_lstnew(info->content));
 		info->content = ft_calloc(1, sizeof(t_cmd));
 		info->content->args = ft_calloc(count_token(line + info->i + 1) + 1, sizeof(char *));
 		// printf("count_line:%d\n", count_token(line + info->i + 1));
@@ -186,8 +187,10 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 
 void parsing_check(char *line, t_info *info)
 {
-	if (line[info->i + 1] == '\0')//마지막을 여기서 체크. 밖에서 quote가 열려있으면 에러처리. 맨 위에서 하는게 위험할것같아서 아래에서 했더니 안되던거 올리니 되네... 검증 해야하는 함수
-		set_content(info, line, &info->head, SEMICOLON_NONE);
+	write(1, &line[info->i], 1);
+	write(1, "  ", 2);
+	//마지막을 여기서 체크. 밖에서 quote가 열려있으면 에러처리. 맨 위에서 하는게 위험할것같아서 아래에서 했더니 안되던거 올리니 되네... 검증 해야하는 함수
+	
     if (line[info->i] == info->quote)
         set_quote(info, 0, line[info->i]);
     else if (info->quote == 0 && (line[info->i] == '\'' || line[info->i] == '\"'))
@@ -197,7 +200,12 @@ void parsing_check(char *line, t_info *info)
     else if (info->quote == 0 && line[info->i] == ';')
         set_content(info, line, &info->head, SEMICOLON_NONE);//같은 이유가 뭘까
     else if (info->quote == 0 && line[info->i] == ' ')
-        push_args(info, line); 
+	{
+		// if (line[info->i + 1] == '\0')//마지막인경우
+		// 	set_content(info, line, &info->head, SEMICOLON_NONE);
+		// else
+	        push_args(info, line);
+	} 
     else if (info->quote == 0 && line[info->i] == '>' && line[info->i + 1] != '>')
         set_content(info, line, &info->head, SI_REDI_R);
     else if (info->quote == 0 && line[info->i] == '>' && line[info->i] == '>')
@@ -217,8 +225,11 @@ void parsing_check(char *line, t_info *info)
     //     info->i++;
         //     info->buff[info->j++] = line[info->i];
     // }
-    else
-        info->buff[info->j++] = line[info->i];
+    else{
+        info->buff[info->j++] = line[info->i]; write(1, "??\n", 3);}
+
+	if (line[info->i + 1] == '\0' && info->args_i)//마지막 넣어주기
+		ft_lstadd_back(&info->head, ft_lstnew(info->content));
 
 }
 
