@@ -12,7 +12,7 @@ int main(int arc, char **arv, char **envp)
     // do_signal();
 	init_exe_data(&info, &data, envp, arv[0]);
     signal(SIGINT, sigint_handler);
-    signal(SIGQUIT, SIG_IGN);
+    signal(SIGQUIT, SIG_DFL);//테스트로 디폴트 작동
     // signal()
 	// 빌트인 커맨드 단독 일 때만 부모 프로세스에서 빌트인 실행
     while(1)

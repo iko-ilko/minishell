@@ -106,17 +106,21 @@ void	push_args(t_info *info, char *line)
 {
 	if (*(info->buff) == 0)
 		return ;
-	printf("info->buff in push args:%s\n", info->buff);
-	info->content->args[info->args_i] = ft_strdup(info->buff);//여기 args는 결국엔 한 노드(파이프 등 구분자로 나눠진)의 배열이니 args_i와 args배열은 구분자있으면 매번 초기화(새로 사이즈 재고 말록, 0초기화)해야하지 않나?
+	printf("info->buff in push args:%sline[info->i]:\"%c\"\n", info->buff, line[info->i]);
 	printf("info->buff:%s\n", info->buff);
 	printf("args_i:%d\n", info->args_i);
-	info->content->args[info->args_i + 1] = NULL;//이건 나중에 하자 -> 이거 인덱스랑 헷갈린것같아 체클해보자
+	if (check_sepa(line[info->i]) == 0 )//여기가 힙 버퍼 오버플로우 원인. 마지막에 + 1에 NULL박았었음
+	{
+		info->content->args[info->args_i] = ft_strdup(info->buff);//여기 args는 결국엔 한 노드(파이프 등 구분자로 나눠진)의 배열이니 args_i와 args배열은 구분자있으면 매번 초기화(새로 사이즈 재고 말록, 0초기화)해야하지 않나?
+		info->buff = ft_size_check(&line[info->i]);
+	}
+	else
+	{
+		info->content->args[info->args_i] = NULL;//여기에 널 박는게 아니라 
+		info->buff = NULL;
+	}
 	(info->args_i)++;
 	free_single((void *)&info->buff);
-	if (check_sepa(line[info->i]) == 1)
-		info->buff = NULL;
-	else
-		info->buff = ft_size_check(&line[info->i]);
 	info->j = 0;
 }
 
@@ -136,9 +140,9 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 	// // if (*(info->buff) != 0)
 	// // 	push_args(info, line);
 	// printf("line[info->i + 1]:%c\tline[info->i]:%ci:%d\n", line[info->i + 1], line[info->i], info->i);
-	if ((info->content->args)[0] == 0 && info->content->flag <= 1)//여긴 뭐 하는곳?
+	/*if ((info->content->args)[0] == 0 && info->content->flag <= 1)//여긴 뭐 하는곳?
 		exit(0);
-	else if (check_sepa(line[info->i + 1]) != 1)
+	else */if (check_sepa(line[info->i + 1]) != 1)
 	{
 		ft_lstadd_back(node, ft_lstnew(info->content));
 		info->content = ft_calloc(1, sizeof(t_cmd));
@@ -147,6 +151,8 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 		info->content->flag = 0;
 	}
 	info->args_i = 0;
+	while (line[info->i] != ' ' && line[info->i] != '\0')//구분자 끝나고 노드 넣고 공백 밀어주는 곳
+		info->i++;
 	//free and init
 }
 
@@ -180,6 +186,8 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 
 void parsing_check(char *line, t_info *info)
 {
+	if (line[info->i + 1] == '\0')//마지막을 여기서 체크. 밖에서 quote가 열려있으면 에러처리. 맨 위에서 하는게 위험할것같아서 아래에서 했더니 안되던거 올리니 되네... 검증 해야하는 함수
+		set_content(info, line, &info->head, SEMICOLON_NONE);
     if (line[info->i] == info->quote)
         set_quote(info, 0, line[info->i]);
     else if (info->quote == 0 && (line[info->i] == '\'' || line[info->i] == '\"'))
@@ -211,8 +219,6 @@ void parsing_check(char *line, t_info *info)
     // }
     else
         info->buff[info->j++] = line[info->i];
-	// if (line[info->i + 1] == '\0')//마지막을 여기서 체크. 밖에서 quote가 열려있으면 에러처리
-	// 	push_args(info, line);
 
 }
 
@@ -433,7 +439,7 @@ void parsing_second(t_arvl *node, char **env)
         quote = 0;
         i = 0;
         while (cmd->args[i])
-        {
+        {printf("parsing second()cmd->args[i]:%s\n", cmd->args[i]);
             buff = ft_set_buff(cmd, crr, idx, env);
             j = 0;
             k = 0;
@@ -489,13 +495,13 @@ void print_nodes_to_head(t_arvl *head)
     t_arvl *current = head;
     int node_num = 1;
     while (current != NULL)
-    {
-        t_cmd *cmd = (t_cmd *)current->content;
+    {write(1, "1", 1);
+        t_cmd *cmd = (t_cmd *)current->content; write(1, "2", 1);
         printf("Node %d:", node_num);
         if (cmd != NULL) 
         {
             for (int i = 0; cmd->args[i] != NULL; i++)
-            {
+            { write(1, "3", 1);
                 printf("\targs[%d] : %s ", i, cmd->args[i]);
             }
             printf("\nflag : %d\n", cmd->flag);
@@ -532,12 +538,12 @@ void	parsing(t_info *info, char *line, char **env)
 		exit(0);
 	}
 	printf("info->args_i:%d\n", info->args_i);
-	if (info->args_i)
-		ft_lstadd_back(&info->head, ft_lstnew(info->content));
+	// if (info->args_i)
+	// 	ft_lstadd_back(&info->head, ft_lstnew(info->content));
 	printf("??%s??\n", info->content->args[0]);
 	// free_single((void *)&info->buff);
 	print_nodes_to_head(info->head); //result
 	printf("------------parsing check done--------------\n");
 	parsing_second(info->head, env);
 	print_nodes_to_head(info->head); //result
-}
+}//push args 첫번째에 널이 들어간다 왜지? 
