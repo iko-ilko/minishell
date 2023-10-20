@@ -24,6 +24,8 @@ void set_quote(t_info *info, char quot, char buffer)
 	if (info->quote == 0)
 		info->buff[info->j] = '\0';
 }
+
+//널문자는 체크 안하는걸로 수정함.
 int	check_sepa(char c)
 {
 	if (c == '|' || c == ';' || c == '>' || c == '<' || c == '\0')
@@ -56,7 +58,7 @@ int		count_token(char *input)//이 함수 작성자가 이렇게 구현한 이�
 	// p = ft_calloc(ft_strlen(input) + 1, sizeof(char));
 	// ft_strcpy(p, input);
 	sepa_idx = 0;
-	while (check_sepa(input[sepa_idx]) == 0)
+	while (check_sepa(input[sepa_idx]) == 0)//check_sepa 널문자는 처리 안하려고 수정할라했는데 여기서 쓰이는구나 ...
 		sepa_idx++;
 	while (input[sepa_idx] != '\0' && input[sepa_idx] != '|' && input[sepa_idx] != ';' && \
 			input[sepa_idx] != '>' && input[sepa_idx] != '<')
@@ -76,8 +78,11 @@ int		count_token(char *input)//이 함수 작성자가 이렇게 구현한 이�
 	return (count_token);
 }
 
-char *ft_size_check(char *line)
+//버퍼 관련 calloc으로 널문자 박기.
+char *get_args_one_size(char *line)
 {
+	printf("in get_args_one_size()\n");
+	printf("line[0]:%c\n", line[0]);
 	int i;
 	int j;
 	char *res;
@@ -96,14 +101,18 @@ char *ft_size_check(char *line)
 			i++;
 			j++;
 		}
-	res = (char *)malloc((j + 1) * sizeof(char));
-	printf("ft_size_check()j:%d\n", j);
+	// res = (char *)malloc((j + 1) * sizeof(char));
+	res = calloc(j + 1, sizeof(char));
+	printf("get_args_one_size()j:%d\n", j);
 	res[j] = '\0';
+	printf("out get_args_one_size()\n");
 	return (res);
 }
-
+//현재 args를 넣되, 그 다음의 것의 공간을 만드는 것 까지함. 다음이 널문자면 만들지 말까? 아니면 나중에 원활한 free를 위해 냅둘까? -> 여기서 free할테니 안만들겠다.
+//문제는 원래는 안쓰는거 일단 만들고 봤는데, 구조상 널 문자가아닌 구분자들은 여기에 안들어옴.
 void	push_args(t_info *info, char *line)
 {
+	printf("in push_args()\n");
 	if (*(info->buff) == 0)
 		return ;
 	printf("info->buff in push args:%sline[info->i]:\"%c\"\n", info->buff, line[info->i]);
@@ -112,21 +121,26 @@ void	push_args(t_info *info, char *line)
 	// if (check_sepa(line[info->i]) == 0 )//여기가 힙 버퍼 오버플로우 원인. 마지막에 + 1에 NULL박았었음
 	// {
 	
-		info->content->args[info->args_i] = ft_strdup(info->buff);//여기 args는 결국엔 한 노드(파이프 등 구분자로 나눠진)의 배열이니 args_i와 args배열은 구분자있으면 매번 초기화(새로 사이즈 재고 말록, 0초기화)해야하지 않나?
-		info->buff = ft_size_check(&line[info->i]);
-		info->content->args[info->args_i + 1] = NULL;
+		info->content->args[info->args_i] = ft_strdup(info->buff);//여기 args는 결국엔 한 노드(파이프 등 구분자로 나눠진)의 배열이니 args배열은 구분자있으면 매번 초기화(새로 사이즈 재고 말록, 0초기화)해야하지 않나?
+		free_single((void *)&info->buff);//굳이 널 안박아줘도 되긴 하지만 ..
+		if (line[info->i + 1] != '\0')
+			info->buff = get_args_one_size(&line[info->i]);//여기가 다음꺼 새로 만드는 시점
+		write(1, "this\n", 5);
+		if (check_sepa(line[info->i]) == 1)//오 ..시바 여긴 공백없이 구분자 바로 올 때. 널 문자일 때도 들어가야함
+				info->content->args[info->args_i + 1] = NULL;
 	// }
 	// else
 	// {
 		//info->buff = NULL;
 	// }
 	(info->args_i)++;
-	free_single((void *)&info->buff);
 	info->j = 0;
+	printf("out push_args()\n");
 }
-
+//구분자 전에 공백이 있으면 이미 만들어져있었을 것이고.. 아니면 안만들어져있을것이고 .. 를 지우의 info->buff 체크해보는 방식으로 해결
 void		set_content(t_info *info, char *line, t_arvl **node, int i)
 {
+	printf("in set_content()\n");
 	if (line[info->i] == '>' && line[info->i + 1] == '>' || line[info->i] == '<' && \
 		line[info->i + 1] == '<')
 		info->i++;
@@ -138,25 +152,31 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 	}
 	info->content->flag = i;
 	// printf("info->buff:%s,%d\n", info->buff, info->buff[0]);
-	if (check_sepa(line[info->i + 1]) == 1)
+	// if (check_sepa(line[info->i + 1]) == 1)
+	write(1, &info->buff, 1);
+	write(1, "  ", 2);
+	if (*(info->buff) != 0)//구분자 앞에 공백이 있어씅면 이미 처리가 됐을테니 현재 args_i는 널이 박혀야하는 자리인듯 하다.
 		push_args(info, line);
+	else
+		info->content->args[info->args_i] = NULL;//여기였다.
 	// printf("line[info->i + 1]:%c\tline[info->i]:%ci:%d\n", line[info->i + 1], line[info->i], info->i);
 		printf("넣어지는 arvs:%s\n", info->content->args[0]);
 		ft_lstadd_back(node, ft_lstnew(info->content));//아래 조건문에서 밖으로 뺌
-	printf("node_cnt: %d\n", node_cnt++);
 	/*if ((info->content->args)[0] == 0 && info->content->flag <= 1)//여긴 뭐 하는곳?
 		exit(0);
-	else */if (check_sepa(line[info->i + 1]) != 1)
-	{printf("new node 넣어지는 arvs:%s\n", info->content->args[0]);
+	else */if (line[info->i + 1] != '\0')
+	{
+		printf("new node 넣어지는 arvs:%s\n", info->content->args[0]);
 		info->content = ft_calloc(1, sizeof(t_cmd));
 		info->content->args = ft_calloc(count_token(line + info->i + 1) + 1, sizeof(char *));
-		// printf("count_line:%d\n", count_token(line + info->i + 1));
-		info->content->flag = 0;
+		printf("count_line:%d\n", count_token(line + info->i + 1));
+		info->content->flag = 0;	
 	}
 	info->args_i = 0;
-	// while (line[info->i] != ' ' && line[info->i + 1] != '\0')//구분자 끝나고 노드 넣고 공백 밀어주는 곳
-	// 	info->i++;
+	while (line[info->i] != ' ' && line[info->i + 1] != '\0')//구분자 끝나고 노드 넣고 공백 밀어주는 곳
+		info->i++;
 	//free and init
+	printf("out set_content()\n");
 }
 
 
@@ -202,9 +222,7 @@ void parsing_check(char *line, t_info *info)
         set_content(info, line, &info->head, SEMICOLON_NONE);//같은 이유가 뭘까
     else if (info->quote == 0 && line[info->i] == ' ')
 	{
-		// if (line[info->i + 1] == '\0')//마지막인경우
-		// 	set_content(info, line, &info->head, SEMICOLON_NONE);
-		// else
+
 		printf("ㅇㅕ기?\n");
 	        push_args(info, line);
 	} 
@@ -228,11 +246,11 @@ void parsing_check(char *line, t_info *info)
         //     info->buff[info->j++] = line[info->i];
     // }
     else{
-        info->buff[info->j++] = line[info->i]; write(1, "??\n", 3);}
+        info->buff[info->j++] = line[info->i];}
 	printf("info->args_i:%d\n", info->args_i);
 	if (line[info->i + 1] == '\0')//마지막 넣어주기
-	{write(1, "????\n", 5);
-		set_content(info, line, &info->head, SEMICOLON_NONE);
+	{
+		push_args(info, line);
 		ft_lstadd_back(&info->head, ft_lstnew(info->content));
 	}
 }
@@ -245,7 +263,7 @@ void make_first_init(t_info *info, char *line)
 	info->j = 0;
 	info->quote = 0;
 	info->head = NULL;
-	info->buff = ft_size_check(line);
+	info->buff = get_args_one_size(line);
 	info->content = (t_cmd *)malloc(sizeof(t_cmd));
 	int count = count_token(line);
 	info->content->args = (char **)malloc((count + 1) * sizeof(char*));
@@ -273,12 +291,12 @@ char		*find_env(char *str, int *j)
 
 	(*j)++;
 	i = *j;
-	// printf("pre_find_env() j:%di:%dstr[*j]:%s\n", *j, i, str + *j);
+	printf("pre_find_env() j:%di:%dstr[*j]:%s\n", *j, i, str + *j);
 	while (str[i] && str[i] != '$' && ft_isalnum(str[i]))
 		i++;
 	i--;
 	res = ft_strndup(str + *j, i - *j + 1);
-	// printf("find_env() j:%di:%dres:%s\n", *j, i, res);
+	printf("find_env() j:%di:%dres:%s\n", *j, i, res);
 	*j = i;
 	return (res);
 	// return (ft_strdup(str + 1));
@@ -401,7 +419,7 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
         {
             j = 0;
             k = 0;
-			// printf("ft_set_buff()cmd->args[i]:%s\n", cmd->args[i]);
+			printf("ft_set_buff()cmd->args[i]:%s\n", cmd->args[i]);
             while (cmd->args[i][j])
             {
 				// write(1, &cmd->args[i][j], 1);
@@ -429,7 +447,48 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
             }
             i++;
         }
-	// printf("ft_set_buff()k:%d\n", k);
+	printf("ft_set_buff()k:%d\n", k);
+    buff = (char *)malloc((k + 1) * (sizeof(char)));
+	buff[k] = '\0';
+    return (buff);
+}
+
+char *set_buff(char *args_line, char **env)
+{
+    int quote;
+    int i;
+    int k;
+    char *buff;
+
+	i = 0;
+	k = 0;
+	printf("ft_set_buff()args_line:%s\n", args_line);
+	while (args_line[i])
+	{
+		// write(1, &args_line[i], 1);
+		// write(1, "  ", 2);
+		// printf("1ft_set_buff()k:%d\n", k);
+		if (args_line[i] == quote)
+			k++;
+		else if (quote == 0 && (args_line[i] == '\'' || args_line[i] == '\"'))
+			k++;
+		else if (quote == '\"' && args_line[i] == '\\' && args_line[i + 1])
+			k++;
+		else if (quote == 0 && args_line[i] == '\\' && args_line[i + 1])
+			k++;
+		else if (quote != '\'' && args_line[i] == '$' && args_line[i + 1])//이 조건만 아니면 모두 k++하는거 아닌ㄴ가?
+		{
+			k--;
+			move_env_size(env, find_env(args_line, &i), &k);// <-여기 댕글링 포인터 처리하려면 줄수 나눠야해 <-여기 달러문자 인덱스 잘못돼서 잘못된 k값 넘겨줌.
+			continue ;
+		}
+		else
+		{
+			k++;
+		}
+	i++;
+	}
+	printf("ft_set_buff()k:%d\n", k);
     buff = (char *)malloc((k + 1) * (sizeof(char)));
 	buff[k] = '\0';
     return (buff);
@@ -437,6 +496,7 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
 /* 구분자 등 일차적인 파싱을 끝내고, 환경변수 확장 해줌.(이미 만든 cmd->args를) */
 void parsing_second(t_arvl *node, char **env)
 {
+	printf("in parsing_second()\n");
     t_arvl *crr;
     t_cmd *cmd;
     int i;
@@ -454,9 +514,11 @@ void parsing_second(t_arvl *node, char **env)
         quote = 0;
         i = 0;
         while (cmd->args[i])
-        {printf("parsing second()cmd->args[i]:%s\n", cmd->args[i]);
-            buff = ft_set_buff(cmd, crr, idx, env);
-            j = 0;
+        {
+			printf("parsing second()cmd->args[i]:%s\n", cmd->args[i]);
+            // buff = ft_set_buff(cmd, crr, idx, env);//이거 수정한거 어디갔지. cat 이 아닌 왜 전체가 돌아? -> 지우한테 물어보기
+			buff = set_buff(cmd->args[i], env);
+            j = 0; write(1, "설마\n", 7);
             k = 0;
             while (cmd->args[i][j])
             {
@@ -495,6 +557,7 @@ void parsing_second(t_arvl *node, char **env)
                 }
                 j++;
             }
+				printf("각각의 k:%d\n", k);
 			buff[k] = '\0';
             cmd->args[i] = ft_strdup(buff);
             i++;
@@ -503,6 +566,7 @@ void parsing_second(t_arvl *node, char **env)
         }
         crr = crr->next;
     }
+	printf("out parsing_second()\n");
 }
 
 void print_nodes_to_head(t_arvl *head)
@@ -555,7 +619,8 @@ void	parsing(t_info *info, char *line, char **env)
 	printf("info->args_i:%d\n", info->args_i);
 	// if (info->args_i)
 	// 	ft_lstadd_back(&info->head, ft_lstnew(info->content));
-	printf("??%s??\n", info->content->args[0]);
+	// printf("??p:%p??\n", info->content);
+	// printf("??%s??\n", info->content->args[0]);
 	// free_single((void *)&info->buff);
 	print_nodes_to_head(info->head); //result
 	printf("------------parsing check done--------------\n");
