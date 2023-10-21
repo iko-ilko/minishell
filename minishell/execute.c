@@ -7,29 +7,18 @@ void	exe_data(t_data *data, char **envp, char *root_file_name)
     t_cmd	*cmd;
 
 	cur = data->arvl;
-	// if (cur == NULL)//<-메인에서 컨틴뉴 주석하고 테스트 해보기
-	// {
-	// 	for (int i = 0; data->envp[i]; i++)
-	// 	{
-	// 		printf("%s\n", data->envp[i]);
-	// 	}
-	// }
+	if (cur && cur->next != NULL)
+	{
+		execute_one();
+		return ;
+	}
 	while (cur != NULL)
 	{
-		cmd = (t_cmd *)cur->content;
-//		if (cur->content->flag)
-
+		// 여기 pipex 구조에 맞게 갖다박고 파이프()
 		if (ft_strcmp(root_file_name, cmd->args[0]) == 0)//more shell도 그냥 pipex에서 했던 실행에 인자 넣어줘도 될지 체크. 되면 파이프 있는지 체크하고 다른 함수 호출.
 			more_shell(data, cmd->args, envp);
 		else if (if_buitin_func(data, cmd->args) == 1)
 			;
-		//else
-		//	execute_argv(data, cmd->content);
-
-		// if (if_more_shell(data, cmd->args, cmd->args, envp) == 1)
-		// 	;
-		// else if (if_buitin_func(data, cmd->args) == 1)
-		// 	;
 		//else
 		//	execute_argv(data, cmd->content);
 		cur = cur->next;
