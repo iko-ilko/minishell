@@ -181,7 +181,7 @@ void parsing_check(char *line, t_parsing *info, t_list *node)
     else if (info->quote == 0 && line[info->i] == ' ')
         put_args(info);
     else if (info->quote == 0 && line[info->i] == '>' && line[info->i + 1] != '>')
-        set_content(info, line, node, SI_REDI_R);
+        set_content(info, line, node, SIN_REDI_R);
     else if (info->quote == 0 && line[info->i] == '>' && line[info->i] == '>')
         set_content(info, line, node, DOUB_REDI_R);
     else if (info->quote == 0 && line[info->i] == '<' && line[info->i + 1] != '<')

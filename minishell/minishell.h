@@ -27,9 +27,9 @@
 /* parsing flag */
 # define SEMICOLON_NONE 0
 # define PIPE 1
-# define SI_REDI_R 2 // >
+# define SIN_REDI_R 2 // >
 # define DOUB_REDI_R 3 // >> 
-# define SI_REDI_L 4 // <
+# define SIN_REDI_L 4 // <
 # define DOUB_REDI_L 5 // <<
 
 
