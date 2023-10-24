@@ -90,7 +90,7 @@ char *get_args_one_size(char *line)
 	i = 0;
 	j = 0;
 	while (line[i] && ((line[i] >= 0 && line[i] <= 32) || (line[i] == '|') || ( line[i] == ';') || \
-			(line[i] == '>') || (line[i] == '>')))
+			(line[i] == '>') || (line[i] == '<')))
 	{
 		i++;
 	}
@@ -266,7 +266,7 @@ void make_first_init(t_info *info, char *line)
 	info->buff = get_args_one_size(line);
 	info->content = (t_cmd *)malloc(sizeof(t_cmd));
 	int count = count_token(line);
-	info->content->args = (char **)malloc((count + 1) * sizeof(char*));
+	info->content->args = ft_calloc(count, sizeof(char *) * (count + 1));
 	printf("return val count_token:%d\n", count);
 	info->content->flag = 0;
 }
