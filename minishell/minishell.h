@@ -77,6 +77,7 @@ typedef struct	s_data
 	char	**envp;
 	char	*pwd;//
 	char	**history;//
+	int		cmd_cnt;
 
 	int		cur_pid;
 	int		last_exit_code;
