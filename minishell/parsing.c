@@ -219,7 +219,7 @@ void parsing_check(char *line, t_info *info)
     else if (info->quote == 0 && line[info->i] == '|')
         set_content(info, line, &info->head, PIPE);
     else if (info->quote == 0 && line[info->i] == ';')
-        set_content(info, line, &info->head, SEMICOLON_NONE);//같은 이유가 뭘까
+        set_content(info, line, &info->head, NONE);//같은 이유가 뭘까
     else if (info->quote == 0 && line[info->i] == ' ')
 	{
 

@@ -56,3 +56,5 @@ void	init_exe_data(t_info *info, t_data *data, char **envp, char *rootfile)
 	data->arvl = NULL; envp_to_envl(data, envp, rootfile);
 	update_envp(data, data->envl);
 }
+
+void	init_pipe()

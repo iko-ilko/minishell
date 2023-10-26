@@ -25,7 +25,7 @@
 # define DEL 1
 
 /* parsing flag */
-# define SEMICOLON_NONE 0
+# define NONE 0
 # define PIPE 1
 # define SIN_REDI_R 2 // >
 # define DOUB_REDI_R 3 // >> 
@@ -70,6 +70,20 @@ typedef struct	s_info
 	t_cmd	*content;
 }	t_info;
 
+/* 매 라인 실행마다 초기화 해주는 파이프 */
+typedef struct 	t_pipe
+{
+	int		pipe_idx;
+	int		pipe_cnt;
+	int		heredoc_f;
+
+	char	**all_path;
+	char	**cur_cmd_arvs;
+	char	*cur_cmd_path;
+	int		pre_fd[2];
+	int		next_fd[2];
+}	t_pipe;
+
 typedef struct	s_data
 {
 	t_arvl	*arvl;
@@ -77,7 +91,8 @@ typedef struct	s_data
 	char	**envp;
 	char	*pwd;//
 	char	**history;//
-	int		cmd_cnt;
+
+	// t_pipe	pipe_data; 함수 내에서 선언하자.
 
 	int		cur_pid;
 	int		last_exit_code;

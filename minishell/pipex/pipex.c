@@ -28,7 +28,7 @@ void	init_datas(t_datas *data, int arc, char **arv, char **envp)
 	data->pipe_cnt = data->cmd_cnt - 1;
 	data->all_path = get_all_path(envp);
 }
-
+//이전의 파이프는 세번째 커맨드부터 전의 것들을 지워줘야함
 void	set_pipe(t_datas *data, int cmd_idx)
 {
 	if (cmd_idx > 2)

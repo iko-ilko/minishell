@@ -177,7 +177,7 @@ void parsing_check(char *line, t_parsing *info, t_arvl *node)
     else if (info->quote == 0 && line[info->i] == '|')
         set_content(info, line, node, PIPE);
     else if (info->quote == 0 && line[info->i] == ';')
-        set_content(info, line, node, SEMICOLON_NONE);
+        set_content(info, line, node, NONE);
     else if (info->quote == 0 && line[info->i] == ' ')
         put_args(info);
     else if (info->quote == 0 && line[info->i] == '>' && line[info->i + 1] != '>')
