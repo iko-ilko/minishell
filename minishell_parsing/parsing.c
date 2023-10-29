@@ -122,7 +122,6 @@ void	ft_bzero(void *s, size_t n)
 //문제는 원래는 안쓰는거 일단 만들고 봤는데, 구조상 널 문자가아닌 구분자들은 여기에 안들어옴.
 void	push_args(t_info *info, char *line)
 {
-	printf("775757777 == %s\n\n", info->buff);
 	if (*(info->buff) == 0)
 		return ;
 	// if (check_sepa(line[info->i]) == 0 )//여기가 힙 버퍼 오버플로우 원인. 마지막에 + 1에 NULL박았었음
@@ -145,7 +144,6 @@ void	push_args(t_info *info, char *line)
 	(info->args_i)++;
 	info->j = 0;
 	ft_bzero(info->buff, ft_strlen(info->buff) + 1);
-	printf("content->args[info->args_i] == %s\n\n", info->content->args[info->args_i - 1]);
 }
 //구분자 전에 공백이 있으면 이미 만들어져있었을 것이고.. 아니면 안만들어져있을것이고 .. 를 지우의 info->buff 체크해보는 방식으로 해결
 void		set_content(t_info *info, char *line, t_arvl **node, int i)
@@ -236,7 +234,6 @@ void parsing_check(char *line, t_info *info)
 		printf("parse error near `|'\n");
 		exit(1);
 	}
-	printf("\n\nlinedd[i] == %c\n", line[info->i]);
 	//마지막을 여기서 체크. 밖에서 quote가 열려있으면 에러처리. 맨 위에서 하는게 위험할것같아서 아래에서 했더니 안되던거 올리니 되네... 검증 해야하는 함수
     if (line[info->i] == info->quote)
         set_quote(info, 0, line[info->i]);
@@ -641,7 +638,8 @@ void print_nodes_to_head(t_arvl *head)
     while (current != NULL)
     {
         t_cmd *cmd = (t_cmd *)current->content;
-        printf("Node %d :\n", node_num);
+
+		printf("Node %d :\n", node_num);
         if (cmd != NULL) 
         {
             for (int i = 0; cmd->args[i] != NULL; i++)
