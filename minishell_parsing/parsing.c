@@ -167,14 +167,11 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 		printf("parse error near '\\n'2\n");
 			exit(1);
 	}
-	if (line[info->i] == ' ')
+	if (line[info->i + 1] != '\0' && (line[info->i + 1] == '>' || line[info->i + 1] == '<' || \
+		line[info->i + 1] == '|' || line[info->i + 1] == ';'))
 	{
-		if (line[info->i + 1] != '\0' && (line[info->i + 1] == '>' || line[info->i + 1] == '<' || \
-			line[info->i + 1] == '|' || line[info->i + 1] == ';'))
-		{
-			printf("syn error\n");
-			exit(1);	
-		}
+		printf("syn error\n");
+		exit(1);	
 	}
 	info->content->flag = i;
 	info->prev_flag = i;
