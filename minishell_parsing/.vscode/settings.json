@@ -1,0 +1,8 @@
+{
+	"lldb.dereferencePointers": true,
+	"lldb.consoleMode": "commands",
+	"lldb.displayFormat": "auto",
+	"files.associations": {
+		"iterator": "c"
+	}
+}
