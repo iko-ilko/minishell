@@ -14,6 +14,7 @@ void	here_doc(char *limiter)//redirection.c로 보내?말어?
 	while (1)
 	{
 		line = readline("> ");//->개행과 EOF도 저장 해줘야 하나?
+		//환경변수 확장
 		if (!line)
 		{
 			str_error("readline error", NULL);
@@ -38,10 +39,12 @@ void	execute_child(t_data *data, t_pipe *pipe_data, t_cmd *cmd)
 	{
 		if (if_buitin_func(data, cmd->args) == 1)
 		{
-			exit(0);
+			exit(0);//return
 		}
 		pipe_data->cur_cmd_path = find_command(cmd->args[0], pipe_data->all_path);
-		if (execve(pipe_data->cur_cmd_path, cmd->args, data->envp) == -1)
+		if (ft_strcmp(cmd->args[0], "./minishell") == 0)
+			execve(cmd->args[0], cmd->args, data->envp);
+		else if (execve(pipe_data->cur_cmd_path, cmd->args, data->envp) == -1)
 			exit_error("command not found", cmd->args[0], 127);
 	}
 }
@@ -69,9 +72,15 @@ void	exe_data(t_data *data, char *root_file_name)
 	while (cur != NULL)
 	{
 		cmd = (t_cmd *)cur->content;
-		if (cmd->flag == SIN_REDI_R && cmd->flag == DOUB_REDI_R)
+		if (cmd->args == NULL)
+		{
+			cur = cur->next;
+			continue ;
+		}
+		printf("cmd->args[0]: %s\n", cmd->args[0]);
+		if (cmd->flag == EXE_SIN_REDI_R && cmd->flag == EXE_DOUB_REDI_R)
 			redirect_file_out(data, &pipe_data, cmd);
-		else if (cmd->flag == SIN_REDI_L && cmd->flag == DOUB_REDI_L)
+		else if (cmd->flag == EXE_SIN_REDI_L && cmd->flag == EXE_DOUB_REDI_L)
 			redirect_file_in(data, &pipe_data, cmd);
 		else
 		{
@@ -84,7 +93,7 @@ void	exe_data(t_data *data, char *root_file_name)
 			unlink("here_doc.temp");
 		cur = cur->next;
 	}
-	wait_parent(data, pipe_data.next_fd);
+	wait_parent(data, pipe_data.next_fd);//여기 pre fd 줘도 될것같은데? 아니지 결국 같겠다 나중에 테스트.
 }
 			// if (ft_strcmp(root_file_name, cmd->args[0]) == 0)//more shell도 그냥 pipex에서 했던 실행에 인자 넣어줘도 될지 체크. 되면 파이프 있는지 체크하고 다른 함수 호출.
 			// 	more_shell(data, cmd->args, envp);

@@ -66,6 +66,7 @@ int	cnt_pipe(t_arvl *arvl)
 			cnt++;
 		cur = cur->next;
 	}
+	printf("cnt: %d\n", cnt);
 	return (cnt);
 }
 
@@ -75,6 +76,7 @@ void	wait_parent(t_data *data, int fd[2])
 
 	close(fd[0]);
 	close(fd[1]);
+	printf("last: %d\n", data->last_exit_code);
 	waitpid(data->cur_pid, &status, 0);
 	while (wait(NULL) != -1)
 		;

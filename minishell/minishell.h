@@ -33,7 +33,12 @@
 # define SIN_REDI_L 4 // <
 # define DOUB_REDI_L 5 // <<
 
-
+// # define EXE_NONE 10
+// # define EXE_PIPE 11
+# define EXE_DOUB_REDI_R 10
+# define EXE_DOUB_REDI_L 11
+# define EXE_SIN_REDI_R 12
+# define EXE_SIN_REDI_L 13
 /* env linkedlist */
 typedef struct	s_envl
 {
@@ -65,6 +70,7 @@ typedef struct	s_info
 	int		i; // cmd의 인덱스. parsing함수에서 사용
 	int		j; // buff의 인덱스. parsing_check함수에서 사용
 	int		token_count;
+	int		prev_flag;
 	char	quote;
 	char 	*buff;
 	t_arvl	*head;
@@ -107,9 +113,9 @@ char	*ft_strtok(char *str, char sepa);
 int		check_sepa(char c);
 char	*get_pre_sepa_str(char *input, int sepa_idx);
 int		count_token(char *input);
-char 	*get_args_one_size(char *line);
+char 	*get_args_one_size(char *line, int last_flag);
 void	push_args(t_info *info, char *line);
-void	set_content(t_info *info, char *line, t_arvl **node, int i);
+void	set_content(t_info *info, char *line, t_arvl **node, int flag);
 char	*ft_substr(char *s, unsigned int start, size_t len);
 char	*ft_strtrim(char *s1, char *set);
 void 	parsing_check(char *line, t_info *info);
