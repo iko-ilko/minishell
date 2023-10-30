@@ -12,6 +12,8 @@ SRCS = minishell.c parsing.c execute.c \
 	./child_process_src/shell_child.c \
 	./child_process_src/execute_child.c \
 	\
+	./util_src/pipe_func.c \
+	./util_src/redirection.c \
 	./util_src/list_func.c \
 	./util_src/signal_func.c \
 	./util_src/init_func.c \

@@ -57,4 +57,12 @@ void	init_exe_data(t_info *info, t_data *data, char **envp, char *rootfile)
 	update_envp(data, data->envl);
 }
 
-void	init_pipe()
+void	init_pipe(t_data *data, t_pipe *pipe_data)
+{
+	data->last_exit_code = 0;
+	pipe_data->cmd_idx = 0;
+	pipe_data->pipe_cnt = cnt_pipe(data->arvl);
+	pipe_data->heredoc_f = 0;
+	pipe_data->all_path = get_all_path(data->envp);
+	pipe_data->cur_cmd_path = NULL;
+}

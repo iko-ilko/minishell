@@ -83,7 +83,8 @@ void	here_doc(char **arv)
 		line = get_next_line(0);
 		if (!line)
 			error("get_next_line error", NULL, 1);
-		if (!ft_strncmp(arv[2], line, ft_strlen(arv[2])))
+		line[ft_strlen(line) - 1] = '\0';
+		if (!ft_strcmp(arv[2], line))
 			break ;
 		write(here_doc_temp, line, ft_strlen(line));
 		free(line);

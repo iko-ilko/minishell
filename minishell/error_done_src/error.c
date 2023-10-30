@@ -29,3 +29,9 @@ void	str_error(char *message, char *reason)
 	write(2, message, ft_strlen(message));
 	write(2, "\n", 1);
 }
+
+void	my_perror(char *infile_name)
+{
+	perror("minishell: ");
+	// exi
+}

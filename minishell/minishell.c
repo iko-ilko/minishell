@@ -5,7 +5,7 @@ int main(int arc, char **arv, char **envp)
 	t_info	info;
 	t_data	data;
     char    *line;
-	int i = 0;
+	int 	i = 0;
 
 	if (arv[1] != NULL)
 		exit_error("No such file or directory", arv[1], 127);
@@ -27,7 +27,7 @@ int main(int arc, char **arv, char **envp)
 		data.arvl = info.head;
 		free(line);
 		printf("----------end parsing\n");
-		exe_data(&data, envp, arv[0]);
+		exe_data(&data, arv[0]);
 		//free_all();//with line
 
     }

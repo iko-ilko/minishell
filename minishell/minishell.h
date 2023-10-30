@@ -17,6 +17,7 @@
 # include <signal.h>
 # include <unistd.h>
 # include <stdlib.h>
+# include <fcntl.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 
@@ -73,12 +74,11 @@ typedef struct	s_info
 /* 매 라인 실행마다 초기화 해주는 파이프 */
 typedef struct 	t_pipe
 {
-	int		pipe_idx;
+	int		cmd_idx;
 	int		pipe_cnt;
 	int		heredoc_f;
 
 	char	**all_path;
-	char	**cur_cmd_arvs;
 	char	*cur_cmd_path;
 	int		pre_fd[2];
 	int		next_fd[2];
@@ -131,7 +131,9 @@ void	parsing(t_info *info, char *line, char **env);
 
 
 /* execute.c */
-void	exe_data(t_data *data, char **envp, char *root_file_name);
+void	exe_data(t_data *data, char *root_file_name);
+void	here_doc(char *limiter);
+
 
 /* ./builtin_src/buitin_func.c */
 int		if_buitin_func(t_data *data, char **arvs);
@@ -163,7 +165,19 @@ void	more_shell(t_data *data, char **arvs, char **envp);
 /* 				execute_child.c */
 
 
-/* util.src/list_func.c */
+/* util.src/pipe_func.c */
+char	**get_all_path(char **envp);
+char	*find_command(char *cmd, char **all_path);
+void	set_pipe(t_pipe *pip);
+int		cnt_pipe(t_arvl *arvl);
+void	wait_parent(t_data *data, int fd[2]);
+
+
+/* 			/redirect_func.c */
+void	redirect_file_out(t_data *data, t_pipe *pipe_data, t_cmd *cmd);
+void	redirect_file_in(t_data *data, t_pipe *pipe_data, t_cmd *cmd);
+
+/*			/list_func.c */
 t_envl	*make_env_node(t_data *data, char *key, char *value);
 t_arvl	*ft_lstnew(void *content);
 t_arvl	*ft_lstlast(t_arvl *lst);
@@ -174,6 +188,8 @@ int		get_lstsize(t_envl *cur);
 void	init_exe_data(t_info *info, t_data *data, char **envp, char *rootfile);
 void	envp_to_envl(t_data *data, char **envp, char *rootfile);
 void	update_envp(t_data *data, t_envl *cur);
+void	init_pipe(t_data *data, t_pipe *pipe_data);
+
 /* 			/signal_func.c */
 void    sigint_handler(int signum);
 void    sigquit_handler(int signum);
@@ -213,6 +229,7 @@ int		find_index(char *str, char c);
 /* ./error_done_src/exit_error.c */
 void	exit_error(char *message, char *reason, int exit_code);
 void	str_error(char *message, char *reason);
+void	my_perror(char *infile_name);
 
 
 
