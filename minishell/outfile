@@ -1,0 +1,15 @@
+last: 0
+       1       2       8 outfile
+[?2004hminishell$ cat
+[?2004lreturn val count_token:1
+------------parsing check done--------------
+Node 1 :
+  args : cat
+  flag : 0
+
+----------end parsing
+cnt: 0
+asdasda
+asd
+asd
+asd

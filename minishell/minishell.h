@@ -138,7 +138,7 @@ void	parsing(t_info *info, char *line, char **env);
 
 /* execute.c */
 void	exe_data(t_data *data, char *root_file_name);
-void	here_doc(char *limiter);
+void	here_doc(char *limiter, int here_doc_temp_fd);
 
 
 /* ./builtin_src/buitin_func.c */

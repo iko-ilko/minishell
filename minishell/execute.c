@@ -1,16 +1,10 @@
 #include "minishell.h"
 //
-void	here_doc(char *limiter)//redirection.c로 보내?말어?
+void	here_doc(char *limiter, int here_doc_temp_fd)//redirection.c로 보내?말어?
 {
-	int		here_doc_temp;
 	char	*line;
 //시그널 처리
-	here_doc_temp = open("here_doc.temp", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (here_doc_temp == -1)
-	{
-		my_perror("here_doc.temp");
-		return ;
-	}
+
 	while (1)
 	{
 		line = readline("> ");//->개행과 EOF도 저장 해줘야 하나?
@@ -22,11 +16,12 @@ void	here_doc(char *limiter)//redirection.c로 보내?말어?
 		}
 		if (!ft_strcmp(limiter, line))
 			break ;
-		write(here_doc_temp, line, ft_strlen(line));
+		write(here_doc_temp_fd, line, ft_strlen(line));
+		write(here_doc_temp_fd, "\n", 1);
 		free(line);
 	}
 	free_single((void *)&line);
-	close(here_doc_temp);
+	close(here_doc_temp_fd);
 }
 
 void	execute_child(t_data *data, t_pipe *pipe_data, t_cmd *cmd)
@@ -64,6 +59,7 @@ void	execute_child(t_data *data, t_pipe *pipe_data, t_cmd *cmd)
 void	exe_data(t_data *data, char *root_file_name)
 {
 	t_arvl	*cur;
+	t_cmd	*next_cmd;
     t_cmd	*cmd;
 	t_pipe	pipe_data;	
 
@@ -72,22 +68,71 @@ void	exe_data(t_data *data, char *root_file_name)
 	while (cur != NULL)
 	{
 		cmd = (t_cmd *)cur->content;
-		if (cmd->args == NULL)
-		{
-			cur = cur->next;
-			continue ;
-		}
-		printf("cmd->args[0]: %s\n", cmd->args[0]);
-		if (cmd->flag == EXE_SIN_REDI_R && cmd->flag == EXE_DOUB_REDI_R)
+		// printf("cmd->args[0]: %s\n", cmd->args[0]);
+		if (cmd->flag == EXE_SIN_REDI_R || cmd->flag == EXE_DOUB_REDI_R)
 			redirect_file_out(data, &pipe_data, cmd);
-		else if (cmd->flag == EXE_SIN_REDI_L && cmd->flag == EXE_DOUB_REDI_L)
+		else if (cmd->flag == EXE_SIN_REDI_L || cmd->flag == EXE_DOUB_REDI_L)
 			redirect_file_in(data, &pipe_data, cmd);
 		else
 		{
+			if (cmd->args == NULL || cmd->args[0] == NULL)
+			{
+				cur = cur->next;
+				continue ;
+			}
+			//리다이렉션 (파싱)플래그보고 다음 노드 열어서 파일명을 cat 인자로 던져주자(다음 없으면 에러)
+			//이 아래 조건문에서 다시 플래그 체크해보고 리다이렉션이라 다음 노드 봤다면 노드 ++하기
+			if (cmd->flag == SIN_REDI_R || cmd->flag == DOUB_REDI_R)
+			{
+				if (cur->next == NULL)
+					exit_error("syntax error near unexpected token `newline'", NULL, 258);//258??
+				// redirect_file_out(data, &pipe_data, (t_cmd *)cur->next->content);
+				char **temp;
+
+				int i = -1;
+				int args_cnt = 0;
+				while (cmd->args[args_cnt])
+					args_cnt++;
+				temp = ft_calloc(args_cnt + 2, sizeof(char *));//2인 이유는 파일고 ㅏ널
+				while (cmd->args[++i])
+					temp[i] = ft_strdup(cmd->args[i]);
+				next_cmd = (t_cmd *)cur->next->content;
+				if (next_cmd == NULL)
+					exit_error("syntax error fuckin need modify", NULL, 999);
+				temp[i++] = ft_strdup(next_cmd->args[0]);
+				temp[i] = NULL;
+				free_double(&cmd->args);
+				cmd->args = temp;
+			}
+			else if (cmd->flag == SIN_REDI_L || cmd->flag == DOUB_REDI_L)
+			{
+				if (cur->next == NULL)
+					exit_error("syntax error near unexpected token `newline'", NULL, 258);//258??
+				// redirect_file_in(data, &pipe_data, (t_cmd *)cur->next->content);
+				char **temp;
+
+				int i = -1;
+				int args_cnt = 0;
+				while (cmd->args[args_cnt])
+					args_cnt++;
+				temp = ft_calloc(args_cnt + 2, sizeof(char *));//2인 이유는 파일고 ㅏ널
+				while (cmd->args[++i])
+					temp[i] = ft_strdup(cmd->args[i]);
+				next_cmd = (t_cmd *)cur->next->content;
+				if (next_cmd == NULL)
+					exit_error("syntax error fuckin need modify", NULL, 999);
+				temp[i++] = ft_strdup(next_cmd->args[0]);
+				temp[i] = NULL;
+				free_double(&cmd->args);
+				cmd->args = temp;
+			}	
 			if (pipe_data.pipe_cnt == 0 && if_buitin_func(data, cmd->args) == 1)
 				;
 			else
 				execute_child(data, &pipe_data, cmd);
+			if (cmd->flag == SIN_REDI_R || cmd->flag == DOUB_REDI_R ||
+				cmd->flag == SIN_REDI_L || cmd->flag == DOUB_REDI_L)
+				cur = cur->next;
 		}
 		if (pipe_data.heredoc_f == 1)
 			unlink("here_doc.temp");

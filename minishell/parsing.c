@@ -128,12 +128,12 @@ void	ft_bzero(void *s, size_t n)
 //문제는 원래는 안쓰는거 일단 만들고 봤는데, 구조상 널 문자가아닌 구분자들은 여기에 안들어옴.
 void	push_args(t_info *info, char *line)
 {
-	printf("in push_args()\n");
+	// printf("in push_args()\n");
 	if (*(info->buff) == 0)
 		return ;
-	printf("info->buff in push args:%sline[info->i]:\"%c\"\n", info->buff, line[info->i]);
-	printf("info->buff:%s\n", info->buff);
-	printf("args_i:%d\n", info->args_i);
+	// printf("info->buff in push args:%sline[info->i]:\"%c\"\n", info->buff, line[info->i]);
+	// printf("info->buff:%s\n", info->buff);
+	// printf("args_i:%d\n", info->args_i);
 	// if (check_sepa(line[info->i]) == 0 )//여기가 힙 버퍼 오버플로우 원인. 마지막에 + 1에 NULL박았었음
 	// {
 	
@@ -155,12 +155,12 @@ void	push_args(t_info *info, char *line)
 	info->j = 0;
 	ft_bzero(info->buff, ft_strlen(info->buff) + 1);
 
-	printf("out push_args()\n");
+	// printf("out push_args()\n");
 }
 //구분자 전에 공백이 있으면 이미 만들어져있었을 것이고.. 아니면 안만들어져있을것이고 .. 를 지우의 info->buff 체크해보는 방식으로 해결
 void		set_content(t_info *info, char *line, t_arvl **node, int i)
 {
-	printf("in set_content()\n");
+	// printf("in set_content()\n");
 	while (line[info->i] == ' ')
 		info->i++;
 	if (line[info->i] == '>' && line[info->i + 1] == '>' || line[info->i] == '<' && \
@@ -184,7 +184,7 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 		printf("syn error\n");
 		exit(1);	
 	}
-	printf("flag: %d\n", i);
+	// printf("flag: %d\n", i);
 	
 	info->content->flag = i;
 	info->prev_flag = i;
@@ -196,13 +196,13 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 	else
 		info->content->args[info->args_i] = NULL;//여기였다.
 	// printf("line[info->i + 1]:%c\tline[info->i]:%ci:%d\n", line[info->i + 1], line[info->i], info->i);
-		printf("넣어지는 arvs:%s\n", info->content->args[0]);
+		// printf("넣어지는 arvs:%s\n", info->content->args[0]);
 		ft_lstadd_back(node, ft_lstnew(info->content));//아래 조건문에서 밖으로 뺌
 	/*if ((info->content->args)[0] == 0 && info->content->flag <= 1)//여긴 뭐 하는곳?
 		exit(0);
 	else */if (line[info->i + 1] != '\0')
 	{
-		printf("new node 넣어지는 arvs:%s\n", info->content->args[0]);
+		// printf("new node 넣어지는 arvs:%s\n", info->content->args[0]);
 		info->content = ft_calloc(1, sizeof(t_cmd));
 		info->content->args = ft_calloc(count_token(line + info->i + 1) + 1, sizeof(char *));
 		// printf("count_line:%d\n", count_token(line + info->i + 1));
@@ -213,7 +213,7 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 	// while (line[info->i] != ' ' && line[info->i + 1] != '\0')//구분자 끝나고 노드 넣고 공백 밀어주는 곳
 	// 	info->i++;
 	//free and init
-	printf("out set_content()\n");
+	// printf("out set_content()\n");
 }
 
 
@@ -370,12 +370,12 @@ char		*find_env(char *str, int *j)
 
 	(*j)++;
 	i = *j;
-	printf("pre_find_env() j:%di:%dstr[*j]:%s\n", *j, i, str + *j);
+	// printf("pre_find_env() j:%di:%dstr[*j]:%s\n", *j, i, str + *j);
 	while (str[i] && str[i] != '$' && ft_isalnum(str[i]))
 		i++;
 	i--;
 	res = ft_strndup(str + *j, i - *j + 1);
-	printf("find_env() j:%di:%dres:%s\n", *j, i, res);
+	// printf("find_env() j:%di:%dres:%s\n", *j, i, res);
 	*j = i;
 	return (res);
 	// return (ft_strdup(str + 1));
@@ -498,7 +498,7 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
         {
             j = 0;
             k = 0;
-			printf("ft_set_buff()cmd->args[i]:%s\n", cmd->args[i]);
+			// printf("ft_set_buff()cmd->args[i]:%s\n", cmd->args[i]);
             while (cmd->args[i][j])
             {
 				// write(1, &cmd->args[i][j], 1);
@@ -526,7 +526,7 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
             }
             i++;
         }
-	printf("ft_set_buff()k:%d\n", k);
+	// printf("ft_set_buff()k:%d\n", k);
     buff = (char *)malloc((k + 1) * (sizeof(char)));
 	buff[k] = '\0';
     return (buff);
@@ -541,7 +541,7 @@ char *set_buff(char *args_line, char **env)
 
 	i = 0;
 	k = 0;
-	printf("ft_set_buff()args_line:%s\n", args_line);
+	// printf("ft_set_buff()args_line:%s\n", args_line);
 	while (args_line[i])
 	{
 		// write(1, &args_line[i], 1);
@@ -567,7 +567,7 @@ char *set_buff(char *args_line, char **env)
 		}
 	i++;
 	}
-	printf("ft_set_buff()k:%d\n", k);
+	// printf("ft_set_buff()k:%d\n", k);
     buff = (char *)malloc((k + 1) * (sizeof(char)));
 	buff[k] = '\0';
     return (buff);
@@ -575,7 +575,7 @@ char *set_buff(char *args_line, char **env)
 /* 구분자 등 일차적인 파싱을 끝내고, 환경변수 확장 해줌.(이미 만든 cmd->args를) */
 void parsing_second(t_arvl *node, char **env)
 {
-	printf("in parsing_second()\n");
+	// printf("in parsing_second()\n");
     t_arvl *crr;
     t_cmd *cmd;
     int i;
@@ -594,7 +594,7 @@ void parsing_second(t_arvl *node, char **env)
         i = 0;
         while (cmd->args[i])
         {
-			printf("parsing second()cmd->args[i]:%s\n", cmd->args[i]);
+			// printf("parsing second()cmd->args[i]:%s\n", cmd->args[i]);
             // buff = ft_set_buff(cmd, crr, idx, env);//이거 수정한거 어디갔지. cat 이 아닌 왜 전체가 돌아? -> 지우한테 물어보기
 			buff = set_buff(cmd->args[i], env);
             j = 0;
@@ -645,7 +645,7 @@ void parsing_second(t_arvl *node, char **env)
         }
         crr = crr->next;
     }
-	printf("out parsing_second()\n");
+	// printf("out parsing_second()\n");
 }
 
 void print_nodes_to_head(t_arvl *head)
@@ -694,13 +694,13 @@ void	parsing(t_info *info, char *line, char **env)
 		printf("fuck\n");
 		exit(0);
 	}
-	printf("info->args_i:%d\n", info->args_i);
+	// printf("info->args_i:%d\n", info->args_i);
 	// if (info->args_i)
 	// 	ft_lstadd_back(&info->head, ft_lstnew(info->content));
 	// printf("??p:%p??\n", info->content);
 	// printf("??%s??\n", info->content->args[0]);
 	// free_single((void *)&info->buff);
-	print_nodes_to_head(info->head); //result
+	// print_nodes_to_head(info->head); //result
 	printf("------------parsing check done--------------\n");
 	parsing_second(info->head, env);
 	print_nodes_to_head(info->head); //result
