@@ -27,7 +27,7 @@ int main(int arc, char **arv, char **envp)
 		data.arvl = info.head;
 		free(line);
 		printf("----------end parsing\n");
-		exe_data(&data, arv[0]);
+		// exe_data(&data, arv[0]);
 		//free_all();//with line
 
     }

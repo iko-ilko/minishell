@@ -1,5 +1,5 @@
 #include "minishell.h"
-//	printf("env_size() envv[i]:%s\n", envv[i]); <- 이거 인자로 넣으면 세그폴트 왜?
+	// printf("env_size() envv[i]:%s\n", envv[i]); <- 이거 인자로 넣으면 세그폴트 왜?
 int	node_cnt = 1;
 void	*ft_memset(void *b, int c, size_t len)
 {
@@ -78,8 +78,8 @@ int		count_token(char *input)//이 함수 작성자가 이렇게 구현한 이�
 	return (count_token);
 }
 
-//버퍼 관련 calloc으로 널문자 박기.ls >> aa bb
-char *get_args_one_size(char *line, int last_flag)
+//버퍼 관련 calloc으로 널문자 박기.
+char *get_args_one_size(char *line)
 {
 	// printf("in get_args_one_size()\n");
 	// printf("line[0]:%c\n", line[0]);
@@ -89,10 +89,6 @@ char *get_args_one_size(char *line, int last_flag)
 
 	i = 0;
 	j = 0;
-	//// ls >> ab cd 일 경우 line[i] 가 b를 가리키고 있음 -> c를 가르키도록 수정
- 	if (last_flag == 1)
-		while (line[i] != ' ')
-			i++;
 	while (line[i] && ((line[i] >= 0 && line[i] <= 32) || (line[i] == '|') || ( line[i] == ';') || \
 			(line[i] == '>') || (line[i] == '<')))
 	{
@@ -112,18 +108,6 @@ char *get_args_one_size(char *line, int last_flag)
 	// printf("out get_args_one_size()\n");
 	return (res);
 }
-
-void	ft_bzero(void *s, size_t n)
-{
-	size_t i;
-
-	i = 0;
-	while (i < n)
-	{
-		*(char*)(s + i) = '\0';
-		i++;
-	}
-}
 //현재 args를 넣되, 그 다음의 것의 공간을 만드는 것 까지함. 다음이 널문자면 만들지 말까? 아니면 나중에 원활한 free를 위해 냅둘까? -> 여기서 free할테니 안만들겠다.
 //문제는 원래는 안쓰는거 일단 만들고 봤는데, 구조상 널 문자가아닌 구분자들은 여기에 안들어옴.
 void	push_args(t_info *info, char *line)
@@ -140,10 +124,8 @@ void	push_args(t_info *info, char *line)
 		info->content->args[info->args_i] = ft_strdup(info->buff);//여기 args는 결국엔 한 노드(파이프 등 구분자로 나눠진)의 배열이니 args배열은 구분자있으면 매번 초기화(새로 사이즈 재고 말록, 0초기화)해야하지 않나?
 		free_single((void *)&info->buff);//굳이 널 안박아줘도 되긴 하지만 ..
 		if (line[info->i + 1] != '\0')
-		{
-			////마지막일 경우에 인덱스가 제대로 안밀려서 flag 넣어줘서 밀음
-			info->buff = get_args_one_size(&line[info->i], 1);//여기가 다음꺼 새로 만드는 시점
-		}
+			info->buff = get_args_one_size(&line[info->i]);//여기가 다음꺼 새로 만드는 시점
+		write(1, "this\n", 5);
 		if (check_sepa(line[info->i]) == 1)//오 ..시바 여긴 공백없이 구분자 바로 올 때. 널 문자일 때도 들어가야함
 				info->content->args[info->args_i + 1] = NULL;
 	// }
@@ -153,49 +135,32 @@ void	push_args(t_info *info, char *line)
 	// }
 	(info->args_i)++;
 	info->j = 0;
-	ft_bzero(info->buff, ft_strlen(info->buff) + 1);
-
 	// printf("out push_args()\n");
 }
 //구분자 전에 공백이 있으면 이미 만들어져있었을 것이고.. 아니면 안만들어져있을것이고 .. 를 지우의 info->buff 체크해보는 방식으로 해결
 void		set_content(t_info *info, char *line, t_arvl **node, int i)
 {
 	// printf("in set_content()\n");
-	while (line[info->i] == ' ')
-		info->i++;
 	if (line[info->i] == '>' && line[info->i + 1] == '>' || line[info->i] == '<' && \
-		line[info->i + 1] == '<' || line[info->i] == ' ' )
+		line[info->i + 1] == '<')
 		info->i++;
-	////ls >> 일 경우 에러
-	if ((line[info->i] == '<' || line[info->i ] == '>') && line[info->i + 1] == '\0')
-	{
-		printf("parse error near '\\n'\n");
-			exit(1);
-	}
-	//// | ls 일 경우 에러
-	if (line[info->i] == '|' && line[info->i + 1] == '\0')
-	{
-		printf("parse error near '\\n'2\n");
-			exit(1);
-	}
 	if (line[info->i + 1] != '\0' && (line[info->i + 1] == '>' || line[info->i + 1] == '<' || \
 		line[info->i + 1] == '|' || line[info->i + 1] == ';'))
 	{
 		printf("syn error\n");
 		exit(1);	
 	}
-	// printf("flag: %d\n", i);
-	
 	info->content->flag = i;
-	info->prev_flag = i;
-	if (*(info->buff) != 0)
-	{
-		//구분자 앞에 공백이 있어씅면 이미 처리가 됐을테니 현재 args_i는 널이 박혀야하는 자리인듯 하다.
+	printf("info->buff:%s,%d\n", info->buff, info->buff[0]);
+	// if (check_sepa(line[info->i + 1]) == 1)
+	write(1, &info->buff, 1);
+	write(1, "  ", 2);
+	 커맨드가 없는 경우에는 널문자를 만났을 때 set_content()에 들어간다. 근데 이 함수는 버퍼가 널이면 args[i]에 널 박아버리니 괜찮을것같은데....
+	if (*(info->buff) != 0)//구분자 앞에 공백이 있어씅면 이미 처리가 됐을테니 현재 args_i는 널이 박혀야하는 자리인듯 하다.
 		push_args(info, line);
-	}
 	else
 		info->content->args[info->args_i] = NULL;//여기였다.
-	// printf("line[info->i + 1]:%c\tline[info->i]:%ci:%d\n", line[info->i + 1], line[info->i], info->i);
+	printf("line[info->i + 1]:%c\tline[info->i]:%ci:%d\n", line[info->i + 1], line[info->i], info->i);
 		// printf("넣어지는 arvs:%s\n", info->content->args[0]);
 		ft_lstadd_back(node, ft_lstnew(info->content));//아래 조건문에서 밖으로 뺌
 	/*if ((info->content->args)[0] == 0 && info->content->flag <= 1)//여긴 뭐 하는곳?
@@ -204,14 +169,14 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 	{
 		// printf("new node 넣어지는 arvs:%s\n", info->content->args[0]);
 		info->content = ft_calloc(1, sizeof(t_cmd));
+		info->content->flag = 0;
 		info->content->args = ft_calloc(count_token(line + info->i + 1) + 1, sizeof(char *));
+		info->content->redi = NULL;
 		// printf("count_line:%d\n", count_token(line + info->i + 1));
-		info->content->flag = 0;	
 	}
 	info->args_i = 0;
-	/////////지움
-	// while (line[info->i] != ' ' && line[info->i + 1] != '\0')//구분자 끝나고 노드 넣고 공백 밀어주는 곳
-	// 	info->i++;
+	while (line[info->i] != ' ' && line[info->i + 1] != '\0')//구분자 끝나고 노드 넣고 공백 밀어주는 곳
+		info->i++;
 	//free and init
 	// printf("out set_content()\n");
 }
@@ -242,16 +207,18 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	return (res);
 }
 
+void	set_redirection(t_info *info, char *line, int flag)
+{
+	// 다리다이렉션 다음 문자들은 결국 파일 이름이 된다.(널, 공백 전까지)
+	char	*file_name;
 
+	
+}
 
 void parsing_check(char *line, t_info *info)
 {
-	//// | ls 일 경우 (파이프가 맨처음에 올 경우 에러)
-	if (line[0] == '|')
-	{
-		printf("parse error near `|'\n");
-		exit(1);
-	}
+	write(1, &line[info->i], 1);
+	write(1, "  ", 2);
 	//마지막을 여기서 체크. 밖에서 quote가 열려있으면 에러처리. 맨 위에서 하는게 위험할것같아서 아래에서 했더니 안되던거 올리니 되네... 검증 해야하는 함수
     if (line[info->i] == info->quote)
         set_quote(info, 0, line[info->i]);
@@ -259,77 +226,41 @@ void parsing_check(char *line, t_info *info)
         set_quote(info, line[info->i], line[info->i]);
     else if (info->quote == 0 && line[info->i] == '|')
         set_content(info, line, &info->head, PIPE);
+    else if (info->quote == 0 && line[info->i] == ';')
+        set_content(info, line, &info->head, NONE);//같은 이유가 뭘까
     else if (info->quote == 0 && line[info->i] == ' ')
 	{
-		////따옴표가 닫히고 공백을 만났을 경우 이전 노드의 flag를 확인
-		if (info->prev_flag == SIN_REDI_R || info->prev_flag == DOUB_REDI_R || 
-			info->prev_flag == SIN_REDI_L ||  info->prev_flag == DOUB_REDI_L)
-		{
-			//// ls >> file일 경우 ls 버퍼에 담고 >> 만났으니 args에 넣어주고 공백 만났을 때 여기 들어옴
-			//// 그러면 공백 file이니까 ls를 담고 버퍼 비웠으니 버퍼에는 아무것도 없잖아 
-			//// 공백이나 구분자 만나기 전까지 버퍼에 담아주고 set_content로 노드추가
-			if (!*(info->buff))
-			{
-				while (line[info->i] == ' ')
-					info->i++;
-				while(line[info->i] != '\0' && line[info->i] != '>' && line[info->i] != '<' && 
-				line[info->i] != ' ' && line[info->i] != '|')
-				{
-					//// 이 안에서도 따옴표가 닫혀있는지 확인
-					if (line[info->i] == info->quote)
-        				set_quote(info, 0, line[info->i]);
-    				else if (info->quote == 0 && (line[info->i] == '\'' || line[info->i] == '\"'))
-        				set_quote(info, line[info->i], line[info->i]);
-					info->buff[info->j++] = line[info->i];
-					info->i++;
-				}
-			}
-			info->i--;
-			//// 이전 플래그를 확인하고 그에 맞는 플래그로 바꿔주고 노드에 추가
-			if (info->prev_flag == 2)
-				set_content(info, line, &info->head, EXE_SIN_REDI_R);
-			if (info->prev_flag == 3)
-				set_content(info, line, &info->head, EXE_DOUB_REDI_R);
-			if (info->prev_flag == 4)
-				set_content(info, line, &info->head, EXE_SIN_REDI_L);
-			if (info->prev_flag == 5)
-				set_content(info, line, &info->head, EXE_DOUB_REDI_L);
-		}
-		else
-		{
+
+		// printf("ㅇㅕ기?\n");
 	        push_args(info, line);
-		} 
-	} 
+	} 커맨드가 없는 경우에는 널문자를 만났을 때 set_content()에 들어간다. 근데 이 함수는 버퍼가 널이면 args[i]에 널 박아버리니 괜찮을것같은데....
     else if (info->quote == 0 && line[info->i] == '>' && line[info->i + 1] != '>')
         set_content(info, line, &info->head, SIN_REDI_R);
+		set_redirection();
     else if (info->quote == 0 && line[info->i] == '>' && line[info->i] == '>')
-	{
         set_content(info, line, &info->head, DOUB_REDI_R);
-	}
     else if (info->quote == 0 && line[info->i] == '<' && line[info->i + 1] != '<')
         set_content(info, line, &info->head, SIN_REDI_L);
     else if (info->quote == 0 && line[info->i] == '<' && line[info->i + 1] == '<')
         set_content(info, line, &info->head, DOUB_REDI_L);
-    else
+    else if (info->quote == '\"' && line[info->i] == '\\')
     {
         info->buff[info->j++] = line[info->i];
+        info->i++;
+        info->buff[info->j++] = line[info->i];
     }
-	//// 마지막일 때 그 뒤의 flag를 확인하고 flag에 맞게 노드추가
-	if (*(info->buff) != 0 && line[info->i + 1] == '\0')//마지막 넣어주기
+	// else if (info->quote == 0 && line[info->i] == '\\')
+    // {
+    //     info->i++;
+        //     info->buff[info->j++] = line[info->i];
+    // }
+    else{
+        info->buff[info->j++] = line[info->i];}
+	// printf("info->args_i:%d\n", info->args_i);
+	if (line[info->i + 1] == '\0')//마지막 넣어주기
 	{
-		if (info->prev_flag == 2)
-			set_content(info, line, &info->head, EXE_SIN_REDI_R);
-		else if (info->prev_flag == 3)
-			set_content(info, line, &info->head, EXE_DOUB_REDI_R);
-		else if (info->prev_flag == 4)
-			set_content(info, line, &info->head, EXE_SIN_REDI_L);
-		else if (info->prev_flag == 5)
-			set_content(info, line, &info->head, EXE_DOUB_REDI_L);
-		else
-		{
-			push_args(info, line);
-			ft_lstadd_back(&info->head, ft_lstnew(info->content));
-		}
+		push_args(info, line);
+		ft_lstadd_back(&info->head, ft_lstnew(info->content));
 	}
 }
 
@@ -341,12 +272,12 @@ void make_first_init(t_info *info, char *line)
 	info->j = 0;
 	info->quote = 0;
 	info->head = NULL;
-	info->buff = get_args_one_size(line, 0);
+	info->buff = get_args_one_size(line);
 	info->content = (t_cmd *)malloc(sizeof(t_cmd));
 	int count = count_token(line);
-	info->prev_flag = 0;
 	info->content->args = ft_calloc(count, sizeof(char *) * (count + 1));
-	printf("return val count_token:%d\n", count);
+	// printf("return val count_token:%d\n", count);
+	info->content->redi = NULL;
 	info->content->flag = 0;
 }
 
@@ -397,7 +328,7 @@ size_t  ft_strlcat(char *dst, char *src, size_t dstsize)
         i = 0;
         while (dst_len + i < dstsize - 1 && src[i])
         {
-			// printf("strlcat()dst:%c, src:%c\n", dst[dst_len + i], src[i]);
+			printf("strlcat()dst:%c, src:%c\n", dst[dst_len + i], src[i]);
                 dst[dst_len + i] = src[i];
                 i++;
         }
@@ -429,7 +360,7 @@ int			set_env_to_buf(char **envv, char *env, char *buf)
 	{
 		if (check_unset(env, envv[i]))
 		{
-			// printf("set_env_to_buf() env:%sbuf:%s\n", env, buf);
+			printf("set_env_to_buf() env:%sbuf:%s\n", env, buf);
 			ft_strlcat(buf, \
 			envv[i] + ft_strlen(env) + 1, ft_strlen(envv[i]) + ft_strlen(buf));
 			break ;
@@ -475,7 +406,7 @@ void move_env_size(char **envv, char *env, int *k)
 			if (envv[i][env_len] == '=')
 			{
 				*k += ft_strlen(envv[i] + env_len + 1);
-				// printf("env_size()k:%dvalue:%s\n", *k, envv[i] + env_len + 1);
+				printf("env_size()k:%dvalue:%s\n", *k, envv[i] + env_len + 1);
 			}
 			break ;
 		}
@@ -503,7 +434,7 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
             {
 				// write(1, &cmd->args[i][j], 1);
 				// write(1, "  ", 2);
-				// printf("1ft_set_buff()k:%d\n", k);
+				printf("1ft_set_buff()k:%d\n", k);
                 if (cmd->args[i][j] == quote)
                     k++;
                 else if (quote == 0 && (cmd->args[i][j] == '\'' || cmd->args[i][j] == '\"'))
@@ -608,7 +539,7 @@ void parsing_second(t_arvl *node, char **env)
 				//parsing second 들어오기 전에 결과 출력해보면 이상없어
                 if (cmd->args[i][j] == quote)
                     quote = 0;
-                else if (quote == 0 && (cmd->args[i][j] == '\'' || cmd->args[i][j] == '\"'))//
+                else if (quote == 0 && (cmd->args[i][j] == '\'' || cmd->args[i][j] == '\"'))
                     quote = cmd->args[i][j];
                 else if (quote == '\"' && cmd->args[i][j] == '\\' && cmd->args[i][j + 1] )
                     buff[k++] = cmd->args[i][++j];
@@ -655,19 +586,20 @@ void print_nodes_to_head(t_arvl *head)
     while (current != NULL)
     {
         t_cmd *cmd = (t_cmd *)current->content;
-		printf("Node %d :\n", node_num);
-        if (cmd != NULL /*&& cmd->args != NULL*/) 
+        printf("Node %d:", node_num);
+        if (cmd != NULL) 
         {
             for (int i = 0; cmd->args[i] != NULL; i++)
             {
-                printf("  args : %s\n", cmd->args[i]);
+                printf("\targs[%d] : %s ", i, cmd->args[i]);
             }
-            printf("  flag : %d\n\n", cmd->flag);
+            printf("\nflag : %d\n", cmd->flag);
         }
         current = current->next;
         node_num++;
     }
 }
+
 
 void	parsing(t_info *info, char *line, char **env)
 {
@@ -691,27 +623,15 @@ void	parsing(t_info *info, char *line, char **env)
 	// 	push_args(info, line);
 	if (info->quote != 0)
 	{
-		printf("fuck\n");
+		// printf("fuck\n");
 		exit(0);
 	}
 	// printf("info->args_i:%d\n", info->args_i);
 	// if (info->args_i)
 	// 	ft_lstadd_back(&info->head, ft_lstnew(info->content));
-	// printf("??p:%p??\n", info->content);
-	// printf("??%s??\n", info->content->args[0]);
 	// free_single((void *)&info->buff);
 	// print_nodes_to_head(info->head); //result
 	printf("------------parsing check done--------------\n");
 	parsing_second(info->head, env);
 	print_nodes_to_head(info->head); //result
 }//push args 첫번째에 널이 들어간다 왜지? 
-
-
-
-//s>> file>>cat a ->syn error
-// file뒤에 >> 붙어서 오면 신덱스에러
-// 09093333330 == 이 부분 보셈 set_content를 두번 들어가
-
-
-//ls >> aa bb
-//ls >> aa >> bb

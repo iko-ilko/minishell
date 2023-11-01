@@ -1,3 +1,6 @@
+cur cmd: (null)
+cur cmd: ls
+cur cmd: wc
 Makefile
 builtin_src
 child_process_src

@@ -68,6 +68,7 @@ void	exe_data(t_data *data, char *root_file_name)
 	while (cur != NULL)
 	{
 		cmd = (t_cmd *)cur->content;
+		printf("cur cmd: %s\n", cmd->args[0]);
 		// printf("cmd->args[0]: %s\n", cmd->args[0]);
 		if (cmd->flag == EXE_SIN_REDI_R || cmd->flag == EXE_DOUB_REDI_R)
 			redirect_file_out(data, &pipe_data, cmd);
@@ -82,49 +83,49 @@ void	exe_data(t_data *data, char *root_file_name)
 			}
 			//리다이렉션 (파싱)플래그보고 다음 노드 열어서 파일명을 cat 인자로 던져주자(다음 없으면 에러)
 			//이 아래 조건문에서 다시 플래그 체크해보고 리다이렉션이라 다음 노드 봤다면 노드 ++하기
-			if (cmd->flag == SIN_REDI_R || cmd->flag == DOUB_REDI_R)
+			if (cmd->flag == EXE_SIN_REDI_R || cmd->flag == EXE_DOUB_REDI_R)
 			{
 				if (cur->next == NULL)
 					exit_error("syntax error near unexpected token `newline'", NULL, 258);//258??
-				// redirect_file_out(data, &pipe_data, (t_cmd *)cur->next->content);
-				char **temp;
+				redirect_file_out(data, &pipe_data, (t_cmd *)cur->next->content);
+				// char **temp;
 
-				int i = -1;
-				int args_cnt = 0;
-				while (cmd->args[args_cnt])
-					args_cnt++;
-				temp = ft_calloc(args_cnt + 2, sizeof(char *));//2인 이유는 파일고 ㅏ널
-				while (cmd->args[++i])
-					temp[i] = ft_strdup(cmd->args[i]);
-				next_cmd = (t_cmd *)cur->next->content;
-				if (next_cmd == NULL)
-					exit_error("syntax error fuckin need modify", NULL, 999);
-				temp[i++] = ft_strdup(next_cmd->args[0]);
-				temp[i] = NULL;
-				free_double(&cmd->args);
-				cmd->args = temp;
+				// int i = -1;
+				// int args_cnt = 0;
+				// while (cmd->args[args_cnt])
+				// 	args_cnt++;
+				// temp = ft_calloc(args_cnt + 2, sizeof(char *));//2인 이유는 파일고 ㅏ널
+				// while (cmd->args[++i])
+				// 	temp[i] = ft_strdup(cmd->args[i]);
+				// next_cmd = (t_cmd *)cur->next->content;
+				// if (next_cmd == NULL)
+				// 	exit_error("syntax error fuckin need modify", NULL, 999);
+				// temp[i++] = ft_strdup(next_cmd->args[0]);
+				// temp[i] = NULL;
+				// free_double(&cmd->args);
+				// cmd->args = temp;
 			}
-			else if (cmd->flag == SIN_REDI_L || cmd->flag == DOUB_REDI_L)
+			else if (cmd->flag == EXE_SIN_REDI_L || cmd->flag == EXE_DOUB_REDI_L)
 			{
 				if (cur->next == NULL)
 					exit_error("syntax error near unexpected token `newline'", NULL, 258);//258??
-				// redirect_file_in(data, &pipe_data, (t_cmd *)cur->next->content);
-				char **temp;
+				redirect_file_in(data, &pipe_data, (t_cmd *)cur->next->content);
+				// char **temp;
 
-				int i = -1;
-				int args_cnt = 0;
-				while (cmd->args[args_cnt])
-					args_cnt++;
-				temp = ft_calloc(args_cnt + 2, sizeof(char *));//2인 이유는 파일고 ㅏ널
-				while (cmd->args[++i])
-					temp[i] = ft_strdup(cmd->args[i]);
-				next_cmd = (t_cmd *)cur->next->content;
-				if (next_cmd == NULL)
-					exit_error("syntax error fuckin need modify", NULL, 999);
-				temp[i++] = ft_strdup(next_cmd->args[0]);
-				temp[i] = NULL;
-				free_double(&cmd->args);
-				cmd->args = temp;
+				// int i = -1;
+				// int args_cnt = 0;
+				// while (cmd->args[args_cnt])
+				// 	args_cnt++;
+				// temp = ft_calloc(args_cnt + 2, sizeof(char *));//2인 이유는 파일고 ㅏ널
+				// while (cmd->args[++i])
+				// 	temp[i] = ft_strdup(cmd->args[i]);
+				// next_cmd = (t_cmd *)cur->next->content;
+				// if (next_cmd == NULL)
+				// 	exit_error("syntax error fuckin need modify", NULL, 999);
+				// temp[i++] = ft_strdup(next_cmd->args[0]);
+				// temp[i] = NULL;
+				// free_double(&cmd->args);
+				// cmd->args = temp;
 			}	
 			if (pipe_data.pipe_cnt == 0 && if_buitin_func(data, cmd->args) == 1)
 				;

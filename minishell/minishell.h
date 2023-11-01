@@ -61,7 +61,18 @@ typedef struct	s_cmd
 {
 	int		flag;
 	char	**args;
+	t_redi	*redi;
 }	t_cmd;
+
+/* redirection token. if NULL = none */
+typedef struct s_redi
+{
+	int		flag;
+	int		fd;
+	char	*file_name;
+	struct s_redi *next;
+}	t_redi;
+
 
 //p_i parsing index, j = buff index, i = line index
 typedef struct	s_info
@@ -73,6 +84,7 @@ typedef struct	s_info
 	int		prev_flag;
 	char	quote;
 	char 	*buff;
+	t_redi	*redi;
 	t_arvl	*head;
 	t_cmd	*content;
 }	t_info;
@@ -113,7 +125,7 @@ char	*ft_strtok(char *str, char sepa);
 int		check_sepa(char c);
 char	*get_pre_sepa_str(char *input, int sepa_idx);
 int		count_token(char *input);
-char 	*get_args_one_size(char *line, int last_flag);
+char 	*get_args_one_size(char *line);
 void	push_args(t_info *info, char *line);
 void	set_content(t_info *info, char *line, t_arvl **node, int flag);
 char	*ft_substr(char *s, unsigned int start, size_t len);

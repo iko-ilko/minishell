@@ -38,7 +38,9 @@ char	*find_command(char *cmd, char **all_path)
 }
 
 void	set_pipe(t_pipe *pip)
-{
+{지금 생각하고있는 구조는 여기서 파이프 만들고 초기화 해주는게 맞을듯. 각 파이프와 널 까지 노드들에서만 해당되는 리다이렉션 fd 값일테니까..
+그럼 pre, next를 음 ....redi구조체에서 받아온 fd값..을 뭘로 초기화? 아니 애초에 이 시점에 dup2로 건들여주는게 맞나?
+일단 파싱에서의 리다이렉션 함수 만들고 생각해보자 ..
 	(pip->cmd_idx)++;
 	if (pip->cmd_idx > 2)
 	{
@@ -49,6 +51,12 @@ void	set_pipe(t_pipe *pip)
 	pip->pre_fd[1] = pip->next_fd[1];
 	if (pip->pipe_cnt - pip->cmd_idx >= 0 && pipe(pip->next_fd) == -1)//첫번째조건 체크해봐야함.
 		perror("minishell: ");
+	else if (pip->pipe_cnt - pip->cmd_idx >= 0)
+	{
+		dup2(pip->next_fd[0], 0);
+		dup2(pip->next_fd[1], 1);
+	}
+	//여기서 파이프 만들면 fd 1, 0로 초기화 해줘야하나?
 }
 
 int	cnt_pipe(t_arvl *arvl)
