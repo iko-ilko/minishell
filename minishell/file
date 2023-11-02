@@ -1,25 +1,4 @@
-cur cmd: (null)
-cur cmd: ls
-cur cmd: wc
-Makefile
-builtin_src
-child_process_src
-error_done_src
-execute.c
-execute.o
-file
-j_main.c
-jminishell.h
-libft_utils.c
-libft_utils_two.c
-minishell
-minishell.c
-minishell.h
-minishell.o
-outfile
-parsing.c
-parsing.o
-pipex
-str_src
-test.c
-util_src
+wadfa$
+affaf$
+limter$
+limter cat -e$

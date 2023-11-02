@@ -3,6 +3,18 @@ https://velog.io/@sweetykr/minishell                    읽어보려고 메모
 https://yeosong1.github.io/%EB%AF%B8%EB%8B%88%EC%89%98%EC%88%98%EB%8F%99%ED%85%8C%EC%8A%A4%ED%8A%B8#cd%20%20%20
 https://velog.io/@sweetykr/minishell
 
+
+
+
+cat > file | ls | wc -l > outfile
+
+<< limiter cat > file | ls | wc -l > outfile
+
+< limiter cat > file
+
+실행에선 각 파이프 전 까지 리다이렉션 다 미리 처리하고 커맨드만 실행 ...
+
+
 -- todo  - 빌트인 자식 프로세스에서 실행하게 할까 .. exit_code 반환해주고 .. 부모에서 이걸 처리해버리면 exe함수도 아닌데 자식에서 하는걸 부모에서 할 수 있다..
 		- $? 환경변수는 파싱에서 확장 시켜야 하는데 ..if $다음 ?면 구조체의 last_exit_code로 확장하게 하자.
 !!!!파이프(커맨드가 두개 이상)인 경우 빌트인은 자식에서 돌아간다(cd .. | ls 실행해보면 cd .. 실행 안돼있음)!!!!

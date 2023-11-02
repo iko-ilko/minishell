@@ -642,6 +642,7 @@ void print_nodes_to_head(t_arvl *head)
 		printf("Node %d :\n", node_num);
         if (cmd != NULL) 
         {
+			// printf("   args_p: %p, args_[0]_p:%p\n", cmd->args, cmd->args[0]);
             for (int i = 0; cmd->args[i] != NULL; i++)
             {
                 printf("  args : %s\n", cmd->args[i]);

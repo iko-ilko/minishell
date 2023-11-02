@@ -61,7 +61,7 @@ typedef struct	s_cmd
 {
 	int		flag;
 	char	**args;
-	t_redi	*redi;
+	// t_redi	*redi;
 }	t_cmd;
 
 /* redirection token. if NULL = none */
@@ -81,7 +81,7 @@ typedef struct	s_info
 	int		i; // cmd의 인덱스. parsing함수에서 사용
 	int		j; // buff의 인덱스. parsing_check함수에서 사용
 	int		token_count;
-	int		redi_flag;
+	int		prev_flag;
 	char	quote;
 	char 	*buff;
 	t_redi	*redi;
@@ -110,6 +110,7 @@ typedef struct	s_data
 	char	*pwd;//
 	char	**history;//
 
+	int		pre_flag;
 	// t_pipe	pipe_data; 함수 내에서 선언하자.
 
 	int		cur_pid;
