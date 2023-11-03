@@ -17,10 +17,9 @@ void	remake_arvl(t_info *info, t_data *data)
 		i = 0;
 		while (cmd->args[i])
 		{
-			cmd->args[i] = ft_set_buff(cmd, cur, i, data->envp);
 			i++;
 		}
 		cur = cur->next;
-	}<< limiter cat -e > file | ls | wc > outfile
+	}//<< limiter cat -e > file | ls | wc > outfile
 	//info->head free and NULL
 }
