@@ -67,22 +67,18 @@ int		count_token(char *input)//이 함수 작성자가 이렇게 구현한 이�
 	// 	exit_error("syntax error near unexpected token", NULL, 258);//이 에러로 핸들링 하면 좋은데 호출이 꽤 늦은 함수라 여기서 되는지는 일단 엑싯 박아놓고 테스트 해보자.
 	p = get_pre_sepa_str(input, sepa_idx);//이 함수는 말록을 해줘야함(이 함수에서 말록)
 	count_token = 1;
-	printf("count_token()p:%s\n", p);
 	if (ft_strtok(p, ' ') != NULL)//여기 strtok은 매번 말록함
 	{
 		while (ft_strtok(NULL, ' ') != NULL)
 			count_token++;
 	}
-	printf("count_token:%d\n", count_token);
 	free(p);
 	return (count_token);
 }
 
-//버퍼 관련 calloc으로 널문자 박기.
+//버퍼 관련 calloc으로 널문자 박기.ls >> aa bb
 char *get_args_one_size(char *line)
 {
-	printf("in get_args_one_size()\n");
-	printf("line[0]:%c\n", line[0]);
 	int i;
 	int j;
 	char *res;
@@ -108,6 +104,18 @@ char *get_args_one_size(char *line)
 	printf("out get_args_one_size()\n");
 	return (res);
 }
+
+void	ft_bzero(void *s, size_t n)
+{
+	size_t i;
+
+	i = 0;
+	while (i < n)
+	{
+		*(char*)(s + i) = '\0';
+		i++;
+	}
+}
 //현재 args를 넣되, 그 다음의 것의 공간을 만드는 것 까지함. 다음이 널문자면 만들지 말까? 아니면 나중에 원활한 free를 위해 냅둘까? -> 여기서 free할테니 안만들겠다.
 //문제는 원래는 안쓰는거 일단 만들고 봤는데, 구조상 널 문자가아닌 구분자들은 여기에 안들어옴.
 void	push_args(t_info *info, char *line)
@@ -115,17 +123,15 @@ void	push_args(t_info *info, char *line)
 	printf("in push_args()\n");
 	if (*(info->buff) == 0)
 		return ;
-	printf("info->buff in push args:%sline[info->i]:\"%c\"\n", info->buff, line[info->i]);
-	printf("info->buff:%s\n", info->buff);
-	printf("args_i:%d\n", info->args_i);
 	// if (check_sepa(line[info->i]) == 0 )//여기가 힙 버퍼 오버플로우 원인. 마지막에 + 1에 NULL박았었음
 	// {
 	
 		info->content->args[info->args_i] = ft_strdup(info->buff);//여기 args는 결국엔 한 노드(파이프 등 구분자로 나눠진)의 배열이니 args배열은 구분자있으면 매번 초기화(새로 사이즈 재고 말록, 0초기화)해야하지 않나?
-		free_single((void *)&info->buff);//굳이 널 안박아줘도 되긴 하지만 ..
+		free_single((void *)&info->buff);//굳이 널 안박아줘도 되긴 하지만 ..bzero ㅇㅏㄴ슬거면 여여기  널 박고 해해보보자
 		if (line[info->i + 1] != '\0')
+		{
 			info->buff = get_args_one_size(&line[info->i]);//여기가 다음꺼 새로 만드는 시점
-		write(1, "this\n", 5);
+		}
 		if (check_sepa(line[info->i]) == 1)//오 ..시바 여긴 공백없이 구분자 바로 올 때. 널 문자일 때도 들어가야함
 				info->content->args[info->args_i + 1] = NULL;
 	// }
@@ -135,15 +141,27 @@ void	push_args(t_info *info, char *line)
 	// }
 	(info->args_i)++;
 	info->j = 0;
-	printf("out push_args()\n");
+	ft_bzero(info->buff, ft_strlen(info->buff) + 1);
+	printf("content->args[info->args_i] == %s\n\n", info->content->args[info->args_i - 1]);
 }
 //구분자 전에 공백이 있으면 이미 만들어져있었을 것이고.. 아니면 안만들어져있을것이고 .. 를 지우의 info->buff 체크해보는 방식으로 해결
 void		set_content(t_info *info, char *line, t_arvl **node, int i)
 {
-	printf("in set_content()\n");
 	if (line[info->i] == '>' && line[info->i + 1] == '>' || line[info->i] == '<' && \
 		line[info->i + 1] == '<')
 		info->i++;
+	////ls >> 일 경우 에러
+	if ((line[info->i ] == '<' || line[info->i ] == '>') && line[info->i + 1] == '\0')
+	{
+		printf("parse error near '\\n'\n");
+			exit(1);
+	}
+	//// | ls 일 경우 에러
+	if (line[info->i ] == '|' && line[info->i + 1] == '\0')
+	{
+		printf("parse error near '\\n'2\n");
+			exit(1);
+	}
 	if (line[info->i + 1] != '\0' && (line[info->i + 1] == '>' || line[info->i + 1] == '<' || \
 		line[info->i + 1] == '|' || line[info->i + 1] == ';'))
 	{
@@ -153,30 +171,25 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 	info->content->flag = i;
 	// printf("info->buff:%s,%d\n", info->buff, info->buff[0]);
 	// if (check_sepa(line[info->i + 1]) == 1)
-	write(1, &info->buff, 1);
-	write(1, "  ", 2);
 	if (*(info->buff) != 0)//구분자 앞에 공백이 있어씅면 이미 처리가 됐을테니 현재 args_i는 널이 박혀야하는 자리인듯 하다.
 		push_args(info, line);
 	else
 		info->content->args[info->args_i] = NULL;//여기였다.
 	// printf("line[info->i + 1]:%c\tline[info->i]:%ci:%d\n", line[info->i + 1], line[info->i], info->i);
-		printf("넣어지는 arvs:%s\n", info->content->args[0]);
 		ft_lstadd_back(node, ft_lstnew(info->content));//아래 조건문에서 밖으로 뺌
 	/*if ((info->content->args)[0] == 0 && info->content->flag <= 1)//여긴 뭐 하는곳?
 		exit(0);
 	else */if (line[info->i + 1] != '\0')
 	{
-		printf("new node 넣어지는 arvs:%s\n", info->content->args[0]);
 		info->content = ft_calloc(1, sizeof(t_cmd));
 		info->content->args = ft_calloc(count_token(line + info->i + 1) + 1, sizeof(char *));
-		printf("count_line:%d\n", count_token(line + info->i + 1));
+
 		info->content->flag = 0;	
 	}
 	info->args_i = 0;
-	while (line[info->i] != ' ' && line[info->i + 1] != '\0')//구분자 끝나고 노드 넣고 공백 밀어주는 곳
-		info->i++;
+	// while (line[info->i] != ' ' && line[info->i + 1] != '\0')//구분자 끝나고 노드 넣고 공백 밀어주는 곳
+	// 	info->i++;
 	//free and init
-	printf("out set_content()\n");
 }
 
 
@@ -220,14 +233,12 @@ void parsing_check(char *line, t_info *info)
     else if (info->quote == 0 && (line[info->i] == '\'' || line[info->i] == '\"'))
         set_quote(info, line[info->i], line[info->i]);
     else if (info->quote == 0 && line[info->i] == '|')
+	{
         set_content(info, line, &info->head, PIPE);
-    else if (info->quote == 0 && line[info->i] == ';')
-        set_content(info, line, &info->head, NONE);//같은 이유가 뭘까
+	}
     else if (info->quote == 0 && line[info->i] == ' ')
 	{
-
-		printf("ㅇㅕ기?\n");
-	        push_args(info, line);
+	    push_args(info, line);
 	} 
     else if (info->quote == 0 && line[info->i] == '>' && line[info->i + 1] != '>')
         set_content(info, line, &info->head, SIN_REDI_R);
@@ -237,21 +248,17 @@ void parsing_check(char *line, t_info *info)
         set_content(info, line, &info->head, SIN_REDI_L);
     else if (info->quote == 0 && line[info->i] == '<' && line[info->i + 1] == '<')
         set_content(info, line, &info->head, DOUB_REDI_L);
-    else if (info->quote == '\"' && line[info->i] == '\\')
+    else if (info->quote == '\"' && line[info->i] == '\\')//너무 잘잘되되면  냅냅두고 ㅇ뭔가 따옴표 이이상상하하면 날려버리기
     {
         info->buff[info->j++] = line[info->i];
         info->i++;
         info->buff[info->j++] = line[info->i];
     }
-	// else if (info->quote == 0 && line[info->i] == '\\')
-    // {
-    //     info->i++;
-        //     info->buff[info->j++] = line[info->i];
-    // }
-    else{
+    else
+	{
         info->buff[info->j++] = line[info->i];}
 	printf("info->args_i:%d\n", info->args_i);
-	if (line[info->i + 1] == '\0')//마지막 넣어주기
+	if (line[info->i + 1] == '\0')//마지막 넣어주기  문제되면 *(info->buff) != 0 &&
 	{
 		push_args(info, line);
 		ft_lstadd_back(&info->head, ft_lstnew(info->content));
@@ -294,12 +301,10 @@ char		*find_env(char *str, int *j)
 
 	(*j)++;
 	i = *j;
-	printf("pre_find_env() j:%di:%dstr[*j]:%s\n", *j, i, str + *j);
 	while (str[i] && str[i] != '$' && ft_isalnum(str[i]))
 		i++;
 	i--;
 	res = ft_strndup(str + *j, i - *j + 1);
-	printf("find_env() j:%di:%dres:%s\n", *j, i, res);
 	*j = i;
 	return (res);
 	// return (ft_strdup(str + 1));
@@ -422,7 +427,6 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
         {
             j = 0;
             k = 0;
-			printf("ft_set_buff()cmd->args[i]:%s\n", cmd->args[i]);
             while (cmd->args[i][j])
             {
 				// write(1, &cmd->args[i][j], 1);
@@ -450,7 +454,6 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
             }
             i++;
         }
-	printf("ft_set_buff()k:%d\n", k);
     buff = (char *)malloc((k + 1) * (sizeof(char)));
 	buff[k] = '\0';
     return (buff);
@@ -465,7 +468,6 @@ char *set_buff(char *args_line, char **env)
 
 	i = 0;
 	k = 0;
-	printf("ft_set_buff()args_line:%s\n", args_line);
 	while (args_line[i])
 	{
 		// write(1, &args_line[i], 1);
@@ -491,7 +493,6 @@ char *set_buff(char *args_line, char **env)
 		}
 	i++;
 	}
-	printf("ft_set_buff()k:%d\n", k);
     buff = (char *)malloc((k + 1) * (sizeof(char)));
 	buff[k] = '\0';
     return (buff);
@@ -518,10 +519,9 @@ void parsing_second(t_arvl *node, char **env)
         i = 0;
         while (cmd->args[i])
         {
-			printf("parsing second()cmd->args[i]:%s\n", cmd->args[i]);
             // buff = ft_set_buff(cmd, crr, idx, env);//이거 수정한거 어디갔지. cat 이 아닌 왜 전체가 돌아? -> 지우한테 물어보기
 			buff = set_buff(cmd->args[i], env);
-            j = 0; write(1, "설마\n", 7);
+            j = 0;
             k = 0;
             while (cmd->args[i][j])
             {
@@ -560,7 +560,6 @@ void parsing_second(t_arvl *node, char **env)
                 }
                 j++;
             }
-				printf("각각의 k:%d\n", k);
 			buff[k] = '\0';
             cmd->args[i] = ft_strdup(buff);
             i++;
@@ -577,22 +576,21 @@ void print_nodes_to_head(t_arvl *head)
     t_arvl *current = head;
     int node_num = 1;
     while (current != NULL)
-    {write(1, "1", 1);
-        t_cmd *cmd = (t_cmd *)current->content; write(1, "2", 1);
-        printf("Node %d:", node_num);
+    {
+        t_cmd *cmd = (t_cmd *)current->content;
+        printf("Node %d :\n", node_num);
         if (cmd != NULL) 
         {
             for (int i = 0; cmd->args[i] != NULL; i++)
-            { write(1, "3", 1);
-                printf("\targs[%d] : %s ", i, cmd->args[i]);
+            {
+                printf("  args : %s\n", cmd->args[i]);
             }
-            printf("\nflag : %d\n", cmd->flag);
+            printf("  flag : %d\n\n", cmd->flag);
         }
         current = current->next;
         node_num++;
     }
 }
-
 
 void	parsing(t_info *info, char *line, char **env)
 {
@@ -610,22 +608,13 @@ void	parsing(t_info *info, char *line, char **env)
 		// if (cmd[info->i] == '\0')
 		// 	push_args(info, cmd);
 	}
-	//info->buff[info->i] = '\0'; -> 이거랑
-	// info->buff = ft_strtrim(info->buff, " "); -> 이거 마지막에 논리구조 확인해보고 뺴도 되는지 체크하기
-	// if (*(info->buff))
-	// 	push_args(info, line);
 	if (info->quote != 0)
 	{
 		printf("fuck\n");
 		exit(0);
 	}
-	printf("info->args_i:%d\n", info->args_i);
-	// if (info->args_i)
-	// 	ft_lstadd_back(&info->head, ft_lstnew(info->content));
-	// printf("??p:%p??\n", info->content);
-	// printf("??%s??\n", info->content->args[0]);
 	// free_single((void *)&info->buff);
-	print_nodes_to_head(info->head); //result
+	// print_nodes_to_head(info->head); //result
 	printf("------------parsing check done--------------\n");
 	parsing_second(info->head, env);
 	print_nodes_to_head(info->head); //result
