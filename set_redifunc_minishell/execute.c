@@ -63,20 +63,26 @@ void	exe_data(t_data *data, char *root_file_name)
     t_cmd	*cmd;
 	t_pipe	pipe_data;	
 
-	cur = cur;
+	cur = data->arvl;
 	init_pipe(data, &pipe_data);
 	while (cur != NULL)
 	{
 		cmd = (t_cmd *)cur->content;
-		// printf("cur cmd: %s\n", cmd->args[0]);
+		printf("cur cmd: %s\n", cmd->args[0]);
 		// printf("cmd->args[0]: %s\n", cmd->args[0]);
-
 		if (cmd->flag == EXE_SIN_REDI_R || cmd->flag == EXE_DOUB_REDI_R)
 			redirect_file_out(data, &pipe_data, cmd);
 		else if (cmd->flag == EXE_SIN_REDI_L || cmd->flag == EXE_DOUB_REDI_L)
 			redirect_file_in(data, &pipe_data, cmd);
 		else
 		{
+			if (cmd->args == NULL || cmd->args[0] == NULL)
+			{
+				cur = cur->next;
+				continue ;
+			}
+			//리다이렉션 (파싱)플래그보고 다음 노드 열어서 파일명을 cat 인자로 던져주자(다음 없으면 에러)
+			//이 아래 조건문에서 다시 플래그 체크해보고 리다이렉션이라 다음 노드 봤다면 노드 ++하기
 			if (cmd->flag == EXE_SIN_REDI_R || cmd->flag == EXE_DOUB_REDI_R)
 			{
 				if (cur->next == NULL)

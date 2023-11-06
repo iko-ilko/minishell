@@ -63,7 +63,7 @@ void	exe_data(t_data *data, char *root_file_name)
     t_cmd	*cmd;
 	t_pipe	pipe_data;	
 
-	cur = data->arvl;
+	cur = cur;
 	init_pipe(data, &pipe_data);
 	while (cur != NULL)
 	{

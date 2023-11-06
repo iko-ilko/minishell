@@ -85,8 +85,8 @@ typedef struct	s_info
 typedef struct s_redi
 {
 	int		flag;
-	int		fd;
-	// char	*file_name;
+	// int		fd;
+	char	*file_name;
 	struct s_redi *next;
 }	t_redi;
 
@@ -114,12 +114,14 @@ typedef struct 	t_pipe
 
 typedef struct	s_data
 {
-	t_cmd_node	*cmd;
+	t_cmd_node	*cmd_node_head;
+	t_cmd_node	*cmd_node_last;
 	t_envl		*envl;
 	char		**envp;
 	char		*pwd;//
 	char		**history;//
 
+	int			node_open_flag;
 	int			args_i;
 	int			pre_flag;
 	// t_pipe	pipe_data; 함수 내에서 선언하자.
@@ -204,7 +206,7 @@ void	wait_parent(t_data *data, int fd[2]);
 
 /*			/remake_func.c */
 void	remake_arvl(t_info *info, t_data *data);
-void	set_data_cmd(t_data *data, t_cmd *cmd, int pre_flag);
+void	set_data_args(t_data *data, t_arvl *cur, int pre_flag, int par_i);
 
 
 
