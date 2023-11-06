@@ -117,6 +117,7 @@ typedef struct	s_data
 	t_cmd_node	*cmd_node_head;
 	t_cmd_node	*cmd_node_last;
 	t_envl		*envl;
+	t_arvl		*arvl;
 	char		**envp;
 	char		*pwd;//
 	char		**history;//

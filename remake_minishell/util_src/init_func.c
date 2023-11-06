@@ -54,7 +54,8 @@ void	init_exe_data(t_info *info, t_data *data, char **envp, char *rootfile)
 	data->pre_flag = 0;
 	data->envl = NULL;
 	data->envp = NULL;
-	data->cmd = NULL; 
+	data->cmd_node_head = NULL; 
+	data->cmd_node_last = NULL; 
 	envp_to_envl(data, envp, rootfile);
 	update_envp(data, data->envl);
 }

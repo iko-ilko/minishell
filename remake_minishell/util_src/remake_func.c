@@ -62,17 +62,20 @@ void	make_exe_args_space(t_data *data, t_arvl *cur, int pre_flag)
 	exe_args_cnt = 0;
 	while (cur != NULL)
 	{
+		i = 0;
 		cur_cmd = (t_cmd *)cur->content;
 		while (cur_cmd->args[i] != NULL)
 		{
-			if (pre_flag != PIPE)
+			if (i == 0 && pre_flag != PIPE && data->arvl != cur)
 				i++;
-			printf("cur_cmd->args[%d] : %s\n", i, cur_cmd->args[i]);
-			if (cur_cmd->flag != PIPE)
-				exe_args_cnt++;
+				printf("i:%d %s %d \n", i, cur_cmd->args[i], pre_flag);
+			if (cur_cmd->args[i] == NULL)
+				break ;
+		printf("args[%d]:%s\n", i, cur_cmd->args[i]);
+			exe_args_cnt++;
 			i++;
 		}
-		if (cur_cmd->flag == PIPE)
+		if (cur_cmd != NULL && cur_cmd->flag == PIPE)
 			break ;
 		// pre_flag = cur_cmd->flag;
 		// if (cur->next != NULL)
@@ -145,7 +148,7 @@ void	remake_arvl(t_info *info, t_data *data)
 		}
 		if (data->node_open_flag == 0)
 			data->cmd_node_last = new_cmd_last_node(&data->cmd_node_head);
-		printf("cur cmd args[0] : %s\n", cur_cmd->args[0]);
+		// printf("cur cmd args[0] : %s\n", cur_cmd->args[0]);
 		while (cur_cmd->args[par_i])
 		{
 			if (par_i == 0 && pre_flag != 0)

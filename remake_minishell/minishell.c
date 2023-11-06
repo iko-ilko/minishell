@@ -24,10 +24,10 @@ int main(int arc, char **arv, char **envp)
 		// 	continue ;
 	    add_history(line);
 		parsing(&info, line, data.envp);//리스트에서 바꾼 2차원 배열로
+		data.arvl = info.head;
 		remake_arvl(&info, &data);//이 안에서 info안에있는 arvl을 수정하면서 data안의 arvl에 붙여주고 free
 									//근데 content안에 넣는게 아니라 (t_cmd *)content->redi에 연결리스트로 들어갈것이다 ..
 		// print_arvl_data(data.arvl);
-		// data.arvl = info.head;
 		free(line);
 		printf("----------end parsing\n");
 		// exe_data(&data, arv[0]);
