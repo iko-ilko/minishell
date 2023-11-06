@@ -99,9 +99,9 @@ char *get_args_one_size(char *line)
 		}
 	// res = (char *)malloc((j + 1) * sizeof(char));
 	res = calloc(j + 1, sizeof(char));
-	printf("get_args_one_size()j:%d\n", j);
+	// printf("get_args_one_size()j:%d\n", j);
 	res[j] = '\0';
-	printf("out get_args_one_size()\n");
+	// printf("out get_args_one_size()\n");
 	return (res);
 }
 
@@ -120,7 +120,7 @@ void	ft_bzero(void *s, size_t n)
 //문제는 원래는 안쓰는거 일단 만들고 봤는데, 구조상 널 문자가아닌 구분자들은 여기에 안들어옴.
 void	push_args(t_info *info, char *line)
 {
-	printf("in push_args()\n");
+	// printf("in push_args()\n");
 	if (*(info->buff) == 0)
 		return ;
 	// if (check_sepa(line[info->i]) == 0 )//여기가 힙 버퍼 오버플로우 원인. 마지막에 + 1에 NULL박았었음
@@ -142,7 +142,7 @@ void	push_args(t_info *info, char *line)
 	(info->args_i)++;
 	info->j = 0;
 	ft_bzero(info->buff, ft_strlen(info->buff) + 1);
-	printf("content->args[info->args_i] == %s\n\n", info->content->args[info->args_i - 1]);
+	// printf("content->args[info->args_i] == %s\n\n", info->content->args[info->args_i - 1]);
 }
 //구분자 전에 공백이 있으면 이미 만들어져있었을 것이고.. 아니면 안만들어져있을것이고 .. 를 지우의 info->buff 체크해보는 방식으로 해결
 void		set_content(t_info *info, char *line, t_arvl **node, int i)
@@ -257,7 +257,7 @@ void parsing_check(char *line, t_info *info)
     else
 	{
         info->buff[info->j++] = line[info->i];}
-	printf("info->args_i:%d\n", info->args_i);
+	// printf("info->args_i:%d\n", info->args_i);
 	if (line[info->i + 1] == '\0')//마지막 넣어주기  문제되면 *(info->buff) != 0 &&
 	{
 		push_args(info, line);
@@ -500,7 +500,7 @@ char *set_buff(char *args_line, char **env)
 /* 구분자 등 일차적인 파싱을 끝내고, 환경변수 확장 해줌.(이미 만든 cmd->args를) */
 void parsing_second(t_arvl *node, char **env)
 {
-	printf("in parsing_second()\n");
+	// printf("in parsing_second()\n");
     t_arvl *crr;
     t_cmd *cmd;
     int i;
@@ -568,7 +568,7 @@ void parsing_second(t_arvl *node, char **env)
         }
         crr = crr->next;
     }
-	printf("out parsing_second()\n");
+	// printf("out parsing_second()\n");
 }
 
 void print_nodes_to_head(t_arvl *head)

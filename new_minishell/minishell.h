@@ -27,7 +27,7 @@
 
 /* parsing flag */
 # define NONE 0
-# define PIPE 1
+# define PIPE 0
 # define SIN_REDI_R 2 // >
 # define DOUB_REDI_R 3 // >> 
 # define SIN_REDI_L 4 // <
@@ -65,13 +65,7 @@ typedef struct	s_cmd
 }	t_cmd;
 
 /* redirection token. if NULL = none */
-typedef struct s_redi
-{
-	int		flag;
-	int		fd;
-	char	*file_name;
-	struct s_redi *next;
-}	t_redi;
+
 
 
 //p_i parsing index, j = buff index, i = line index
@@ -84,10 +78,26 @@ typedef struct	s_info
 	int		prev_flag;
 	char	quote;
 	char 	*buff;
-	t_redi	*redi;
 	t_arvl	*head;
 	t_cmd	*content;
 }	t_info;
+
+typedef struct s_redi
+{
+	int		flag;
+	int		fd;
+	// char	*file_name;
+	struct s_redi *next;
+}	t_redi;
+
+/* 실행에서 쓰이는 커맨드 리스트 */
+typedef struct	s_cmd_node
+{
+	char				**args;
+	//flag는 필요..없을듯?
+	t_redi				*redi;
+	struct s_cmd_node	*next;
+}	t_cmd_node;
 
 /* 매 라인 실행마다 초기화 해주는 파이프 */
 typedef struct 	t_pipe
@@ -104,17 +114,18 @@ typedef struct 	t_pipe
 
 typedef struct	s_data
 {
-	t_arvl	*arvl;
-	t_envl	*envl;
-	char	**envp;
-	char	*pwd;//
-	char	**history;//
+	t_cmd_node	*cmd;
+	t_envl		*envl;
+	char		**envp;
+	char		*pwd;//
+	char		**history;//
 
-	int		pre_flag;
+	int			args_i;
+	int			pre_flag;
 	// t_pipe	pipe_data; 함수 내에서 선언하자.
 
-	int		cur_pid;
-	int		last_exit_code;
+	int			cur_pid;
+	int			last_exit_code;
 }	t_data;
 
 
@@ -190,6 +201,11 @@ char	*find_command(char *cmd, char **all_path);
 void	set_pipe(t_pipe *pip);
 int		cnt_pipe(t_arvl *arvl);
 void	wait_parent(t_data *data, int fd[2]);
+
+/*			/remake_func.c */
+void	remake_arvl(t_info *info, t_data *data);
+void	set_data_cmd(t_data *data, t_cmd *cmd, int pre_flag);
+
 
 
 /* 			/redirect_func.c */
