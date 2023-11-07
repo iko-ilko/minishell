@@ -131,6 +131,7 @@ typedef struct	s_data
 	int			last_exit_code;
 }	t_data;
 
+void	print_data_cmd(t_data *data);
 
 
 

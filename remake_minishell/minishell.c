@@ -1,5 +1,33 @@
 #include "minishell.h"
 
+void	print_data_cmd(t_data *data)
+{
+	t_cmd_node	*cur;
+	t_redi		*redi;
+	int			idx = 1;
+	int			i;
+
+	cur = data->cmd_node_head;
+	while (cur != NULL)
+	{
+		redi = cur->redi;
+		printf("node %d:\n", idx++);
+		while (redi != NULL)
+		{
+			printf("redi->flag : %d    file_name:%s\n", redi->flag, redi->file_name);
+			redi = redi->next;
+		}
+		i = 0;
+		while (cur->args[i])
+		{
+			printf("args[%d]:%s \n", i, cur->args[i]);
+			i++;
+		}
+		printf("\n");
+		cur = cur->next;
+	}
+}
+
 int main(int arc, char **arv, char **envp)
 {
 	t_info	info;
@@ -27,7 +55,7 @@ int main(int arc, char **arv, char **envp)
 		data.arvl = info.head;
 		remake_arvl(&info, &data);//이 안에서 info안에있는 arvl을 수정하면서 data안의 arvl에 붙여주고 free
 									//근데 content안에 넣는게 아니라 (t_cmd *)content->redi에 연결리스트로 들어갈것이다 ..
-		// print_arvl_data(data.arvl);
+		print_data_cmd(&data);
 		free(line);
 		printf("----------end parsing\n");
 		// exe_data(&data, arv[0]);
