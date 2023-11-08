@@ -33,12 +33,6 @@
 # define SIN_REDI_L 4 // <
 # define DOUB_REDI_L 5 // <<
 
-// # define EXE_NONE 10
-// # define EXE_PIPE 11
-# define EXE_DOUB_REDI_R 10
-# define EXE_DOUB_REDI_L 11
-# define EXE_SIN_REDI_R 12
-# define EXE_SIN_REDI_L 13
 /* env linkedlist */
 typedef struct	s_envl
 {
@@ -61,7 +55,6 @@ typedef struct	s_cmd
 {
 	int		flag;
 	char	**args;
-	// t_redi	*redi;
 }	t_cmd;
 
 /* redirection token. if NULL = none */
@@ -114,14 +107,14 @@ typedef struct 	t_pipe
 
 typedef struct	s_data
 {
-	t_cmd_node	*cmd_node_head;
-	t_cmd_node	*cmd_node_last;
 	t_envl		*envl;
-	t_arvl		*arvl;
 	char		**envp;
 	char		*pwd;//
 	char		**history;//
 
+	t_arvl		*arvl;
+	t_cmd_node	*cmd_node_head;
+	t_cmd_node	*cmd_node_last;
 	int			node_open_flag;
 	int			args_i;
 	int			pre_flag;
@@ -203,7 +196,7 @@ void	more_shell(t_data *data, char **arvs, char **envp);
 char	**get_all_path(char **envp);
 char	*find_command(char *cmd, char **all_path);
 void	set_pipe(t_pipe *pip);
-int		cnt_pipe(t_arvl *arvl);
+int		cnt_pipe(t_cmd_node *head);
 void	wait_parent(t_data *data, int fd[2]);
 
 /*			/remake_func.c */
@@ -213,8 +206,9 @@ void	set_data_args(t_data *data, t_arvl *cur, int pre_flag, int par_i);
 
 
 /* 			/redirect_func.c */
-void	redirect_file_out(t_data *data, t_pipe *pipe_data, t_cmd *cmd);
-void	redirect_file_in(t_data *data, t_pipe *pipe_data, t_cmd *cmd);
+void	redirect_file(t_redi *redi, int *heredoc_f);
+void	redirect_file_out(int flag, char *file_name);
+void	redirect_file_in(int flag, char *file_name, int *heredoc_f);
 
 /*			/list_func.c */
 t_envl	*make_env_node(t_data *data, char *key, char *value);
@@ -224,7 +218,8 @@ void	ft_lstadd_back(t_arvl **lst, t_arvl *new);
 int		get_lstsize(t_envl *cur);
 
 /* 			/init_func.c */
-void	init_exe_data(t_info *info, t_data *data, char **envp, char *rootfile);
+void	init_envl(t_data *data, char **envp, char *rootfile);
+void	every_init(t_info *info, t_data *data);
 void	envp_to_envl(t_data *data, char **envp, char *rootfile);
 void	update_envp(t_data *data, t_envl *cur);
 void	init_pipe(t_data *data, t_pipe *pipe_data);
@@ -236,6 +231,8 @@ void    sigquit_handler(int signum);
 void	free_vars(t_data *data);
 void	free_double(char ***str);
 void	free_single(void **str);
+void	free_every(t_data *data, t_info *info, char **line);
+
 //구조체, 또는 노드 전체, 또는 노드 하나 프리하는 함수
 
 /* ./str_src/str_func1.c */

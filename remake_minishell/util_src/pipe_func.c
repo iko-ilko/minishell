@@ -21,6 +21,8 @@ char	*find_command(char *cmd, char **all_path)
 	char	*temp;
 	char	*result;
 
+	write(1, cmd, ft_strlen(cmd));
+	write(1, "?\n", 2);
 	if (cmd[0] == '/' && access(cmd, X_OK) == 0)
 		return (ft_strdup(cmd));
 	i = -1;
@@ -60,22 +62,19 @@ void	set_pipe(t_pipe *pip)
 	//여기서 파이프 만들면 fd 1, 0로 초기화 해줘야하나?
 }
 
-int	cnt_pipe(t_arvl *arvl)
+int	cnt_pipe(t_cmd_node *cmd)
 {
-	int		cnt;
-	t_cmd	*cmd;
-	t_arvl	*cur;
+	int	cnt;
 
 	cnt = 0;
-	cur = arvl;
-	while (cur != NULL)
+	while (cmd != NULL)
 	{
-		cmd = (t_cmd *)cur->content;
-		if (cmd->flag == PIPE)
+		if (cmd->args != NULL)
 			cnt++;
-		cur = cur->next;
+		cmd = cmd->next;
 	}
-	printf("cnt: %d\n", cnt);
+	if (cnt > 0)
+	cnt--; 
 	return (cnt);
 }
 
@@ -85,7 +84,7 @@ void	wait_parent(t_data *data, int fd[2])
 
 	close(fd[0]);
 	close(fd[1]);
-	printf("last: %d\n", data->last_exit_code);
+	printf("last exit: %d\n", data->last_exit_code);
 	waitpid(data->cur_pid, &status, 0);
 	while (wait(NULL) != -1)
 		;

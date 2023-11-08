@@ -6,7 +6,6 @@ void	print_data_cmd(t_data *data)
 	t_redi		*redi;
 	int			idx = 1;
 	int			i;
-
 	cur = data->cmd_node_head;
 	while (cur != NULL)
 	{
@@ -41,7 +40,7 @@ int main(int arc, char **arv, char **envp)
 	if (arv[1] != NULL)
 		exit_error("No such file or directory", arv[1], 127);
     // do_signal();
-	init_exe_data(&info, &data, envp, arv[0]);
+	init_envl(&data, envp, arv[0]);
     signal(SIGINT, sigint_handler);
     signal(SIGQUIT, SIG_DFL);//테스트로 디폴트 작동
     // signal()
@@ -52,16 +51,16 @@ int main(int arc, char **arv, char **envp)
 		if (line == NULL)//<-파상 안에서 하는 trim 여기서 할까? 아님 파싱에서 syntax error 잡히면 -1 리턴하고 그러면 라인 free하고 continue되게 할까?
 			break ;
 	    add_history(line);
-		parsing(&info, line, data.envp);//리스트에서 바꾼 2차원 배열로
+		every_init(&info, &data);
+		parsing(&info, line, data.envp);
 		print_nodes_to_head(info.head); //print info->head
 		data.arvl = info.head;//안에 넣을까?
 		remake_arvl(&info, &data);
 		// free_arvl(info);<-메모리 많이 잡아먹지도 않는데 아래서 한번에 해줄까?
 		print_data_cmd(&data);//print data->cmd_node_head
-		free(line);
 		printf("----------end parsing\n");
-		// exe_data(&data, arv[0]);
-		//free_all();//with line
+		exe_data(&data, arv[0]);//root file name 필요없을듯 있으면 구조체에 ㄱ
+		free_every(&data, &info, &line);//with line
 
     }
 }

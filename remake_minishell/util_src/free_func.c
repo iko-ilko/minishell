@@ -37,3 +37,55 @@ void	free_single(void **p)
 	free(*p);
 	*p = NULL;
 }
+
+void	clear_t_avrl(t_arvl **head)
+{
+	t_arvl	*cur;
+	t_arvl	*next;
+	t_cmd	*cmd;
+
+	cur = *head;
+	while (cur != NULL)
+	{
+		cmd = cur->content;
+		free_double((void *)&cmd->args);
+		next = cur->next;
+		free(cur->content);
+		free(cur);
+		cur = next;
+	}
+	*head = NULL;
+}
+
+void	clear_t_cmd_node(t_cmd_node **head)
+{
+	t_cmd_node	*cmd;
+	t_cmd_node	*next;
+	t_redi		*redi;
+	t_redi		*next_redi;
+
+	cmd = *head;
+	while (cmd != NULL)
+	{
+		redi = cmd->redi;
+		while (redi != NULL)
+		{
+			next_redi = redi->next;
+			free_single((void *)&redi->file_name);
+			free(redi);
+			redi = next_redi;
+		}
+		next = cmd->next;
+		free_double((void *)&cmd->args);
+		free(cmd);
+		cmd = next;
+	}
+	*head = NULL;
+}
+void	free_every(t_data *data, t_info *info, char **line)
+{
+	free_single((void **)line);
+	clear_t_avrl(&info->head);
+	clear_t_cmd_node(&data->cmd_node_head);
+	
+}

@@ -66,18 +66,18 @@ void	cd_exe(t_data *data, char **arvs)
 		find_key(data, "OLDPWD")->value = cwd_temp;
 	else
 		find_key(data, "OLDPWD")->value = find_key(data, "PWD")->value;
-	free(cwd_temp);
+	free_single((void *)&cwd_temp);
 	if (chdir(arvs[1]) == -1)
 		perror(error_str);
-	else if (ft_strcmp(arvs[1], ".") != 0)
-	{
-		cwd_temp = getcwd(NULL, 0);
-		if (find_key(data, "PWD") == NULL)
-			add_env(data, "PWD", cwd_temp);
-		else
-			modify_env(data, "PWD", cwd_temp);
-		free(cwd_temp);
-	}
+	// else if (ft_strcmp(arvs[1], ".") != 0)
+	// {
+	// 	cwd_temp = getcwd(NULL, 0);
+	// 	if (find_key(data, "PWD") == NULL)
+	// 		add_env(data, "PWD", cwd_temp);
+	// 	else
+	// 		modify_env(data, "PWD", cwd_temp);
+	// 	free(cwd_temp);
+	// }
 
 	// printf("\n$PWD:%s\n", find_key(data, "PWD")->value);
 	// printf("$OLDPWD:%s\n", find_key(data, "OLDPWD")->value);

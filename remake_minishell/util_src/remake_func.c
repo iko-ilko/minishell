@@ -100,6 +100,13 @@ void	set_data_args(t_data *data, t_arvl *cur, int pre_flag, int par_i)
 	data->args_i++; //<- 이거 츠가ㅣ함
 }
 
+void	open_new_node(t_data *data)
+{
+	data->cmd_node_last = new_cmd_last_node(&data->cmd_node_head);
+	data->args_i = 0;
+	data->node_open_flag = 1;
+}
+
 //앞의 플래그가 리다렉이면 현재 노드의 args[0]을 파일이름으로 생각하고
 //리다렉이 아니면 args[0] ~ 현재 노드의 args끝까지를 커맨드로 생각한다.
 void	remake_arvl(t_info *info, t_data *data)
@@ -109,8 +116,6 @@ void	remake_arvl(t_info *info, t_data *data)
 	int 	pre_flag;
 	int		par_i;
 
-	data->args_i = 0;
-	data->node_open_flag = 0;
 	pre_flag = -1;
 	//인덱스로 커맨드 <-> 노드 연결은 너무 복잡할것같으니 t_cmd에 redi 연결리스트 데이터를 넣어주자.
 	cur = info->head;
@@ -125,11 +130,7 @@ void	remake_arvl(t_info *info, t_data *data)
 			continue ;
 		}
 		if (data->node_open_flag == 0)
-		{
-			data->cmd_node_last = new_cmd_last_node(&data->cmd_node_head);
-			data->args_i = 0;
-			data->node_open_flag = 1;
-		}
+			open_new_node(data);
 		while (cur_cmd->args[par_i])
 		{
 			if (par_i == 0 && pre_flag != PIPE && pre_flag != -1)

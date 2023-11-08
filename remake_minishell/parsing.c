@@ -225,8 +225,6 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 
 void parsing_check(char *line, t_info *info)
 {
-	write(1, &line[info->i], 1);
-	write(1, "  ", 2);
 	//마지막을 여기서 체크. 밖에서 quote가 열려있으면 에러처리. 맨 위에서 하는게 위험할것같아서 아래에서 했더니 안되던거 올리니 되네... 검증 해야하는 함수
     if (line[info->i] == info->quote)
         set_quote(info, 0, line[info->i]);
@@ -277,7 +275,7 @@ void make_first_init(t_info *info, char *line)
 	info->content = (t_cmd *)malloc(sizeof(t_cmd));
 	int count = count_token(line);
 	info->content->args = ft_calloc(count, sizeof(char *) * (count + 1));
-	printf("return val count_token:%d\n", count);
+	// printf("return val count_token:%d\n", count);
 	info->content->flag = 0;
 }
 
@@ -615,6 +613,7 @@ void	parsing(t_info *info, char *line, char **env)
 	}
 	// free_single((void *)&info->buff);
 	// print_nodes_to_head(info->head); //result
-	printf("------------parsing check done--------------\n");
+	// printf("------------parsing check done--------------\n");
 	parsing_second(info->head, env);
+	free_single((void *)&info->buff);
 }//push args 첫번째에 널이 들어간다 왜지? 
