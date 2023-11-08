@@ -1,8 +1,10 @@
 #include "../minishell.h"
 //util/remake_list_func.c
+int aaa = 1;
 t_redi	*new_redi_last_node(t_redi **head)
 {
 	t_redi	*new;
+	t_redi	*cur;
 
 	new = (t_redi *)malloc(sizeof(t_redi));
 	if (!new)
@@ -10,13 +12,14 @@ t_redi	*new_redi_last_node(t_redi **head)
 	new->flag = 0;
 	new->file_name = NULL;
 	new->next = NULL;
-	if (*head == NULL)
+	cur = *head;
+	if (cur == NULL)
 		*head = new;
 	else
 	{
-		while ((*head)->next != NULL)
-			*head = (*head)->next;
-		(*head)->next = new;
+		while ((cur)->next != NULL)
+			cur = (cur)->next;
+		(cur)->next = new;
 	}
 	return (new);
 }
@@ -24,6 +27,7 @@ t_redi	*new_redi_last_node(t_redi **head)
 t_cmd_node	*new_cmd_last_node(t_cmd_node **head)
 {
 	t_cmd_node	*new;
+	t_cmd_node	*cur;
 
 	new = (t_cmd_node *)malloc(sizeof(t_cmd_node));
 	if (!new)
@@ -31,19 +35,21 @@ t_cmd_node	*new_cmd_last_node(t_cmd_node **head)
 	new->redi = NULL;
 	new->args = NULL;
 	new->next = NULL;
-	if (*head == NULL)
+	cur = *head;
+	if (cur == NULL)
 		*head = new;
 	else
 	{
-		while ((*head)->next != NULL)
-			*head = (*head)->next;
-		(*head)->next = new;
+		while ((cur)->next != NULL)
+			cur = (cur)->next;
+		(cur)->next = new;
 	}
 	return (new);
 }
 
 void	set_data_redi(t_data *data, char *file_name, int pre_flag)
 {
+	// printf("redi node %d:%s\n", aaa++, file_name);
 	t_redi	*new;
 
 	new = new_redi_last_node(&data->cmd_node_last->redi);
@@ -87,6 +93,7 @@ void	set_data_args(t_data *data, t_arvl *cur, int pre_flag, int par_i)
 	t_cmd	*cur_cmd;
 
 	cur_cmd = (t_cmd *)cur->content;
+	// printf("args node %d:%s\n", aaa++, cur_cmd->args[par_i]);
 	if (data->args_i == 0)
 		make_exe_args_space(data, cur, pre_flag);
 	data->cmd_node_last->args[data->args_i] = ft_strdup(cur_cmd->args[par_i]);
@@ -101,18 +108,16 @@ void	remake_arvl(t_info *info, t_data *data)
 	t_cmd	*cur_cmd;
 	int 	pre_flag;
 	int		par_i;
-	int		exe_i;
 
 	data->args_i = 0;
 	data->node_open_flag = 0;
-	pre_flag = -1;//0으로 해도 되는지 체크
+	pre_flag = -1;
 	//인덱스로 커맨드 <-> 노드 연결은 너무 복잡할것같으니 t_cmd에 redi 연결리스트 데이터를 넣어주자.
 	cur = info->head;
 	while (cur)
 	{
 		cur_cmd = (t_cmd *)cur->content;
 		par_i = 0;
-		exe_i = 0;
 		if (cur_cmd->args == NULL || cur_cmd->args[0] == NULL)//ㄷㅜㄹ ㅈㅜㅇ ㅎㅏ나만 살살리리기
 		{
 			pre_flag = cur_cmd->flag;
@@ -127,26 +132,19 @@ void	remake_arvl(t_info *info, t_data *data)
 		}
 		while (cur_cmd->args[par_i])
 		{
-		// printf("args[0] : %s pre_flag:%d\n", cur_cmd->args[0], pre_flag);
 			if (par_i == 0 && pre_flag != PIPE && pre_flag != -1)
 				set_data_redi(data, cur_cmd->args[0], pre_flag);
 			else
 				set_data_args(data, cur, pre_flag, par_i);
 			par_i++;
-			// 	<- cur_cmd 대신 cur 넣고 par_i도 줘야할듯? 다시 생각해보기
-			// 위 함함수수들에서 끝인경우 node_open_flag 값올려줘서 아래서 노드 닫기
-			// 생각해보니 노드 닫는건 안해도 될듯. 값만 잘 올려주고 calloc쓰면 널 포인터 잘 박혀있을것이고 ..
 		}
-		printf("-----------------------\n");
-		printf("cur->redi->head:%s\n", cur->content) <- 리다이렉션 출출력  해해보보자  이이상상하하게  들들어어간간다다
-		print_data_cmd(data);
-		printf("-----------------------\n");
-
 		if (cur_cmd->flag == PIPE)
 			data->node_open_flag = 0;
 		pre_flag = cur_cmd->flag;
 		cur = cur->next;
-	}//<< limiter cat -e > file | ls | wc > outfile
-	//info->head free and NULL
+	}
+
 	printf("remake done\n");
 }
+	//<< limiter cat -e > file | ls | wc > outfile
+	//info->head free and NULL

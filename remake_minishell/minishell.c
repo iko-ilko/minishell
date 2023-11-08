@@ -14,14 +14,17 @@ void	print_data_cmd(t_data *data)
 		printf("node %d:\n", idx++);
 		while (redi != NULL)
 		{
-			printf("redi->flag : %d    file_name:%s\n", redi->flag, redi->file_name);
+			printf("file_name:%s\tredi->flag : %d\n", redi->file_name, redi->flag);
 			redi = redi->next;
 		}
-		i = 0;
-		while (cur->args[i])
+		if (cur->args != NULL)
 		{
-			printf("args[%d]:%s \n", i, cur->args[i]);
-			i++;
+			i = 0;
+			while (cur->args[i])
+			{
+				printf("args[%d]:%s \n", i, cur->args[i]);
+				i++;
+			}
 		}
 		printf("\n");
 		cur = cur->next;
@@ -46,16 +49,15 @@ int main(int arc, char **arv, char **envp)
     while(1)
     {
         line = readline("minishell$ ");
-		if (line == NULL)
+		if (line == NULL)//<-파상 안에서 하는 trim 여기서 할까? 아님 파싱에서 syntax error 잡히면 -1 리턴하고 그러면 라인 free하고 continue되게 할까?
 			break ;
-		// if (ft_strlen(line) == 0)
-		// 	continue ;
 	    add_history(line);
 		parsing(&info, line, data.envp);//리스트에서 바꾼 2차원 배열로
-		data.arvl = info.head;
-		remake_arvl(&info, &data);//이 안에서 info안에있는 arvl을 수정하면서 data안의 arvl에 붙여주고 free
-									//근데 content안에 넣는게 아니라 (t_cmd *)content->redi에 연결리스트로 들어갈것이다 ..
-		print_data_cmd(&data);
+		print_nodes_to_head(info.head); //print info->head
+		data.arvl = info.head;//안에 넣을까?
+		remake_arvl(&info, &data);
+		// free_arvl(info);<-메모리 많이 잡아먹지도 않는데 아래서 한번에 해줄까?
+		print_data_cmd(&data);//print data->cmd_node_head
 		free(line);
 		printf("----------end parsing\n");
 		// exe_data(&data, arv[0]);

@@ -617,5 +617,4 @@ void	parsing(t_info *info, char *line, char **env)
 	// print_nodes_to_head(info->head); //result
 	printf("------------parsing check done--------------\n");
 	parsing_second(info->head, env);
-	print_nodes_to_head(info->head); //result
 }//push args 첫번째에 널이 들어간다 왜지? 
