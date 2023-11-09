@@ -2,6 +2,11 @@
 pipe_cnt: 0, cmd_idx: 2
 2
 3
+cat?
+1
+pipe_cnt: 0, cmd_idx: 2
+2
+3
 ls?
 Makefile
 b

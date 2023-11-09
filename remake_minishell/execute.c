@@ -28,16 +28,21 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 {
 	if (args == NULL || args[0] == NULL)
 		return ;
+	write(1, "1\n", 2);
 	set_pipe(pipe_data);
+	write(1, "2\n", 2);
+
 	data->cur_pid = fork();
 	if (data->cur_pid == -1)
 		exit_error("fork error", NULL, 1);
 	else if (data->cur_pid == 0)
 	{
+	write(1, "3\n", 2);
 		if (if_buitin_func(data, args) == 1)
 		{
 			exit(0);//return
 		}///
+
 		pipe_data->cur_cmd_path = find_command(args[0], pipe_data->all_path);
 		if (ft_strcmp(args[0], "./minishell") == 0)
 			execve(args[0], args, data->envp);
@@ -66,6 +71,9 @@ void	exe_data(t_data *data, char *root_file_name)
 	init_pipe(data, &pipe_data);//need to check
 	while (cur != NULL)
 	{
+		//아 .. 파이프 만들고 리다이렉션 해야될것같은데 ..
+		set_pipe(&pipe_data);//여기서 파이프 만들고 아래서 리다렉해주고..
+
 		redirect_file(cur->redi, &pipe_data.heredoc_f); //<-히어독 파싱부분에가면 플래그 관련 없애면 됨. 아니면 파싱에서 쓰는 확장 함수 ..재사용 가능할까?
 		{
 			if (pipe_data.pipe_cnt == 0 && if_buitin_func(data, cur->args) == 1)

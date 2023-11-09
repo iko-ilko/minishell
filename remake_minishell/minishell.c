@@ -37,6 +37,7 @@ int main(int arc, char **arv, char **envp)
     char    *line;
 	int 	i = 0;
 
+
 	if (arv[1] != NULL)
 		exit_error("No such file or directory", arv[1], 127);
     // do_signal();

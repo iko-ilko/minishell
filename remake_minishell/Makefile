@@ -34,12 +34,12 @@ all: $(NAME)
 	
 
 $(NAME): $(OBJS)
-	$(CC) -fsanitize=address $(OBJS) -lreadline -o $(NAME)
-#	$(CC) -g3 $(OBJS) -lreadline -o $(NAME)
+#	$(CC) -fsanitize=address $(OBJS) -lreadline -o $(NAME)
+	$(CC) -g3 $(OBJS) -lreadline -o $(NAME)
 
 %.o:%.c
-	$(CC) -fsanitize=address -c $< -o $@
-#	$(CC) -g3 -c $< -o $@
+#	$(CC) -fsanitize=address -c $< -o $@
+	$(CC) -g3 -c $< -o $@
 
 
 clean:
