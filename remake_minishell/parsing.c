@@ -236,8 +236,8 @@ void parsing_check(char *line, t_info *info)
 	}
     else if (info->quote == 0 && line[info->i] == ' ')
 	{
-	    push_args(info, line);
-	} 
+		push_args(info, line);
+	}
     else if (info->quote == 0 && line[info->i] == '>' && line[info->i + 1] != '>')
         set_content(info, line, &info->head, SIN_REDI_R);
     else if (info->quote == 0 && line[info->i] == '>' && line[info->i] == '>')

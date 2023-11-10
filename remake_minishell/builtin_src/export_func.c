@@ -37,7 +37,7 @@ int	find_index(char *str, char c)
     }
     return (0);
 }
-
+//OLDPWD 빈거 출력되네? 나중에 체크
 static void    print_all_export(t_data *data)
 {
     t_envl  *cur;

@@ -21,8 +21,8 @@ char	*find_command(char *cmd, char **all_path)
 	char	*temp;
 	char	*result;
 
-	write(1, cmd, ft_strlen(cmd));
-	write(1, "?\n", 2);
+	// write(1, cmd, ft_strlen(cmd));
+	// write(1, "?\n", 2);
 	if (cmd[0] == '/' && access(cmd, X_OK) == 0)
 		return (ft_strdup(cmd));
 	i = -1;
@@ -52,17 +52,17 @@ void	set_pipe(t_pipe *pip)
 	}
 	pip->pre_fd[0] = pip->next_fd[0];
 	pip->pre_fd[1] = pip->next_fd[1];
-	printf("pipe_cnt: %d, cmd_idx: %d\n", pip->pipe_cnt, pip->cmd_idx);
+	// printf("pipe_cnt: %d, cmd_idx: %d\n", pip->pipe_cnt, pip->cmd_idx);
 	if (pip->pipe_cnt - pip->cmd_idx >= 0 && pipe(pip->next_fd) == -1)//첫번째조건 체크해봐야함.
 		perror("minishell: ");
-	else if (pip->pipe_cnt - pip->cmd_idx >= 0)
-	{
-		printf("pip[0]: %d, pip[1]: %d\n", pip->next_fd[0], pip->next_fd[1]);
-		dup2(pip->next_fd[0], 0);//ㅇㅕ기서 무무한  루루프프
-		write(2, "??\n", 3);
-		dup2(pip->next_fd[1], 1);
-		write(2, "??2\n", 4);//;<- 여기 지나감
-	}
+	// else if (pip->pipe_cnt - pip->cmd_idx >= -1)
+	// {
+	// 	// printf("pip[0]: %d, pip[1]: %d\n", pip->next_fd[0], pip->next_fd[1]);
+	// 	dup2(pip->next_fd[0], 0);
+	// 	write(2, "??\n", 3);
+	// 	dup2(pip->next_fd[1], 1);
+	// 	write(2, "??2\n", 4);//;<- 여기 지나감
+	// }
 	//여기서 파이프 만들면 fd 1, 0로 초기화 해줘야하나?
 }
 
@@ -85,7 +85,7 @@ int	cnt_pipe(t_cmd_node *cmd)
 void	wait_parent(t_data *data, int fd[2])
 {
 	int status;
-
+write(2, "wait\n", 5);
 	close(fd[0]);
 	close(fd[1]);
 	printf("last exit: %d\n", data->last_exit_code);

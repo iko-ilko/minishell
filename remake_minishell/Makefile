@@ -41,7 +41,6 @@ $(NAME): $(OBJS)
 #	$(CC) -fsanitize=address -c $< -o $@
 	$(CC) -g3 -c $< -o $@
 
-
 clean:
 	rm -rf $(OBJS)
 
