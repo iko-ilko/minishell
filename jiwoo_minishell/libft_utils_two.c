@@ -35,46 +35,46 @@ char	*ft_strdup(const char *s1)
 	p[i] = '\0';
 	return (p);
 }
-char	*ft_strcpy(char *dest, char *src)
-{
-	int	i;
+// char	*ft_strcpy(char *dest, char *src)
+// {
+// 	int	i;
 
-	i = 0;
-	while (*(src + i) != '\0')
-	{
-		*(dest + i) = *(src + i);
-		i++;
-	}
-	dest[i] = '\0';
-	return (dest);
-}
+// 	i = 0;
+// 	while (*(src + i) != '\0')
+// 	{
+// 		*(dest + i) = *(src + i);
+// 		i++;
+// 	}
+// 	dest[i] = '\0';
+// 	return (dest);
+// }
 
-char	*ft_strchr(const char *s, int c)
-{
-	while (*s)
-	{
-		if (*s == c)
-			return ((char *)s);
-		s++;
-	}
-	if (c == '\0')
-		return ((char*)s);
-	return (0);
-}
+// char	*ft_strchr(const char *s, int c)
+// {
+// 	while (*s)
+// 	{
+// 		if (*s == c)
+// 			return ((char *)s);
+// 		s++;
+// 	}
+// 	if (c == '\0')
+// 		return ((char*)s);
+// 	return (0);
+// }
 
-void	*ft_calloc(size_t count, size_t size)
-{
-	char	*p;
-	size_t	i;
+// void	*ft_calloc(size_t count, size_t size)
+// {
+// 	char	*p;
+// 	size_t	i;
 
-	i = 0;
-	p = (char *)malloc(size * count);
-	if (p == NULL)
-		return (NULL);
-	while (i < size * count)
-	{
-		p[i] = 0;
-		i++;
-	}
-	return ((void *)p);
-}
+// 	i = 0;
+// 	p = (char *)malloc(size * count);
+// 	if (p == NULL)
+// 		return (NULL);
+// 	while (i < size * count)
+// 	{
+// 		p[i] = 0;
+// 		i++;
+// 	}
+// 	return ((void *)p);
+// }
