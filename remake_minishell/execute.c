@@ -44,12 +44,20 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 		{
 			exit(0);//return
 		}///
-		if (pipe_data->cmd_idx == 1){write(2, "11111111111\n", 12);
-			dup2(pipe_data->next_fd[1], 1);
-			close(pipe_data->next_fd[0]);}
-		else{write(2, "222222222222\n", 13);
-			dup2(pipe_data->pre_fd[0], 0);
-			close(pipe_data->next_fd[1]);}
+		if (pipe_data->cmd_idx == 1){write(2, "11111111111\n", 12);}
+			// dup2(pipe_data->next_fd[1], 1);
+			// close(pipe_data->next_fd[0]);}
+		else{write(2, "222222222222\n", 13);}
+			// dup2(pipe_data->pre_fd[0], 0);
+			// close(pipe_data->next_fd[1]);}
+			dup2(pipe_data->next_fd[0], pipe_data->pre_fd[0]);
+			dup2(pipe_data->next_fd[1], pipe_data->pre_fd[1]);
+			close(pipe_data->pre_fd[0]); //이거 두개는 여기서 닫아줘야하나? 아니면 부모에서 닫아줘야하나?
+			close(pipe_data->pre_fd[1]);
+			close(pipe_data->next_fd[0]);
+			close(pipe_data->next_fd[1]);
+			close(pipe_data->in_out_fd[0]);
+			close(pipe_data->in_out_fd[1]);
 
 		pipe_data->cur_cmd_path = find_command(args[0], pipe_data->all_path);
 		if (ft_strcmp(args[0], "./minishell") == 0)
@@ -105,7 +113,7 @@ void	exe_data(t_data *data, char *root_file_name)
 			unlink("here_doc.temp");
 		cur = cur->next;
 	}
-	wait_parent(data, pipe_data.next_fd);//여기 pre fd 줘도 될것같은데? 아니지 결국 같겠다 나중에 테스트.
+	wait_parent(data, &pipe_data);//여기 pre fd 줘도 될것같은데? 아니지 결국 같겠다 나중에 테스트.
 }
 			// if (ft_strcmp(root_file_name, cmd->args[0]) == 0)//more shell도 그냥 pipex에서 했던 실행에 인자 넣어줘도 될지 체크. 되면 파이프 있는지 체크하고 다른 함수 호출.
 			// 	more_shell(data, cmd->args, envp);

@@ -103,6 +103,7 @@ typedef struct 	t_pipe
 	char	*cur_cmd_path;
 	int		pre_fd[2];
 	int		next_fd[2];
+	int		in_out_fd[2];
 }	t_pipe;
 
 typedef struct	s_data
@@ -197,7 +198,7 @@ char	**get_all_path(char **envp);
 char	*find_command(char *cmd, char **all_path);
 void	set_pipe(t_pipe *pip);
 int		cnt_pipe(t_cmd_node *head);
-void	wait_parent(t_data *data, int fd[2]);
+void	wait_parent(t_data *data, t_pipe *pipe_data);
 
 /*			/remake_func.c */
 void	remake_arvl(t_info *info, t_data *data);
