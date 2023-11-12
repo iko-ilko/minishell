@@ -101,9 +101,12 @@ typedef struct 	t_pipe
 
 	char	**all_path;
 	char	*cur_cmd_path;
+	
+	// inout을 배열로 둘까 그냥 변수로 둘까.. 
+
 	int		pre_fd[2];
 	int		next_fd[2];
-	int		in_out_fd[2];
+	int		stdio_back_fd[2];
 }	t_pipe;
 
 typedef struct	s_data
@@ -207,7 +210,7 @@ void	set_data_args(t_data *data, t_arvl *cur, int pre_flag, int par_i);
 
 
 /* 			/redirect_func.c */
-void	redirect_file(t_redi *redi, int *heredoc_f);
+void	redirect_file(t_redi *redi, t_pipe *pipe_data);
 void	redirect_file_out(int flag, char *file_name);
 void	redirect_file_in(int flag, char *file_name, int *heredoc_f);
 

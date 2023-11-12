@@ -74,6 +74,8 @@ void	init_pipe(t_data *data, t_pipe *pipe_data)
 	pipe_data->heredoc_f = 0;
 	pipe_data->all_path = get_all_path(data->envp);
 	pipe_data->cur_cmd_path = NULL;
-	pipe_data->in_out_fd[0] = dup(0);
-	pipe_data->in_out_fd[1] = dup(1);
+	pipe_data->stdio_back_fd[0] = dup(0);
+	pipe_data->stdio_back_fd[1] = dup(1);
+	dup2(pipe_data->pre_fd[0], pipe_data->stdio_back_fd[0]);
+	dup2(pipe_data->pre_fd[1], pipe_data->stdio_back_fd[1]);
 }

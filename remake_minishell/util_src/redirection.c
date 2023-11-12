@@ -1,13 +1,13 @@
 #include "../minishell.h"
 
-void	redirect_file(t_redi *redi, int *heredoc_f)
+void	redirect_file(t_redi *redi, t_pipe *pipe_data)
 {
 	while (redi != NULL)
 	{
 		if (redi->flag == SIN_REDI_R || redi->flag == DOUB_REDI_R)
 			redirect_file_out(redi->flag, redi->file_name);
 		else
-			redirect_file_in(redi->flag, redi->file_name, heredoc_f);
+			redirect_file_in(redi->flag, redi->file_name, &pipe_data->heredoc_f);
 		redi = redi->next;
 	}
 }

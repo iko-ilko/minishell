@@ -53,18 +53,18 @@ void	set_pipe(t_pipe *pip)
 	pip->pre_fd[0] = pip->next_fd[0];
 	pip->pre_fd[1] = pip->next_fd[1];
 	// printf("pipe_cnt: %d, cmd_idx: %d\n", pip->pipe_cnt, pip->cmd_idx);
-	if (pip->pipe_cnt - pip->cmd_idx >= 0 && pipe(pip->next_fd) == -1)//첫번째조건 체크해봐야함.
+	if (pip->pipe_cnt - pip->cmd_idx  > 0 && pipe(pip->next_fd) == -1)//첫번째조건 체크해봐야함.
 		perror("minishell: ");
 	// else if (pip->pipe_cnt - pip->cmd_idx >= -1)
 	// {
-	// 	dup2(pip->next_fd[0], pip->in_out_fd[0]);
-	// 	dup2(pip->next_fd[1], pip->in_out_fd[1]);
-	// 	close(pip->in_out_fd[0]);
-	// 	close(pip->in_out_fd[1]);
+	// 	dup2(pip->next_fd[0], pip->stdio_back_fd[0]);
+	// 	dup2(pip->next_fd[1], pip->stdio_back_fd[1]);
+	// 	close(pip->stdio_back_fd[0]);
+	// 	close(pip->stdio_back_fd[1]);
 	// }
 	// else if (pip->pipe_cnt - pip->cmd_idx > 0)
 	// {
-	// 	dup2(pip->next_fd[1], 1);
+	// 	dup2(pip->next_fd[1], pip->stdio_back_fd[1]);
 	// 	write(2, "??SS\n", 4);
 	// }
 	// else if (pip->pipe_cnt - pip->cmd_idx < 0)
@@ -76,16 +76,16 @@ void	set_pipe(t_pipe *pip)
 	// }
 	// else
 	// {
-	// 	dup2(pip->next_fd[0], pip->in_out_fd[0]);
+	// 	dup2(pip->next_fd[0], pip->pre_fd[0]);
 	// 	write(2, "??FF\n", 4);
 	// }
-	else
-	{
-		dup2(pip->next_fd[0], pip->in_out_fd[0]);
-		dup2(pip->next_fd[1], pip->in_out_fd[1]);
-		close(pip->in_out_fd[0]);
-		close(pip->in_out_fd[1]);
-	}
+	// else
+	// {
+	// 	dup2(pip->next_fd[0], pip->stdio_back_fd[0]);
+	// 	dup2(pip->next_fd[1], pip->stdio_back_fd[1]);
+	// 	close(pip->stdio_back_fd[0]);
+	// 	close(pip->stdio_back_fd[1]);
+	// }
 	//close inout
 	//여기서 파이프 만들면 fd 1, 0로 초기화 해줘야하나?
 }
@@ -112,8 +112,8 @@ void	wait_parent(t_data *data, t_pipe *pipe_data)
 write(2, "wait\n", 5);
 	close(pipe_data->next_fd[0]);
 	close(pipe_data->next_fd[1]);
-	close(pipe_data->in_out_fd[0]);
-	close(pipe_data->in_out_fd[1]);
+	close(pipe_data->stdio_back_fd[0]);
+	close(pipe_data->stdio_back_fd[1]);
 write(2, "close!!\n", 8);
 	printf("last exit: %d\n", data->last_exit_code);
 	waitpid(data->cur_pid, &status, 0);
