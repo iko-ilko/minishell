@@ -56,49 +56,7 @@ void	set_pipe(t_pipe *pip)
 	// printf("pipe_cnt: %d, cmd_idx: %d\n", pip->pipe_cnt, pip->cmd_idx);
 	if (pip->pipe_cnt - pip->cmd_idx  > 0 && pipe(pip->next_fd) == -1)//첫번째조건 체크해봐야함.
 		perror("minishell: ");
-	// if (pip->cmd_idx != 0)
-	// {
-	// 	write(2, "one\n", 4);
-	// 	dup2(pip->next_fd[0], 0);
-	// 	close(pip->next_fd[0]);
-	// }
-	// if (pip->cmd_idx != pip->pipe_cnt)
-	// {
-	// 	write(2, "two\n", 4);
-	// 	dup2(pip->next_fd[1], 1);
-
-	// }
-	// else if (pip->pipe_cnt - pip->cmd_idx >= -1)
-	// {
-	// 	dup2(pip->next_fd[0], pip->stdio_back_fd[0]);
-	// 	dup2(pip->next_fd[1], pip->stdio_back_fd[1]);
-	// 	close(pip->stdio_back_fd[0]);
-	// 	close(pip->stdio_back_fd[1]);
-	// }
-	// else if (pip->pipe_cnt - pip->cmd_idx > 0)
-	// {
-	// 	dup2(pip->next_fd[1], pip->stdio_back_fd[1]);
-	// 	write(2, "??SS\n", 4);
-	// }
-	// else if (pip->pipe_cnt - pip->cmd_idx < 0)
-	// {
-	// 	// printf("pip[0]: %d, pip[1]: %d\n", pip->next_fd[0], pip->next_fd[1]);
-	// 	dup2(pip->next_fd[0], pip->pre_fd[0]);
-	// 	dup2(pip->next_fd[1], pip->next_fd[1]);
-	// 	write(2, "??LL\n", 4);//;<- 여기 지나감
-	// }
-	// else
-	// {
-	// 	dup2(pip->next_fd[0], pip->pre_fd[0]);
-	// 	write(2, "??FF\n", 4);
-	// }
-	// else
-	// {
-	// 	dup2(pip->next_fd[0], pip->stdio_back_fd[0]);
-	// 	dup2(pip->next_fd[1], pip->stdio_back_fd[1]);
-	// 	close(pip->stdio_back_fd[0]);
-	// 	close(pip->stdio_back_fd[1]);
-	// }
+	
 	//close inout
 	//여기서 파이프 만들면 fd 1, 0로 초기화 해줘야하나?
 }

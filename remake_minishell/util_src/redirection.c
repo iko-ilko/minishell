@@ -5,15 +5,17 @@ void	redirect_file(t_redi *redi, t_pipe *pipe_data)
 	while (redi != NULL)
 	{
 		if (redi->flag == SIN_REDI_R || redi->flag == DOUB_REDI_R)
-			redirect_file_out(redi->flag, redi->file_name);
+			pipe_data->in_out_fd[1] = redirect_file_out(redi->flag, redi->file_name);
 		else
-			redirect_file_in(redi->flag, redi->file_name, &pipe_data->heredoc_f);
+			pipe_data->in_out_fd[0] = redirect_file_in(redi->flag, redi->file_name, &pipe_data->heredoc_f);
 		redi = redi->next;
 	}
+	dup2(pipe_data->in_out_fd[0], 0);//부모와 자식 입장에서 잘 생각해보고 구조에 맞게 리다이렉션 처리. << limiter 문제 있음
+	dup2(pipe_data->in_out_fd[1], 1);
 }
 
 
-void	redirect_file_out(int flag, char *file_name)
+int	redirect_file_out(int flag, char *file_name)
 {
 	int	fd;
 
@@ -24,12 +26,11 @@ void	redirect_file_out(int flag, char *file_name)
 	if (fd == -1)
 	{
 		my_perror(file_name);
-		return ;
+		return (-1);
 	}
-	dup2(fd, STDOUT_FILENO);
-	close(fd);
+	return (fd);
 }
-void	redirect_file_in(int flag, char *file_name, int *heredoc_f)
+int	redirect_file_in(int flag, char *file_name, int *heredoc_f)
 {
 	int	fd;
 
@@ -39,10 +40,8 @@ void	redirect_file_in(int flag, char *file_name, int *heredoc_f)
 		if (fd == -1)
 		{
 			my_perror(file_name);
-			return ;
+			return (-1);
 		}
-		dup2(fd, STDIN_FILENO);
-		close(fd);
 	}
 	else
 	{
@@ -50,9 +49,10 @@ void	redirect_file_in(int flag, char *file_name, int *heredoc_f)
 		if (fd == -1)
 		{
 			my_perror("here_doc.temp");
-			return ;
+			return (-1);
 		}
 		here_doc(file_name, fd);
 		*heredoc_f = 1;
 	}
+	return (fd);
 }

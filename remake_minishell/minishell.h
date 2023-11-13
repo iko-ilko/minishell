@@ -106,6 +106,8 @@ typedef struct 	t_pipe
 	//inoutfd를 file open한 fd와 stdio_back_fd의 값을 넘겨줘서 자식에서 dup2해주자.리다이렉션이 없으면 기본값 백업 fd로 넘겨주자.
 	int		pre_fd[2];
 	int		next_fd[2];
+
+	int		in_out_fd[2];
 	int		stdio_back_fd[2];
 }	t_pipe;
 
@@ -211,8 +213,8 @@ void	set_data_args(t_data *data, t_arvl *cur, int pre_flag, int par_i);
 
 /* 			/redirect_func.c */
 void	redirect_file(t_redi *redi, t_pipe *pipe_data);
-void	redirect_file_out(int flag, char *file_name);
-void	redirect_file_in(int flag, char *file_name, int *heredoc_f);
+int		redirect_file_out(int flag, char *file_name);
+int		redirect_file_in(int flag, char *file_name, int *heredoc_f);
 
 /*			/list_func.c */
 t_envl	*make_env_node(t_data *data, char *key, char *value);
