@@ -20,6 +20,7 @@ minishell.h
 minishell.o
 new
 outfile
+p
 parsing.c
 parsing.o
 pipex

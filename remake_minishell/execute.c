@@ -44,6 +44,27 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 		{
 			exit(0);//return
 		}///
+		if (pipe_data->cmd_idx == 0)
+		{
+			write(2, "FIRST\n", 6);
+			dup2(pipe_data->next_fd[1], 1);
+			close(pipe_data->next_fd[0]);
+		}
+		else if (pipe_data->cmd_idx == pipe_data->pipe_cnt)
+		{
+			write(2, "LAST\n", 5);
+			dup2(pipe_data->pre_fd[0], 0);
+			close(pipe_data->pre_fd[1]);
+		}
+		else
+		{	
+			write(2, "MIDDLE\n", 7);
+			dup2(pipe_data->next_fd[1], 1);
+			dup2(pipe_data->pre_fd[0], 0);
+			close(pipe_data->next_fd[0]);
+			close(pipe_data->pre_fd[1]);
+			
+		}
 		// if (pipe_data->cmd_idx == 1){write(2, "11111111111\n", 12);
 		// 	dup2(pipe_data->next_fd[1], pipe_data->stdio_back_fd[1]);
 		// 	dup2(pipe_data->next_fd[0], pipe_data->stdio_back_fd[0]);
@@ -57,8 +78,8 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 		// 	dup2(pipe_data->next_fd[1], pipe_data->stdio_back_fd[1]);
 		// 	dup2(pipe_data->pre_fd[0], pipe_data->stdio_back_fd[0]);
 		// 	close(pipe_data->next_fd[1]);}
-		dup2(pipe_data->next_fd[1], pipe_data->pre_fd[1]);
-		dup2(pipe_data->next_fd[0], pipe_data->pre_fd[0]);
+		// dup2(pipe_data->next_fd[1], pipe_data->pre_fd[1]);
+		// dup2(pipe_data->next_fd[0], pipe_data->pre_fd[0]);
 
 		pipe_data->cur_cmd_path = find_command(args[0], pipe_data->all_path);
 		if (ft_strcmp(args[0], "./minishell") == 0)
@@ -72,7 +93,6 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 	memset(str, 0, 10);
 	// printf("cur_pid: %d\n", data->cur_pid);
 	// write(2, itoa(data->cur_pid, str, 10), ft_strlen(itoa(data->cur_pid, str, 10)));
-	write(2, "99\n", 3);
 	//여기서 안안에  있있는는것것들  닫닫고  프프리리
 }
 
@@ -101,7 +121,6 @@ void	exe_data(t_data *data, char *root_file_name)
 		// continue ;
 		//아 .. 파이프 만들고 리다이렉션 해야될것같은데 ..
 		set_pipe(&pipe_data);//여기서 파이프 만들고 아래서 리다렉해주고..
-		write(2, "4\n", 2);
 		redirect_file(cur->redi, &pipe_data); //<-히어독 파싱부분에가면 플래그 관련 없애면 됨. 아니면 파싱에서 쓰는 확장 함수 ..재사용 가능할까?
 		if (cur->args != NULL)
 		{

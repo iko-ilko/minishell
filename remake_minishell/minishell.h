@@ -103,7 +103,7 @@ typedef struct 	t_pipe
 	char	*cur_cmd_path;
 	
 	// inout을 배열로 둘까 그냥 변수로 둘까.. 
-
+	//inoutfd를 file open한 fd와 stdio_back_fd의 값을 넘겨줘서 자식에서 dup2해주자.리다이렉션이 없으면 기본값 백업 fd로 넘겨주자.
 	int		pre_fd[2];
 	int		next_fd[2];
 	int		stdio_back_fd[2];
