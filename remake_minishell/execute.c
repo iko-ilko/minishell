@@ -44,15 +44,43 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 		{
 			exit(0);//return
 		}///
+		// dup2(pipe_data->next_fd[1], pipe_data->stdio_back_fd[1]);
+		// dup2(pipe_data->next_fd[0],  pipe_data->stdio_back_fd[0]);
+
+		// close(pipe_data->next_fd[0]);
+		// close(pipe_data->next_fd[1]);
+		// close(pipe_data->pre_fd[0]);
+		// close(pipe_data->pre_fd[1]);
+
+		// dup2(pipe_data->next_fd[0], pipe_data->stdio_back_fd[0]);
+		// dup2(pipe_data->next_fd[1], pipe_data->stdio_back_fd[1]);
 
 		if (pipe_data->cmd_idx != 0)
-			dup2(pipe_data->pre_fd[0], 0);
+			dup2(pipe_data->pre_fd[0], pipe_data->in_out_fd[0]);
 		if (pipe_data->cmd_idx != pipe_data->pipe_cnt)
-			dup2(pipe_data->next_fd[1], 1);
+			dup2(pipe_data->next_fd[1], pipe_data->in_out_fd[1]);
+
+		// if (pipe_data->cmd_idx != 0)
+		// 	dup2(pipe_data->pre_fd[0], pipe_data->in_out_fd[0]);
+		// else if (pipe_data->cmd_idx != 0 && pipe_data->pipe_cnt != 0)
+		// {
+		// 	dup2(pipe_data->pre_fd[0], pipe_data->in_out_fd[0]);
+		// 	dup2(pipe_data->next_fd[1], pipe_data->in_out_fd[1]);
+		// }
+		// else if (pipe_data->cmd_idx == pipe_data->pipe_cnt){write(2, "last child!!!!!!!!!!!!!!!\n", 26);
+		// 	dup2(pipe_data->next_fd[1], pipe_data->in_out_fd[1]);}
+			
+		
+
 		close(pipe_data->pre_fd[0]);
 		close(pipe_data->pre_fd[1]);
 		close(pipe_data->next_fd[0]);
 		close(pipe_data->next_fd[1]);
+		if (pipe_data->cmd_idx == pipe_data->pipe_cnt)
+		{
+			printf("in last child iofd[1]:%d\n", pipe_data->in_out_fd[1]);
+			// sleep(10);
+		}
 		
 
 
@@ -60,8 +88,7 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 		if (ft_strcmp(args[0], "./minishell") == 0)
 			execve(args[0], args, data->envp);
 		else if (execve(pipe_data->cur_cmd_path, args, data->envp) == -1)
-		{write(2, "NOT\n", 4);
-		write(2, args[0], ft_strlen(args[0]));
+		{
 			exit_error("command not found", args[0], 127);}
 	}
 	char str[10];
@@ -97,7 +124,16 @@ void	exe_data(t_data *data, char *root_file_name)
 		//아 .. 파이프 만들고 리다이렉션 해야될것같은데 ..
 		set_pipe(&pipe_data);//여기서 파이프 만들고 아래서 리다렉해주고..
 		redirect_file(cur->redi, &pipe_data); //<-히어독 파싱부분에가면 플래그 관련 없애면 됨. 아니면 파싱에서 쓰는 확장 함수 ..재사용 가능할까?
-		printf("in fd:%d out fd:%d\n", pipe_data.in_out_fd[0], pipe_data.in_out_fd[1]);
+		// printf("in fd:%d out fd:%d\n", pipe_data.in_out_fd[0], pipe_data.in_out_fd[1]);
+
+		// if (pipe_data.cmd_idx != 0)
+		// 	dup2(pipe_data.pre_fd[0], pipe_data.stdio_back_fd[0]);
+		// if (pipe_data.cmd_idx != pipe_data.pipe_cnt)
+		// 	dup2(pipe_data.next_fd[1], pipe_data.stdio_back_fd[1]);
+		// close(pipe_data.pre_fd[0]);
+		// close(pipe_data.pre_fd[1]);
+		// close(pipe_data.next_fd[0]);
+		// close(pipe_data.next_fd[1]);
 		if (pipe_data.in_out_fd[0] != -1 && cur->args != NULL)
 		{
 			if (pipe_data.pipe_cnt == 0 && if_buitin_func(data, cur->args) == 1)
@@ -105,6 +141,13 @@ void	exe_data(t_data *data, char *root_file_name)
 			else
 				execute_child(data, &pipe_data, cur->args);
 		}
+		
+		// if (pipe_data.cmd_idx != 0)
+		// 	dup2(pipe_data.pre_fd[0], pipe_data.stdio_back_fd[0]);
+		// if (pipe_data.cmd_idx != pipe_data.pipe_cnt)
+		// 	dup2(pipe_data.next_fd[1], pipe_data.stdio_back_fd[1]);
+
+
 		if (pipe_data.heredoc_f == 1)
 			unlink("here_doc.temp");
 		cur = cur->next;
