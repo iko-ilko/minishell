@@ -1,6 +1,6 @@
 #include "../minishell.h"
 //util/remake_list_func.c
-int aaa = 1;
+
 t_redi	*new_redi_last_node(t_redi **head)
 {
 	t_redi	*new;
@@ -124,7 +124,7 @@ void	remake_arvl(t_info *info, t_data *data)
 		cur_cmd = (t_cmd *)cur->content;
 		par_i = 0;
 		if (cur_cmd->args == NULL || cur_cmd->args[0] == NULL)//ㄷㅜㄹ ㅈㅜㅇ ㅎㅏ나만 살살리리기
-		{
+		{//next_if_null();
 			pre_flag = cur_cmd->flag;
 			cur = cur->next;
 			continue ;

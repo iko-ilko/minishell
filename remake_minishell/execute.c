@@ -24,11 +24,6 @@ void	here_doc(char *limiter, int here_doc_temp_fd)//redirection.c로 보내?말�
 	close(here_doc_temp_fd);
 }
 
-char* itoa(int value, char* str, int base) {
-    sprintf(str, "%d", value);
-    return str;
-}
-
 
 void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 {
@@ -39,57 +34,23 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 		exit_error("fork error", NULL, 1);
 	else if (data->cur_pid == 0)
 	{
-	write(2, args[0], ft_strlen(args[0]));
-		if (if_buitin_func(data, args) == 1)
-		{
-			exit(0);//return
-		}///
-		// dup2(pipe_data->next_fd[1], pipe_data->stdio_back_fd[1]);
-		// dup2(pipe_data->next_fd[0],  pipe_data->stdio_back_fd[0]);
-
-		// close(pipe_data->next_fd[0]);
-		// close(pipe_data->next_fd[1]);
-		// close(pipe_data->pre_fd[0]);
-		// close(pipe_data->pre_fd[1]);
-
-		// dup2(pipe_data->next_fd[0], pipe_data->stdio_back_fd[0]);
-		// dup2(pipe_data->next_fd[1], pipe_data->stdio_back_fd[1]);
-
 		if (pipe_data->cmd_idx != 0)
 			dup2(pipe_data->pre_fd[0], 0);
 		if (pipe_data->cmd_idx != pipe_data->pipe_cnt)
 			dup2(pipe_data->next_fd[1], 1);
 
-
 		if (pipe_data->in_out_fd[0] != -1)
-				dup2(pipe_data->in_out_fd[0], 0);
+			dup2(pipe_data->in_out_fd[0], 0);
 		if (pipe_data->in_out_fd[1] != -1)
-				dup2(pipe_data->in_out_fd[1], 1);
-
-
-		// if (pipe_data->cmd_idx != 0)
-		// 	dup2(pipe_data->pre_fd[0], pipe_data->in_out_fd[0]);
-		// else if (pipe_data->cmd_idx != 0 && pipe_data->pipe_cnt != 0)
-		// {
-		// 	dup2(pipe_data->pre_fd[0], pipe_data->in_out_fd[0]);
-		// 	dup2(pipe_data->next_fd[1], pipe_data->in_out_fd[1]);
-		// }
-		// else if (pipe_data->cmd_idx == pipe_data->pipe_cnt){write(2, "last child!!!!!!!!!!!!!!!\n", 26);
-		// 	dup2(pipe_data->next_fd[1], pipe_data->in_out_fd[1]);}
-			
-		
-
-		close(pipe_data->pre_fd[0]);
-		close(pipe_data->pre_fd[1]);
-		close(pipe_data->next_fd[0]);
-		close(pipe_data->next_fd[1]);
-		if (pipe_data->cmd_idx == pipe_data->pipe_cnt)
+			dup2(pipe_data->in_out_fd[1], 1);
+				
+		if (if_buitin_func(data, args) == 1)
 		{
-			printf("in last child iofd[1]:%d\n", pipe_data->in_out_fd[1]);
-			// sleep(10);
-		}
-		
+			close_all_fd(pipe_data);
+			exit(0);//return
+		}///
 
+		close_all_fd(pipe_data);
 
 		pipe_data->cur_cmd_path = find_command(args[0], pipe_data->all_path);
 		if (ft_strcmp(args[0], "./minishell") == 0)
@@ -97,11 +58,7 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 		else if (execve(pipe_data->cur_cmd_path, args, data->envp) == -1)
 		{
 			exit_error("command not found", args[0], 127);}
-	}
-	char str[10];
-	memset(str, 0, 10);
-	// printf("cur_pid: %d\n", data->cur_pid);
-	// write(2, itoa(data->cur_pid, str, 10), ft_strlen(itoa(data->cur_pid, str, 10)));
+		}
 	//여기서 안안에  있있는는것것들  닫닫고  프프리리
 }
 
@@ -120,18 +77,17 @@ void	exe_data(t_data *data, char *root_file_name)
 	t_pipe		pipe_data;	
 
 	cur = data->cmd_node_head;
-	//init_data
 	init_pipe(data, &pipe_data);//need to check
 	while (cur != NULL)
 	{
-		// printf("cur->redi: %p\n", cur->redi);
-		// printf("cur->args: %p\n", cur->args);
-		// cur = cur->next;
-		// continue ;
-		//아 .. 파이프 만들고 리다이렉션 해야될것같은데 ..
-		set_pipe(&pipe_data);//여기서 파이프 만들고 아래서 리다렉해주고..
+		set_pipe(&pipe_data);
 		redirect_file(cur->redi, &pipe_data); //<-히어독 파싱부분에가면 플래그 관련 없애면 됨. 아니면 파싱에서 쓰는 확장 함수 ..재사용 가능할까?
-		// printf("in fd:%d out fd:%d\n", pipe_data.in_out_fd[0], pipe_data.in_out_fd[1]);
+		if (pipe_data.pipe_fail_flag == -1)//next_if_pipe_fail(data, &cur) cur 포인터 넘겨줘서 실패라면 continue
+		{
+			pipe_data.pipe_fail_flag = 0;
+			cur = cur->next;
+			continue ;
+		}
 
 		if (cur->args != NULL)
 		{
@@ -140,13 +96,6 @@ void	exe_data(t_data *data, char *root_file_name)
 			else
 				execute_child(data, &pipe_data, cur->args);
 		}
-		
-		// if (pipe_data.cmd_idx != 0)
-		// 	dup2(pipe_data.pre_fd[0], pipe_data.stdio_back_fd[0]);
-		// if (pipe_data.cmd_idx != pipe_data.pipe_cnt)
-		// 	dup2(pipe_data.next_fd[1], pipe_data.stdio_back_fd[1]);
-
-
 		if (pipe_data.heredoc_f == 1)
 			unlink("here_doc.temp");
 		cur = cur->next;
@@ -161,3 +110,15 @@ void	exe_data(t_data *data, char *root_file_name)
 			//	execute_argv(data, cmd->content);
 
 //execve("./minishell", arvl->content->args, /*ㄹㅣ스트 다시 2차원 포인터 바꾼 것것*/);
+
+
+void	wait_parent(t_data *data, t_pipe *pipe_data)
+{
+	int status;
+
+	close_all_fd(pipe_data);
+	waitpid(data->cur_pid, &status, 0);
+	while (wait(NULL) != -1)
+		;
+	data->last_exit_code = WEXITSTATUS(status);
+}

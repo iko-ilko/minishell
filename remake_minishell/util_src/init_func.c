@@ -69,17 +69,12 @@ void	every_init(t_info *info, t_data *data)
 void	init_pipe(t_data *data, t_pipe *pipe_data)
 {
 	data->last_exit_code = 0;
+	pipe_data->pipe_fail_flag = 0;
 	pipe_data->cmd_idx = -1;
 	pipe_data->pipe_cnt = cnt_pipe(data->cmd_node_head);
 	pipe_data->heredoc_f = 0;
 	pipe_data->all_path = get_all_path(data->envp);
 	pipe_data->cur_cmd_path = NULL;
 
-	// pipe_data->in_out_fd[0] = 0;
-	// pipe_data->in_out_fd[1] = 1;
-	// pipe_data->stdio_back_fd[0] = dup(0);
-	// pipe_data->stdio_back_fd[1] = dup(1);
-	// dup2(pipe_data->in_out_fd[0], pipe_data->stdio_back_fd[0]);
-	// dup2(pipe_data->in_out_fd[1], pipe_data->stdio_back_fd[1]);
 
 }

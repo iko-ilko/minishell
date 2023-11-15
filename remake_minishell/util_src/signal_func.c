@@ -6,6 +6,11 @@
 //부모 시그인트는 버퍼지우고 개행 .. 부모 시그큍은 무시하게	
 //그리고 각 자식 프로세스 들어갈 때 시그널 핸들링 함수 알맞는거 호출해놓으면 될듯?
 
+
+//child_sigint_handler(int signum)
+// {
+
+// }
 void    sigint_handler(int signum)//핸들러 함수는 부모,자식으로 나누지말고 함수별로 나누자 main, here_doc, exe
 {
     write(1, "\n", 1);

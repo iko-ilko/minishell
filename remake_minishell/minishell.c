@@ -55,9 +55,8 @@ int main(int arc, char **arv, char **envp)
 		every_init(&info, &data);
 		parsing(&info, line, data.envp);
 		print_nodes_to_head(info.head); //print info->head
-		data.arvl = info.head;//안에 넣을까?
 		remake_arvl(&info, &data);
-		// free_arvl(info);<-메모리 많이 잡아먹지도 않는데 아래서 한번에 해줄까?
+		// free_arvl(&info);<-메모리 많이 잡아먹지도 않는데 아래서 한번에 해줄까?
 		print_data_cmd(&data);//print data->cmd_node_head
 		printf("----------end parsing\n");
 		exe_data(&data, arv[0]);//root file name 필요없을듯 있으면 구조체에 ㄱ

@@ -102,13 +102,10 @@ typedef struct 	t_pipe
 	char	**all_path;
 	char	*cur_cmd_path;
 	
-	// inout을 배열로 둘까 그냥 변수로 둘까.. 
-	//inoutfd를 file open한 fd와 stdio_back_fd의 값을 넘겨줘서 자식에서 dup2해주자.리다이렉션이 없으면 기본값 백업 fd로 넘겨주자.
+	int		pipe_fail_flag;
 	int		pre_fd[2];
 	int		next_fd[2];
-
 	int		in_out_fd[2];
-	int		stdio_back_fd[2];
 }	t_pipe;
 
 typedef struct	s_data
@@ -166,6 +163,7 @@ void	parsing(t_info *info, char *line, char **env);
 /* execute.c */
 void	exe_data(t_data *data, char *root_file_name);
 void	here_doc(char *limiter, int here_doc_temp_fd);
+void	wait_parent(t_data *data, t_pipe *pipe_data);
 
 
 /* ./builtin_src/buitin_func.c */
@@ -203,7 +201,8 @@ char	**get_all_path(char **envp);
 char	*find_command(char *cmd, char **all_path);
 void	set_pipe(t_pipe *pip);
 int		cnt_pipe(t_cmd_node *head);
-void	wait_parent(t_data *data, t_pipe *pipe_data);
+void	close_all_fd(t_pipe *pipe_data);
+
 
 /*			/remake_func.c */
 void	remake_arvl(t_info *info, t_data *data);
