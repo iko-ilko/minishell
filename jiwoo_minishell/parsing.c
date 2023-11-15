@@ -879,6 +879,7 @@ void	parsing(t_info *info, char *line, char **env)
 		printf("fuck\n");
 		exit(0);
 	}
+	
 	// free_single((void *)&info->buff);
 	// print_nodes_to_head(info->head); //result
 	printf("------------parsing check done--------------\n");
