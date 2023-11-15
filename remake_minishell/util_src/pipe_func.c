@@ -87,16 +87,15 @@ int	cnt_pipe(t_cmd_node *cmd)
 void	wait_parent(t_data *data, t_pipe *pipe_data)
 {
 	int status;
-	printf("next_fd[0]: %d?\n", pipe_data->next_fd[0]);
-	printf("next_fd[1]: %d?\n", pipe_data->next_fd[1]);
-	printf("pre_fd[0]: %d?\n", pipe_data->pre_fd[0]);
-	printf("pre_fd[1]: %d?\n", pipe_data->pre_fd[1]);
-	printf("in_out_fd[0]: %d?\n", pipe_data->in_out_fd[0]);
-	printf("in_out_fd[1]: %d?\n", pipe_data->in_out_fd[1]);
-	printf("cur_pid: %d?\n", data->cur_pid);
+	// printf("next_fd[0]: %d?\n", pipe_data->next_fd[0]);
+	// printf("next_fd[1]: %d?\n", pipe_data->next_fd[1]);
+	// printf("pre_fd[0]: %d?\n", pipe_data->pre_fd[0]);
+	// printf("pre_fd[1]: %d?\n", pipe_data->pre_fd[1]);
+	// printf("in_out_fd[0]: %d?\n", pipe_data->in_out_fd[0]);
+	// printf("in_out_fd[1]: %d?\n", pipe_data->in_out_fd[1]);
+	// printf("cur_pid: %d?\n", data->cur_pid);
 	
 	close(pipe_data->next_fd[0]);
-	printf("n fd[1]: %d?\n", pipe_data->next_fd[1]);
 	close(pipe_data->next_fd[1]);
 	close(pipe_data->stdio_back_fd[0]);
 	close(pipe_data->stdio_back_fd[1]);
@@ -104,11 +103,8 @@ void	wait_parent(t_data *data, t_pipe *pipe_data)
 	close(pipe_data->pre_fd[1]);
 	close(pipe_data->in_out_fd[0]);
 	close(pipe_data->in_out_fd[1]);
-write(2, "wait\n", 5);
 	waitpid(data->cur_pid, &status, 0);
 	while (wait(NULL) != -1)
 		;
-write(2, "wait fin\n", 6);
 	data->last_exit_code = WEXITSTATUS(status);
-	printf("data->cur_pid:%d last exit: %d\n", data->cur_pid, data->last_exit_code);
 }
