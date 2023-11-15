@@ -1,6 +1,46 @@
 #include "minishell.h"
+
+extern int exit_code;
 //	printf("env_size() envv[i]:%s\n", envv[i]); <- 이거 인자로 넣으면 세그폴트 왜?
 int	node_cnt = 1;
+
+char *ft_itoa(int nbr) 
+{
+	if(nbr == -2147483648)
+		return("-2147483648\0");
+	int n = nbr;
+	int len = 0;
+	if (nbr <= 0)
+	{
+		len++;
+    	}
+	while (n) 
+	{
+		n /= 10;
+		len++;
+	}
+	char *result = (char *)malloc(sizeof(char) * (len + 1));
+	if (result == NULL) 
+		return NULL;
+	result[len] = '\0';
+	if (nbr == 0)
+	{
+		result[0] = '0';
+		return(result);
+	}
+	if (nbr < 0) 
+	{
+		result[0] = '-';
+		nbr = -nbr;
+	}
+	while (nbr) 
+	{
+		result[--len] = nbr % 10 + '0';
+		nbr /= 10;
+	}
+	return result;
+}
+
 void	*ft_memset(void *b, int c, size_t len)
 {
 	unsigned char	*p;
@@ -16,6 +56,8 @@ void	*ft_memset(void *b, int c, size_t len)
 	}
 	return ((void *)b);
 }
+
+
 
 void set_quote(t_info *info, char quot, char buffer)
 {
@@ -284,7 +326,7 @@ int	ft_isalnum(int c)
 /* key의 길이 + 1($문자) 만큼 인덱스를 밀어주면서, $를 제외한 키의 문자열을 반환 *//* i는 달러 위치 */
 /* e.x)  $USER *i의 값은 + 5만큼 해주고 USER를 반환 */
 /* parsing env key of args */
-char		*find_env(char *str, int *j)
+char	*find_env(char *str, int *j)
 {
 	char	*res;
 	int		i;
@@ -296,10 +338,17 @@ char		*find_env(char *str, int *j)
 	i--;
 	res = ft_strndup(str + *j, i - *j + 1);
 	*j = i;
+	printf("in find env res:%s\n", res);
 	return (res);
 	// return (ft_strdup(str + 1));
 
 }
+// char	*find_exit_code(int *j)
+// {
+// 	*j += 1;
+// 	return (ft_itoa(exit_code));
+// }
+
 
 size_t  ft_strlcat(char *dst, char *src, size_t dstsize)
 {
@@ -348,12 +397,14 @@ int			set_env_to_buf(char **envv, char *env, char *buf)
 	{
 		if (check_unset(env, envv[i]))
 		{
-			// printf("set_env_to_buf() env:%sbuf:%s\n", env, buf);
+			printf("set_env_to_buf() env:%sbuf:%s\n", env, buf);
+			/////
 			ft_strlcat(buf, \
 			envv[i] + ft_strlen(env) + 1, ft_strlen(envv[i]) + ft_strlen(buf));
 			break ;
 		}
 	}
+	printf("42tu48tu\n");
 	free(env);
 	return ((int)ft_strlen(buf));
 }
@@ -450,6 +501,24 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
     return (buff);
 }
 
+int get_exit_code_len(int exit_code)
+{
+	int len;
+	int temp;
+
+	if (exit_code == 0)
+		return (1);
+	temp = exit_code;
+	len = 0;
+	while(temp)
+	{
+		temp /= 10;
+		len++;
+	}
+	printf("\n\n\naaaaaaaaaaaaa == %d\n", len);
+	return(len);
+}
+
 char *set_buff(char *args_line, char **env)
 {
     int quote;
@@ -459,6 +528,7 @@ char *set_buff(char *args_line, char **env)
 
 	i = 0;
 	k = 0;
+	printf("sagasgas ==== %s\n", args_line);
 	while (args_line[i])
 	{
 		// write(1, &args_line[i], 1);
@@ -475,8 +545,17 @@ char *set_buff(char *args_line, char **env)
 		else if (quote != '\'' && args_line[i] == '$' && args_line[i + 1])//이 조건만 아니면 모두 k++하는거 아닌ㄴ가?
 		{
 			k--;
-			move_env_size(env, find_env(args_line, &i), &k);// <-여기 댕글링 포인터 처리하려면 줄수 나눠야해 <-여기 달러문자 인덱스 잘못돼서 잘못된 k값 넘겨줌.
-			continue ;
+			if (args_line[i + 1] == '?')
+			{
+				//// 버퍼 크기
+				i++;
+				k += get_exit_code_len(exit_code);
+			}
+			else
+			{
+				move_env_size(env, find_env(args_line, &i), &k);// <-여기 댕글링 포인터 처리하려면 줄수 나눠야해 <-여기 달러문자 인덱스 잘못돼서 잘못된 k값 넘겨줌.
+				continue ;
+			}
 		}
 		else
 		{
@@ -518,16 +597,40 @@ char		*word_parsing_splitting(char **args, int *idx, char **env, char *buff)
         else if (quote != '\'' && args[0][i] == '$' && args[0][i + 1])
 		{
 			buff[k] = '\0';
-            check_split(&k, set_env_to_buf(env, find_env(args[0], &i), buff), idx, quote);
+			printf("235253523o\n");
+			if (args[0][i + 1] == '?')
+			{
+				char *ppp = ft_itoa(exit_code);
+				int zzz = 0;
+				
+				while (ppp[zzz])
+				{
+					buff[k] = ppp[zzz];
+					k++;
+					zzz++;
+				}
+				
+				i++;
+				free_single((void **)&ppp);
+			}
+			else
+			{
+            	check_split(&k, set_env_to_buf(env, find_env(args[0], &i), buff), idx, quote);
+			}
 		}
         else
         {
         	buff[k] = args[0][i];
             	k++;
         }
+	
 		i++;
 	}
+	printf("buvuubvuv -== %s\n", buff);
 		buff[k] = '\0';
+
+		printf("buvuubvuv -== %s\n", buff);
+		printf("235253523o\n");
 		printf("i == %d\n", i);
 		printf("buffggggggg= %s\n", buff);
         res = ft_strdup(buff);
@@ -565,8 +668,26 @@ char		*word_parsing(char **args, int *idx, char **env, char *buff)
 		}
         else if (quote != '\'' && args[*idx][i] == '$' && args[*idx][i + 1])
 		{
-			buff[k] = '\0';
-            k = set_env_to_buf(env, find_env(args[*idx], &i), buff);
+			
+			// buff[k] = '\0';
+			if (args[*idx][i + 1] == '?')
+			{
+				char *ppp = ft_itoa(exit_code);
+				int zzz = 0;
+				while (ppp[zzz])
+				{
+					buff[k] = ppp[zzz];
+					k++;
+					zzz++;
+				}
+				i++;
+				free_single((void **)&ppp);
+			}
+			else
+			{
+				printf("ddddd\n");
+            	k += set_env_to_buf(env, find_env(args[*idx], &i), buff);
+			}
 		}
         else
         {
@@ -601,7 +722,7 @@ char		**parsing_second_args(char **args, char **env)
 	int idx = 0;
 	char *args_temp;
 
-	
+	//// 커맨드가 하나일 때 ex) ls, ls -al, a="ls -al" -> $a
 	if (double_str_len(args) == 1)
 	{
 		buff = set_buff(args[i], env);
@@ -614,6 +735,7 @@ char		**parsing_second_args(char **args, char **env)
 			free(args_temp);
 		}
 	}
+	///// 그 이외의 것들 ls | cat 이런거
 	else
 	{
 		while (args[idx])
@@ -761,5 +883,6 @@ void	parsing(t_info *info, char *line, char **env)
 	// print_nodes_to_head(info->head); //result
 	printf("------------parsing check done--------------\n");
 	parsing_second(info->head, env);
+	printf("\n\n%d----------\n",exit_code);
 	print_nodes_to_head(info->head); //result
 }//push args 첫번째에 널이 들어간다 왜지? 

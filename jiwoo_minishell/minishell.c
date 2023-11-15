@@ -1,5 +1,5 @@
 #include "minishell.h"
-
+int		exit_code = 0;
 int main(int arc, char **arv, char **envp)
 {
 	t_info	info;
