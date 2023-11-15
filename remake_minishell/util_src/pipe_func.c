@@ -53,6 +53,9 @@ void	set_pipe(t_pipe *pip)
 	}
 	pip->pre_fd[0] = pip->next_fd[0];
 	pip->pre_fd[1] = pip->next_fd[1];
+	pip->in_out_fd[0] = -1;
+	pip->in_out_fd[1] = -1;
+
 	// printf("pipe_cnt: %d, cmd_idx: %d\n", pip->pipe_cnt, pip->cmd_idx);
 	if (pip->pipe_cnt - pip->cmd_idx  > 0 && pipe(pip->next_fd) == -1)//첫번째조건 체크해봐야함.
 		perror("minishell: ");

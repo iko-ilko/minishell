@@ -55,10 +55,17 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 		// dup2(pipe_data->next_fd[0], pipe_data->stdio_back_fd[0]);
 		// dup2(pipe_data->next_fd[1], pipe_data->stdio_back_fd[1]);
 
+		if (pipe_data->in_out_fd[0] != -1)
+				dup2(pipe_data->in_out_fd[0], 0);
+		if (pipe_data->in_out_fd[1] != -1)
+				dup2(pipe_data->in_out_fd[1], 1);
+
 		if (pipe_data->cmd_idx != 0)
-			dup2(pipe_data->pre_fd[0], pipe_data->in_out_fd[0]);
+			dup2(pipe_data->pre_fd[0], 0);
 		if (pipe_data->cmd_idx != pipe_data->pipe_cnt)
-			dup2(pipe_data->next_fd[1], pipe_data->in_out_fd[1]);
+			dup2(pipe_data->next_fd[1], 1);
+
+
 
 		// if (pipe_data->cmd_idx != 0)
 		// 	dup2(pipe_data->pre_fd[0], pipe_data->in_out_fd[0]);
@@ -134,7 +141,7 @@ void	exe_data(t_data *data, char *root_file_name)
 		// close(pipe_data.pre_fd[1]);
 		// close(pipe_data.next_fd[0]);
 		// close(pipe_data.next_fd[1]);
-		if (pipe_data.in_out_fd[0] != -1 && cur->args != NULL)
+		if (cur->args != NULL)
 		{
 			if (pipe_data.pipe_cnt == 0 && if_buitin_func(data, cur->args) == 1)
 				;
