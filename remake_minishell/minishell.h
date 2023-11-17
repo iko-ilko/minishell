@@ -128,6 +128,8 @@ typedef struct	s_data
 }	t_data;
 
 void	print_data_cmd(t_data *data);
+int		check_line(char **line);
+
 
 
 

@@ -141,7 +141,7 @@ void	push_args(t_info *info, char *line)
 	// }
 	(info->args_i)++;
 	info->j = 0;
-	ft_bzero(info->buff, ft_strlen(info->buff) + 1);
+	// ft_bzero(info->buff, ft_strlen(info->buff) + 1);
 	// printf("content->args[info->args_i] == %s\n\n", info->content->args[info->args_i - 1]);
 }
 //구분자 전에 공백이 있으면 이미 만들어져있었을 것이고.. 아니면 안만들어져있을것이고 .. 를 지우의 info->buff 체크해보는 방식으로 해결

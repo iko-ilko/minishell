@@ -32,7 +32,7 @@ void	free_double(char ***str)
 
 void	free_single(void **p)
 {
-	if (*p != NULL)
+	if (*p == NULL)
 		return ;
 	free(*p);
 	*p = NULL;
