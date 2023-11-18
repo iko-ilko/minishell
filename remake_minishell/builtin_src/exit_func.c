@@ -20,6 +20,7 @@ void	exit_exe(t_data *data, char **arvs)
 {
 	int		exit_code = 0;//임시
 
+	write(1, "exit\n", 5);
 	free_vars(data);
 	//릭 정리하고
 	//check_arv_number() 는 숫자인지 체크하고 long long 범위 안넘는지 체크

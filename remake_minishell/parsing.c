@@ -565,7 +565,6 @@ char		*word_parsing(char **args, int *idx, char **env, char *buff)
 
 	while(args[*idx][i])
 	{
-		printf("zzzz == %c\n",args[*idx][i]);
 		if (args[*idx][i] == quote)
 			quote = 0;
         else if (quote == 0 && (args[*idx][i] == '\'' || args[*idx][i] == '\"'))

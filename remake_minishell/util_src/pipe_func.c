@@ -59,13 +59,7 @@ void	set_pipe(t_pipe *pip)
 	pip->pipe_fail_flag = pipe(pip->next_fd);
 	if (pip->pipe_cnt - pip->cmd_idx > 0 && pip->pipe_fail_flag == -1)//첫번째조건 체크해봐야함.
 		perror("minishell: ");
-	// else
-	// {
-	// 	dup2(pip->next_fd[0], pip->in_out_fd[0]);
-	// 	dup2(pip->next_fd[1], pip->in_out_fd[1]);
-	// }
-	//close inout
-	//여기서 파이프 만들면 fd 1, 0로 초기화 해줘야하나?
+
 }
 
 int	cnt_pipe(t_cmd_node *cmd)
@@ -85,10 +79,16 @@ int	cnt_pipe(t_cmd_node *cmd)
 }
 void	close_all_fd(t_pipe *pipe_data)
 {
-	close(pipe_data->next_fd[0]);
-	close(pipe_data->next_fd[1]);
-	close(pipe_data->pre_fd[0]);
-	close(pipe_data->pre_fd[1]);
-	close(pipe_data->in_out_fd[0]);
-	close(pipe_data->in_out_fd[1]);
+	if (pipe_data->pre_fd[0] != -1)
+		close(pipe_data->pre_fd[0]);
+	if (pipe_data->pre_fd[1] != -1)
+		close(pipe_data->pre_fd[1]);
+	if (pipe_data->next_fd[0] != -1)
+		close(pipe_data->next_fd[0]);
+	if (pipe_data->next_fd[1] != -1)
+		close(pipe_data->next_fd[1]);
+	if (pipe_data->in_out_fd[0] != -1)
+		close(pipe_data->in_out_fd[0]);
+	if (pipe_data->in_out_fd[1] != -1)
+		close(pipe_data->in_out_fd[1]);
 }

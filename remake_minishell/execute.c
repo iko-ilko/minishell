@@ -44,7 +44,7 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 		if (pipe_data->in_out_fd[1] != -1)
 			dup2(pipe_data->in_out_fd[1], 1);
 				
-		if (if_buitin_func(data, args) == 1)
+		if (if_buitin_func(data, pipe_data, args) == 1)
 		{
 			close_all_fd(pipe_data);
 			exit(0);//return
@@ -80,18 +80,18 @@ void	exe_data(t_data *data, char *root_file_name)
 	init_pipe(data, &pipe_data);//need to check
 	while (cur != NULL)
 	{
-		set_pipe(&pipe_data);
+		if (pipe_data.pipe_cnt > 0)
+			set_pipe(&pipe_data);
 		redirect_file(cur->redi, &pipe_data); //<-히어독 파싱부분에가면 플래그 관련 없애면 됨. 아니면 파싱에서 쓰는 확장 함수 ..재사용 가능할까?
 		if (pipe_data.pipe_fail_flag == -1)//next_if_pipe_fail(data, &cur) cur 포인터 넘겨줘서 실패라면 continue
-		{
+		{//리다이렉션 실패시 에러메세지 출력하고 continue. 커맨드 실행 x
 			pipe_data.pipe_fail_flag = 0;
 			cur = cur->next;
 			continue ;
 		}
-
 		if (cur->args != NULL)
 		{
-			if (pipe_data.pipe_cnt == 0 && if_buitin_func(data, cur->args) == 1)
+			if (pipe_data.pipe_cnt == 0 && if_buitin_func(data, &pipe_data, cur->args) == 1)
 				;
 			else
 				execute_child(data, &pipe_data, cur->args);

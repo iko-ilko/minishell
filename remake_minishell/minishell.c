@@ -38,13 +38,14 @@ int	check_line(char **line)
 	int	i;
 
 	i = 0;
-	while ((*line)[i])
-	{
-		if ((*line)[i] != ' ')
-			return (0);
+	while ((*line)[i] && (*line)[i] == ' ')
 		i++;
+	if ((*line)[i] == '\0')
+	{
+		free(*line);
+		return (-1);
 	}
-	return (1);
+	return (0);
 	// 이 함수 제대로 만들기
 }
 void a()
@@ -72,8 +73,8 @@ int main(int arc, char **arv, char **envp)
         line = readline("minishell$ ");
 		if (line == NULL)//<-파상 안에서 하는 trim 여기서 할까? 아님 파싱에서 syntax error 잡히면 -1 리턴하고 그러면 라인 free하고 continue되게 할까?
 			break ;
-		// if (check_line(&line) == -1)
-		// 	continue ;
+		if (check_line(&line) == -1)
+			continue ;
 	    add_history(line);
 		every_init(&info, &data);
 		parsing(&info, line, data.envp);
@@ -84,6 +85,7 @@ int main(int arc, char **arv, char **envp)
 		printf("----------end parsing\n");
 		exe_data(&data, arv[0]);//root file name 필요없을듯 있으면 구조체에 ㄱ
 		free_every(&data, &info, &line);//with line
+
 
     }
 	// atexit(a);

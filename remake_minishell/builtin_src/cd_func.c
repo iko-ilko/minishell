@@ -14,41 +14,58 @@
 // 아마도 빌트인 함수라 바로 실행해서 그런듯 ..
 #include "../minishell.h"
 
-int	get_slash_idx(char *pwd)
+// int	get_slash_idx(char *pwd)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (pwd[i++])
+// 		;
+// 	while (pwd[--i] != '/')
+// 		;
+// 	return (i);
+// }
+
+// void	change_pwd(t_data *data, char *dir)
+// {
+// 	int		idx;
+// 	char	*temp;
+
+// 	idx = 0;
+// 	if (dir[0] == '/')
+// 	{
+// 		free(data->pwd);
+// 		data->pwd = ft_strdup(dir);
+// 	}
+// 	else if (ft_strcmp(dir, ".") == 0)
+// 		return ;
+// 	else if (ft_strcmp(dir, "~") == 0)
+
+// 	else if (ft_strcmp(dir, "..") == 0)//~은 HOME이 있으면 HOME 없으면 getenv("HOME")으로 처리 -> 과제에서 특수문자 제한 둔거보면 해석 안하는걸로 판단. cd에서 처리
+// 	{
+// 		idx = get_slash_idx(data->pwd);
+// 		temp = data->pwd;
+// 		if (idx == 0)
+// 			data->pwd = ft_strdup("/");
+// 		else
+// 			data->pwd = ft_strndup(data->pwd, idx);
+// 		free(temp);
+// 	}
+// }
+
+void	cd_home(t_data *data, char *error_str)
 {
-	int	i;
+	char	*home_dir;
 
-	i = 0;
-	while (pwd[i++])
-		;
-	while (pwd[--i] != '/')
-		;
-	return (i);
-}
-
-void	change_pwd(t_data *data, char *dir)
-{
-	int		idx;
-	char	*temp;
-
-	idx = 0;
-	if (dir[0] == '/')
+	home_dir = find_key(data, "HOME")->value;
+	if (home_dir == NULL)
 	{
-		free(data->pwd);
-		data->pwd = ft_strdup(dir);
+		home_dir = getenv("HOME");
+		chdir(home_dir);
 	}
-	else if (ft_strcmp(dir, ".") == 0)
-		return ;
-	else if (ft_strcmp(dir, "..") == 0)//~은 HOME이 있으면 HOME 없으면 getenv("HOME")으로 처리 
-	{
-		idx = get_slash_idx(data->pwd);
-		temp = data->pwd;
-		if (idx == 0)
-			data->pwd = ft_strdup("/");
-		else
-			data->pwd = ft_strndup(data->pwd, idx);
-		free(temp);
-	}
+	else
+		chdir(home_dir);
+	free_single((void *)&home_dir);
 }
 ///////////////일단 리스트 함수들 만들고 export, unset, pwd 명령어 구현하고 cd구현 마무리하자.
 //cd $HOME은 파싱 부분에서 확장될것이니까 cd $만 처리하자.
@@ -59,7 +76,7 @@ void	cd_exe(t_data *data, char **arvs)
 	char	*cwd_temp;
 
 	error_str = ft_strjoin("minishell: cd: ", arvs[1]);
-	if (arvs[1] == NULL)//HOME으로
+	if (arvs[1] == NULL)
 		return ;
 	cwd_temp = getcwd(NULL, 0);
 	if (cwd_temp != NULL)
@@ -67,22 +84,9 @@ void	cd_exe(t_data *data, char **arvs)
 	else
 		find_key(data, "OLDPWD")->value = find_key(data, "PWD")->value;
 	free_single((void *)&cwd_temp);
-	if (chdir(arvs[1]) == -1)
+	if (ft_strcmp(arvs[1], "~") == 0)
+		cd_home(data, error_str);
+	else if (chdir(arvs[1]) == -1)
 		perror(error_str);
-	// else if (ft_strcmp(arvs[1], ".") != 0)
-	// {
-	// 	cwd_temp = getcwd(NULL, 0);
-	// 	if (find_key(data, "PWD") == NULL)
-	// 		add_env(data, "PWD", cwd_temp);
-	// 	else
-	// 		modify_env(data, "PWD", cwd_temp);
-	// 	free(cwd_temp);
-	// }
-
-	// printf("\n$PWD:%s\n", find_key(data, "PWD")->value);
-	// printf("$OLDPWD:%s\n", find_key(data, "OLDPWD")->value);
-
-	// printf("!%s---%p\n", data->pwd, data->pwd);
-	// printf("?%s---%p\n", getcwd(NULL, 0), getcwd(NULL, 0));
-	// system("pwd");
+	free_single((void *)&error_str);
 }

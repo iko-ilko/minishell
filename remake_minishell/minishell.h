@@ -33,6 +33,10 @@
 # define SIN_REDI_L 4 // <
 # define DOUB_REDI_L 5 // <<
 
+/* parent or child process*/
+# define CHILD 0
+# define PARENT 1
+
 /* env linkedlist */
 typedef struct	s_envl
 {
@@ -113,7 +117,6 @@ typedef struct	s_data
 	t_envl		*envl;
 	char		**envp;
 	char		*pwd;//
-	char		**history;//
 
 	t_arvl		*arvl;
 	t_cmd_node	*cmd_node_head;
@@ -121,7 +124,7 @@ typedef struct	s_data
 	int			node_open_flag;
 	int			args_i;
 	int			pre_flag;
-	// t_pipe	pipe_data; 함수 내에서 선언하자.
+	t_pipe		*pipe_temp;
 
 	int			cur_pid;
 	int			last_exit_code;
@@ -169,9 +172,11 @@ void	wait_parent(t_data *data, t_pipe *pipe_data);
 
 
 /* ./builtin_src/buitin_func.c */
-int		if_buitin_func(t_data *data, char **arvs);
+int		if_buitin_func(t_data *data, t_pipe *pipe_data, char **arvs);
 /* 				cd_func.c */
+void	cd_home(t_data *data, char *error_str);
 void	cd_exe(t_data *data, char **arvs);
+
 /* 				exit_func.c */
 void	exit_exe(t_data *data, char **arvs);
 
