@@ -190,7 +190,7 @@ void	push_args(t_info *info, char *line)
 	// }
 	(info->args_i)++;
 	info->j = 0;
-	ft_bzero(info->buff, ft_strlen(info->buff) + 1);
+	ft_memset(info->buff, 0, ft_strlen(info->buff) + 1);
 	printf("content->args[info->args_i] == %s\n\n", info->content->args[info->args_i - 1]);
 }
 //구분자 전에 공백이 있으면 이미 만들어져있었을 것이고.. 아니면 안만들어져있을것이고 .. 를 지우의 info->buff 체크해보는 방식으로 해결
@@ -496,6 +496,7 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
             }
             i++;
         }
+		printf("0------ = %d\n", k);
     buff = (char *)malloc((k + 1) * (sizeof(char)));
 	buff[k] = '\0';
     return (buff);
@@ -549,7 +550,7 @@ char *set_buff(char *args_line, char **env)
 			{
 				//// 버퍼 크기
 				i++;
-				k += get_exit_code_len(exit_code);
+				k = get_exit_code_len(exit_code);
 			}
 			else
 			{
@@ -669,7 +670,7 @@ char		*word_parsing(char **args, int *idx, char **env, char *buff)
         else if (quote != '\'' && args[*idx][i] == '$' && args[*idx][i + 1])
 		{
 			
-			// buff[k] = '\0';
+			buff[k] = '\0';
 			if (args[*idx][i + 1] == '?')
 			{
 				char *ppp = ft_itoa(exit_code);
@@ -686,7 +687,7 @@ char		*word_parsing(char **args, int *idx, char **env, char *buff)
 			else
 			{
 				printf("ddddd\n");
-            	k += set_env_to_buf(env, find_env(args[*idx], &i), buff);
+            	k = set_env_to_buf(env, find_env(args[*idx], &i), buff);
 			}
 		}
         else
@@ -809,31 +810,6 @@ int check_line_error(char *line, int i, int flag)
 	return(1);
 }
 
-int check_line(char *line, int i)
-{
-	if (line[i] == '<' && line[i + 1] == '<')
-	{
-		if (!check_line_error(line, i ,2))
-			return(0);
-	}
-	else if (line[i] == '>')
-	{
-		if (!check_line_error(line, i ,1))
-			return(0);
-	}
-	else if (line[i] == '<')
-	{
-		if (!check_line_error(line, i ,1))
-			return(0);
-	}
-	else if (line[i] == '|')
-	{
-		if (!check_line_error(line, i ,1))
-			return(0);
-	}
-	return(1);
-}
-
 int error_case(char *line)
 {
 	int i= 0;
@@ -844,13 +820,17 @@ int error_case(char *line)
 	}
 	while(line[i])
 	{
-		if (line[i] == '>' && line[i + 1] == '>')
+		if ((line[i] == '>' && line[i + 1] == '>') || 
+				(line[i] == '<' && line[i + 1] == '<'))
 		{
 			if (!check_line_error(line, i ,2))
 				return(0);
 		}
-		else if (!check_line(line, i))
-			return(0);
+		else if(line[i] == '>' || line[i] == '<' || line[i] == '|')
+		{
+			if (!check_line_error(line, i ,1))
+				return(0);
+		}
 		i++;
 	}
 	return(1);
