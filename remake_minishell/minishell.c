@@ -1,5 +1,8 @@
 #include "minishell.h"
 
+int		exit_code = 0;
+
+
 void	print_data_cmd(t_data *data)
 {
 	t_cmd_node	*cur;
@@ -29,6 +32,7 @@ void	print_data_cmd(t_data *data)
 		cur = cur->next;
 	}
 }
+
 int	check_line(char **line)
 {
 	int	i;
@@ -40,6 +44,7 @@ int	check_line(char **line)
 			return (0);
 		i++;
 	}
+	return (1);
 	// 이 함수 제대로 만들기
 }
 void a()
@@ -67,8 +72,8 @@ int main(int arc, char **arv, char **envp)
         line = readline("minishell$ ");
 		if (line == NULL)//<-파상 안에서 하는 trim 여기서 할까? 아님 파싱에서 syntax error 잡히면 -1 리턴하고 그러면 라인 free하고 continue되게 할까?
 			break ;
-		if (check_line(&line) == -1)
-			continue ;
+		// if (check_line(&line) == -1)
+		// 	continue ;
 	    add_history(line);
 		every_init(&info, &data);
 		parsing(&info, line, data.envp);

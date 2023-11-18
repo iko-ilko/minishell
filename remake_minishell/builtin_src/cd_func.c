@@ -39,7 +39,7 @@ void	change_pwd(t_data *data, char *dir)
 	}
 	else if (ft_strcmp(dir, ".") == 0)
 		return ;
-	else if (ft_strcmp(dir, "..") == 0)
+	else if (ft_strcmp(dir, "..") == 0)//~은 HOME이 있으면 HOME 없으면 getenv("HOME")으로 처리 
 	{
 		idx = get_slash_idx(data->pwd);
 		temp = data->pwd;

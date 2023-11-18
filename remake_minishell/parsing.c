@@ -1,6 +1,39 @@
 #include "minishell.h"
+
+extern int exit_code;
 //	printf("env_size() envv[i]:%s\n", envv[i]); <- 이거 인자로 넣으면 세그폴트 왜?
 int	node_cnt = 1;
+
+char *ft_itoa(int nbr) 
+{
+//need to test
+	char	*result;
+	int		n;
+	int		len;
+
+	len = 0;
+	if (nbr == 0)
+		len++;
+	n = nbr;
+	while (n) 
+	{
+		n /= 10;
+		len++;
+	}
+	result = ft_calloc(len + 1, sizeof(char));
+	if (nbr == 0)
+	{
+		result[0] = '0';
+		return(result);
+	}
+	while (nbr) 
+	{
+		result[--len] = nbr % 10 + '0';
+		nbr /= 10;
+	}
+	return (result);
+}
+
 void	*ft_memset(void *b, int c, size_t len)
 {
 	unsigned char	*p;
@@ -28,7 +61,7 @@ void set_quote(t_info *info, char quot, char buffer)
 //널문자는 체크 안하는걸로 수정함.
 int	check_sepa(char c)
 {
-	if (c == '|' || c == ';' || c == '>' || c == '<' || c == '\0')
+	if (c == '|' || c == '>' || c == '<' || c == '\0')
 		return (1);
 	return (0);
 }
@@ -60,7 +93,7 @@ int		count_token(char *input)//이 함수 작성자가 이렇게 구현한 이�
 	sepa_idx = 0;
 	while (check_sepa(input[sepa_idx]) == 0)//check_sepa 널문자는 처리 안하려고 수정할라했는데 여기서 쓰이는구나 ...
 		sepa_idx++;
-	while (input[sepa_idx] != '\0' && input[sepa_idx] != '|' && input[sepa_idx] != ';' && \
+	while (input[sepa_idx] != '\0' && input[sepa_idx] != '|' && \
 			input[sepa_idx] != '>' && input[sepa_idx] != '<')
 		sepa_idx++;
 	// if (sepa_idx == 0)
@@ -85,37 +118,22 @@ char *get_args_one_size(char *line)
 
 	i = 0;
 	j = 0;
-	while (line[i] && ((line[i] >= 0 && line[i] <= 32) || (line[i] == '|') || ( line[i] == ';') || \
+	while (line[i] && ((line[i] >= 0 && line[i] <= 32) || (line[i] == '|') || \
 			(line[i] == '>') || (line[i] == '<')))
 	{
 		i++;
 	}
-	while (line[i] && ((line[i] != ' ') && (line[i] != '|') && ( line[i] != ';') && (line[i] != '>' && \
+	while (line[i] && ((line[i] != ' ') && (line[i] != '|') && (line[i] != '>' && \
 			(line[i] != '<'))))
 		{
-			// printf("line[i]:%c\n", line[i]);
 			i++;
 			j++;
 		}
-	// res = (char *)malloc((j + 1) * sizeof(char));
-	res = calloc(j + 1, sizeof(char));
-	// printf("get_args_one_size()j:%d\n", j);
+	res = ft_calloc(j + 1, sizeof(char));
 	res[j] = '\0';
-	// printf("out get_args_one_size()\n");
 	return (res);
 }
 
-void	ft_bzero(void *s, size_t n)
-{
-	size_t i;
-
-	i = 0;
-	while (i < n)
-	{
-		*(char*)(s + i) = '\0';
-		i++;
-	}
-}
 //현재 args를 넣되, 그 다음의 것의 공간을 만드는 것 까지함. 다음이 널문자면 만들지 말까? 아니면 나중에 원활한 free를 위해 냅둘까? -> 여기서 free할테니 안만들겠다.
 //문제는 원래는 안쓰는거 일단 만들고 봤는데, 구조상 널 문자가아닌 구분자들은 여기에 안들어옴.
 void	push_args(t_info *info, char *line)
@@ -123,25 +141,16 @@ void	push_args(t_info *info, char *line)
 	// printf("in push_args()\n");
 	if (*(info->buff) == 0)
 		return ;
-	// if (check_sepa(line[info->i]) == 0 )//여기가 힙 버퍼 오버플로우 원인. 마지막에 + 1에 NULL박았었음
-	// {
-	
-		info->content->args[info->args_i] = ft_strdup(info->buff);//여기 args는 결국엔 한 노드(파이프 등 구분자로 나눠진)의 배열이니 args배열은 구분자있으면 매번 초기화(새로 사이즈 재고 말록, 0초기화)해야하지 않나?
-		free_single((void *)&info->buff);//굳이 널 안박아줘도 되긴 하지만 ..bzero ㅇㅏㄴ슬거면 여여기  널 박고 해해보보자
-		if (line[info->i + 1] != '\0')
-		{
-			info->buff = get_args_one_size(&line[info->i]);//여기가 다음꺼 새로 만드는 시점
-		}
-		if (check_sepa(line[info->i]) == 1)//오 ..시바 여긴 공백없이 구분자 바로 올 때. 널 문자일 때도 들어가야함
-				info->content->args[info->args_i + 1] = NULL;
-	// }
-	// else
-	// {
-		//info->buff = NULL;
-	// }
+	info->content->args[info->args_i] = ft_strdup(info->buff);//여기 args는 결국엔 한 노드(파이프 등 구분자로 나눠진)의 배열이니 args배열은 구분자있으면 매번 초기화(새로 사이즈 재고 말록, 0초기화)해야하지 않나?
+	free_single((void *)&info->buff);//굳이 널 안박아줘도 되긴 하지만 ..bzero ㅇㅏㄴ슬거면 여여기  널 박고 해해보보자
+	if (line[info->i + 1] != '\0')
+	{
+		info->buff = get_args_one_size(&line[info->i]);//여기가 다음꺼 새로 만드는 시점
+	}
+	if (check_sepa(line[info->i]) == 1)//오 ..시바 여긴 공백없이 구분자 바로 올 때. 널 문자일 때도 들어가야함
+			info->content->args[info->args_i + 1] = NULL;
 	(info->args_i)++;
 	info->j = 0;
-	// ft_bzero(info->buff, ft_strlen(info->buff) + 1);
 	// printf("content->args[info->args_i] == %s\n\n", info->content->args[info->args_i - 1]);
 }
 //구분자 전에 공백이 있으면 이미 만들어져있었을 것이고.. 아니면 안만들어져있을것이고 .. 를 지우의 info->buff 체크해보는 방식으로 해결
@@ -150,36 +159,13 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 	if (line[info->i] == '>' && line[info->i + 1] == '>' || line[info->i] == '<' && \
 		line[info->i + 1] == '<')
 		info->i++;
-	////ls >> 일 경우 에러
-	if ((line[info->i ] == '<' || line[info->i ] == '>') && line[info->i + 1] == '\0')
-	{
-		printf("parse error near '\\n'\n");
-			exit(1);
-	}
-	//// | ls 일 경우 에러
-	if (line[info->i ] == '|' && line[info->i + 1] == '\0')
-	{
-		printf("parse error near '\\n'2\n");
-			exit(1);
-	}
-	if (line[info->i + 1] != '\0' && (line[info->i + 1] == '>' || line[info->i + 1] == '<' || \
-		line[info->i + 1] == '|' || line[info->i + 1] == ';'))
-	{
-		printf("syn error\n");
-		exit(1);	
-	}
 	info->content->flag = i;
-	// printf("info->buff:%s,%d\n", info->buff, info->buff[0]);
-	// if (check_sepa(line[info->i + 1]) == 1)
 	if (*(info->buff) != 0)//구분자 앞에 공백이 있어씅면 이미 처리가 됐을테니 현재 args_i는 널이 박혀야하는 자리인듯 하다.
 		push_args(info, line);
 	else
-		info->content->args[info->args_i] = NULL;//여기였다.
-	// printf("line[info->i + 1]:%c\tline[info->i]:%ci:%d\n", line[info->i + 1], line[info->i], info->i);
+		info->content->args[info->args_i] = NULL;
 		ft_lstadd_back(node, ft_lstnew(info->content));//아래 조건문에서 밖으로 뺌
-	/*if ((info->content->args)[0] == 0 && info->content->flag <= 1)//여긴 뭐 하는곳?
-		exit(0);
-	else */if (line[info->i + 1] != '\0')
+	if (line[info->i + 1] != '\0')
 	{
 		info->content = ft_calloc(1, sizeof(t_cmd));
 		info->content->args = ft_calloc(count_token(line + info->i + 1) + 1, sizeof(char *));
@@ -187,8 +173,7 @@ void		set_content(t_info *info, char *line, t_arvl **node, int i)
 		info->content->flag = 0;	
 	}
 	info->args_i = 0;
-	// while (line[info->i] != ' ' && line[info->i + 1] != '\0')//구분자 끝나고 노드 넣고 공백 밀어주는 곳
-	// 	info->i++;
+
 	//free and init
 }
 
@@ -253,10 +238,8 @@ void parsing_check(char *line, t_info *info)
         info->buff[info->j++] = line[info->i];
     }
     else
-	{
-        info->buff[info->j++] = line[info->i];}
-	// printf("info->args_i:%d\n", info->args_i);
-	if (line[info->i + 1] == '\0')//마지막 넣어주기  문제되면 *(info->buff) != 0 &&
+        info->buff[info->j++] = line[info->i];
+	if (line[info->i + 1] == '\0')
 	{
 		push_args(info, line);
 		ft_lstadd_back(&info->head, ft_lstnew(info->content));
@@ -275,31 +258,21 @@ void make_first_init(t_info *info, char *line)
 	info->content = (t_cmd *)malloc(sizeof(t_cmd));
 	int count = count_token(line);
 	info->content->args = ft_calloc(count, sizeof(char *) * (count + 1));
-	// printf("return val count_token:%d\n", count);
 	info->content->flag = 0;
 }
 
 
-int	ft_isalnum(int c)
-{
-	if (((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
-		|| ((c >= '0') && (c <= '9')))
-		return (1);
-	else
-		return (0);
-}
-
 /* key의 길이 + 1($문자) 만큼 인덱스를 밀어주면서, $를 제외한 키의 문자열을 반환 *//* i는 달러 위치 */
 /* e.x)  $USER *i의 값은 + 5만큼 해주고 USER를 반환 */
 /* parsing env key of args */
-char		*find_env(char *str, int *j)
+char	*find_env(char *str, int *j)
 {
 	char	*res;
 	int		i;
 
 	(*j)++;
 	i = *j;
-	while (str[i] && str[i] != '$' && ft_isalnum(str[i]))
+	while (str[i] && str[i] != '$')
 		i++;
 	i--;
 	res = ft_strndup(str + *j, i - *j + 1);
@@ -324,7 +297,6 @@ size_t  ft_strlcat(char *dst, char *src, size_t dstsize)
         i = 0;
         while (dst_len + i < dstsize - 1 && src[i])
         {
-			// printf("strlcat()dst:%c, src:%c\n", dst[dst_len + i], src[i]);
                 dst[dst_len + i] = src[i];
                 i++;
         }
@@ -427,9 +399,6 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
             k = 0;
             while (cmd->args[i][j])
             {
-				// write(1, &cmd->args[i][j], 1);
-				// write(1, "  ", 2);
-				// printf("1ft_set_buff()k:%d\n", k);
                 if (cmd->args[i][j] == quote)
                     k++;
                 else if (quote == 0 && (cmd->args[i][j] == '\'' || cmd->args[i][j] == '\"'))
@@ -457,6 +426,23 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
     return (buff);
 }
 
+int get_exit_code_len(int exit_code)
+{
+	int len;
+	int temp;
+
+	if (exit_code == 0)
+		return (1);
+	temp = exit_code;
+	len = 0;
+	while(temp)
+	{
+		temp /= 10;
+		len++;
+	}
+	return(len);
+}
+
 char *set_buff(char *args_line, char **env)
 {
     int quote;
@@ -482,8 +468,16 @@ char *set_buff(char *args_line, char **env)
 		else if (quote != '\'' && args_line[i] == '$' && args_line[i + 1])//이 조건만 아니면 모두 k++하는거 아닌ㄴ가?
 		{
 			k--;
-			move_env_size(env, find_env(args_line, &i), &k);// <-여기 댕글링 포인터 처리하려면 줄수 나눠야해 <-여기 달러문자 인덱스 잘못돼서 잘못된 k값 넘겨줌.
-			continue ;
+			if (args_line[i + 1] == '?')
+			{
+				i++;
+				k = get_exit_code_len(exit_code);
+			}
+			else
+			{
+				move_env_size(env, find_env(args_line, &i), &k);// <-여기 댕글링 포인터 처리하려면 줄수 나눠야해 <-여기 달러문자 인덱스 잘못돼서 잘못된 k값 넘겨줌.
+				continue ;
+			}
 		}
 		else
 		{
@@ -495,75 +489,184 @@ char *set_buff(char *args_line, char **env)
 	buff[k] = '\0';
     return (buff);
 }
+
+char		*word_parsing_splitting(char **args, int *idx, char **env, char *buff)
+{
+    int quote;
+	int i;
+	int k;
+	char *res;
+
+	i = 0;
+	quote = 0;
+	k = 0;
+	while(args[0][i])
+    {
+		if (args[0][i] == quote)
+        quote = 0;
+        else if (quote == 0 && (args[0][i] == '\'' || args[0][i] == '\"'))
+            quote = args[0][i];
+        else if (quote == '\"' && args[0][i] == '\\' && args[0][i + 1] )
+            buff[k++] = args[0][++i];
+        else if (quote == 0 && args[0][i] == '\\' && args[0][i + 1])
+            buff[k++] = args[0][i];
+        else if (quote == 0 && ((args[0][i] == '|') || args[0][i] == '>') || (args[0][i] == '<'))
+        {
+			break;
+		}
+        else if (quote != '\'' && args[0][i] == '$' && args[0][i + 1])
+		{
+			buff[k] = '\0';
+			if (args[0][i + 1] == '?')
+			{
+				char *ppp = ft_itoa(exit_code);
+				int zzz = 0;
+				while (ppp[zzz])
+				{
+					buff[k] = ppp[zzz];
+					k++;
+					zzz++;
+				}
+				
+				i++;
+				free_single((void **)&ppp);
+			}
+			else
+			{
+            	check_split(&k, set_env_to_buf(env, find_env(args[0], &i), buff), idx, quote);
+			}
+		}
+        else
+        {
+        	buff[k] = args[0][i];
+            	k++;
+        }
+	
+		i++;
+	}
+		buff[k] = '\0';
+
+        res = ft_strdup(buff);
+        free(buff);
+		buff = NULL;
+		return(res);
+}
+
+char		*word_parsing(char **args, int *idx, char **env, char *buff)
+{
+	int quote;
+	int i;
+	int k;
+	char *res;
+
+	i = 0;
+	quote = 0;
+    k = 0;
+
+	while(args[*idx][i])
+	{
+		printf("zzzz == %c\n",args[*idx][i]);
+		if (args[*idx][i] == quote)
+			quote = 0;
+        else if (quote == 0 && (args[*idx][i] == '\'' || args[*idx][i] == '\"'))
+            quote = args[*idx][i];
+        else if (quote == '\"' && args[*idx][i] == '\\' && args[*idx][i + 1] )
+            buff[k++] = args[*idx][++i];
+        else if (quote == 0 && args[*idx][i] == '\\' && args[*idx][i + 1])
+            buff[k++] = args[*idx][i];
+        else if (quote == 0 && ((args[*idx][i] == '|') || args[*idx][i] == '>') || (args[*idx][i] == '<'))
+		{
+			break;
+		}
+        else if (quote != '\'' && args[*idx][i] == '$' && args[*idx][i + 1])
+		{
+			
+			buff[k] = '\0';
+			if (args[*idx][i + 1] == '?')
+			{
+				char *ppp = ft_itoa(exit_code);
+				int zzz = 0;
+				while (ppp[zzz])
+				{
+					buff[k] = ppp[zzz];
+					k++;
+					zzz++;
+				}
+				i++;
+				free_single((void **)&ppp);
+			}
+			else
+			{
+            	k = set_env_to_buf(env, find_env(args[*idx], &i), buff);
+			}
+		}
+			else
+			{
+        		buff[k] = args[*idx][i];
+				k++;
+			}
+			i++;
+        }
+	buff[k] = '\0';
+	res = ft_strdup(buff);
+	free(buff);
+	buff = NULL;
+	return(res);
+}
+int		double_str_len(char **str)
+{
+	int idx;
+
+	idx = 0;
+	while (str[idx])
+		idx++;
+	return (idx);
+}
+
+char		**parsing_second_args(char **args, char **env)
+{
+	char *buff;
+	int i = 0;
+	int idx = 0;
+	char *args_temp;
+
+	//// 커맨드가 하나일 때 ex) ls, ls -al, a="ls -al" -> $a
+	if (double_str_len(args) == 1)
+	{
+		buff = set_buff(args[i], env);
+		args[0] = word_parsing_splitting(args, &idx, env, buff);
+		if (idx== 1)
+		{
+			args_temp = args[0];
+			args = ft_split(args_temp, ' ');
+			free(args_temp);
+		}
+	}
+	///// 그 이외의 것들 ls | cat 이런거
+	else
+	{
+		while (args[idx])
+		{
+			buff = set_buff(args[idx], env);
+			args[idx] = word_parsing(args, &idx, env, buff);
+			buff = NULL;
+			idx++;
+        }
+	}
+	return(args);
+}
+
 /* 구분자 등 일차적인 파싱을 끝내고, 환경변수 확장 해줌.(이미 만든 cmd->args를) */
 void parsing_second(t_arvl *node, char **env)
 {
-	// printf("in parsing_second()\n");
-    t_arvl *crr;
+    t_arvl *crr; // t_list
     t_cmd *cmd;
-    int i;
-    char *buff;
-    int j;
-    int quote;
-    int k = 0;
-    int idx = -1;
-    cmd = NULL;
-    crr = node;
-
-    while (crr != NULL)
-    {
-        cmd = crr->content;
-        quote = 0;
-        i = 0;
-        while (cmd->args[i])
-        {
-            // buff = ft_set_buff(cmd, crr, idx, env);//이거 수정한거 어디갔지. cat 이 아닌 왜 전체가 돌아? -> 지우한테 물어보기
-			buff = set_buff(cmd->args[i], env);
-            j = 0;
-            k = 0;
-            while (cmd->args[i][j])
-            {
-			// write(1, "!!!", 3);
-			// write(1, &cmd->args[i][j], 1);
-			// write(1, "!!!\n", 4);
-//여기서 args찍어보면 $USER aa 일 경우 args : $USER, args : aa 이렇게 나오는데 환경변수 확장하고 그 뒤에 aa 까지 while문 돌아서 buff에 넣어줌
-				//parsing second 들어오기 전에 결과 출력해보면 이상없어
-                if (cmd->args[i][j] == quote)
-                    quote = 0;
-                else if (quote == 0 && (cmd->args[i][j] == '\'' || cmd->args[i][j] == '\"'))
-                    quote = cmd->args[i][j];
-                else if (quote == '\"' && cmd->args[i][j] == '\\' && cmd->args[i][j + 1] )
-                    buff[k++] = cmd->args[i][++j];
-                else if (quote == 0 && cmd->args[i][j] == '\\' && cmd->args[i][j + 1])
-                    buff[k++] = cmd->args[i][j];
-//$USER aa , $USER | "$USER" , $USER ; $USER 등 이런거 처리
-                else if (quote == 0 && ((cmd->args[i][j] == '|') || cmd->args[i][j] == '>') || (cmd->args[i][j] == '<') || \
-							(cmd->args[i][j] == ';'))
-				{
-					break;
-				}
-                else if (quote != '\'' && cmd->args[i][j] == '$' && cmd->args[i][j + 1])
-				{
-					buff[k] = '\0';//!!!!!!! 
-                    check_split(&k, set_env_to_buf(env, find_env(cmd->args[i], &j), buff), &idx, quote); 
-					j++;
-					//여기도
-					if (quote == 0)
-						j--;
-				}
-                else
-                {
-                    buff[k] = cmd->args[i][j];
-                    k++;
-                }
-                j++;
-            }
-			buff[k] = '\0';
-            cmd->args[i] = ft_strdup(buff);
-            i++;
-            free(buff);
-			buff = NULL;
-        }
+    
+	crr = node;
+	while (crr != NULL)
+	{
+		cmd = (t_cmd *)(crr->content);
+		cmd->args = parsing_second_args(cmd->args, env);
         crr = crr->next;
     }
 	// printf("out parsing_second()\n");
@@ -589,6 +692,50 @@ void print_nodes_to_head(t_arvl *head)
         node_num++;
     }
 }
+int check_line_error(char *line, int i, int flag)
+{
+	if (flag == 2)
+	{
+		i++;
+		i++;
+	}
+	if (flag == 1)
+		i++;
+	while (line[i] == ' ')
+		i++;
+	if (line[i] == '\0' || line[i] == '|' || line[i] == '<' || line[i] == '>')
+	{
+		printf("syntax error\n");
+		return(0);
+	}
+	return(1);
+}
+
+int error_case(char *line)
+{
+	int i= 0;
+	if (line[0] == '|')
+	{
+		printf("syntax error\n");
+		return(0);
+	}
+	while(line[i])
+	{
+		if ((line[i] == '>' && line[i + 1] == '>') || 
+				(line[i] == '<' && line[i + 1] == '<'))
+		{
+			if (!check_line_error(line, i ,2))
+				return(0);
+		}
+		else if(line[i] == '>' || line[i] == '<' || line[i] == '|')
+		{
+			if (!check_line_error(line, i ,1))
+				return(0);
+		}
+		i++;
+	}
+	return(1);
+}
 
 void	parsing(t_info *info, char *line, char **env)
 {
@@ -596,6 +743,8 @@ void	parsing(t_info *info, char *line, char **env)
 	cmd = ft_strtrim(line, " ");
 	if (cmd == NULL)
 		return ;
+	if (!(error_case(line)))
+		exit(1);
 	make_first_init(info, cmd);
 	while (cmd[info->i])
 	{

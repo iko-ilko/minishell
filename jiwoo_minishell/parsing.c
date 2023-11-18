@@ -19,9 +19,8 @@ char *ft_itoa(int nbr)
 		n /= 10;
 		len++;
 	}
-	char *result = (char *)malloc(sizeof(char) * (len + 1));
-	if (result == NULL) 
-		return NULL;
+	char *result = ft_calloc(len + 1, sizeof(char));
+
 	result[len] = '\0';
 	if (nbr == 0)
 	{
@@ -70,7 +69,7 @@ void set_quote(t_info *info, char quot, char buffer)
 //널문자는 체크 안하는걸로 수정함.
 int	check_sepa(char c)
 {
-	if (c == '|' || c == ';' || c == '>' || c == '<' || c == '\0')
+	if (c == '|' || c == '>' || c == '<' || c == '\0')
 		return (1);
 	return (0);
 }
@@ -102,7 +101,7 @@ int		count_token(char *input)//이 함수 작성자가 이렇게 구현한 이�
 	sepa_idx = 0;
 	while (check_sepa(input[sepa_idx]) == 0)//check_sepa 널문자는 처리 안하려고 수정할라했는데 여기서 쓰이는구나 ...
 		sepa_idx++;
-	while (input[sepa_idx] != '\0' && input[sepa_idx] != '|' && input[sepa_idx] != ';' && \
+	while (input[sepa_idx] != '\0' && input[sepa_idx] != '|' && \
 			input[sepa_idx] != '>' && input[sepa_idx] != '<')
 		sepa_idx++;
 	// if (sepa_idx == 0)
@@ -129,12 +128,12 @@ char *get_args_one_size(char *line)
 	i = 0;
 	j = 0;
 	quot = 0;
-	while (line[i] && ((line[i] >= 0 && line[i] <= 32) || (line[i] == '|') || ( line[i] == ';') || \
+	while (line[i] && ((line[i] >= 0 && line[i] <= 32) || (line[i] == '|') || \
 			(line[i] == '>') || (line[i] == '<')))
 	{
 		i++;
 	}
-	while (line[i] && ((line[i] != ' ' || quot != 2) && (line[i] != '|') && ( line[i] != ';') && (line[i] != '>' && \
+	while (line[i] && ((line[i] != ' ' || quot != 2) && (line[i] != '|') && (line[i] != '>' && \
 			(line[i] != '<'))))
 		{
 			if (line[i] == '\"')
@@ -190,7 +189,6 @@ void	push_args(t_info *info, char *line)
 	// }
 	(info->args_i)++;
 	info->j = 0;
-	ft_memset(info->buff, 0, ft_strlen(info->buff) + 1);
 	printf("content->args[info->args_i] == %s\n\n", info->content->args[info->args_i - 1]);
 }
 //구분자 전에 공백이 있으면 이미 만들어져있었을 것이고.. 아니면 안만들어져있을것이고 .. 를 지우의 info->buff 체크해보는 방식으로 해결
@@ -333,7 +331,7 @@ char	*find_env(char *str, int *j)
 
 	(*j)++;
 	i = *j;
-	while (str[i] && str[i] != '$' && ft_isalnum(str[i]))
+	while (str[i] && str[i] != '$')
 		i++;
 	i--;
 	res = ft_strndup(str + *j, i - *j + 1);
@@ -590,8 +588,7 @@ char		*word_parsing_splitting(char **args, int *idx, char **env, char *buff)
             buff[k++] = args[0][++i];
         else if (quote == 0 && args[0][i] == '\\' && args[0][i + 1])
             buff[k++] = args[0][i];
-        else if (quote == 0 && ((args[0][i] == '|') || args[0][i] == '>') || (args[0][i] == '<') || \
-					(args[0][i] == ';'))
+        else if (quote == 0 && ((args[0][i] == '|') || args[0][i] == '>') || (args[0][i] == '<'))
 		{
 			break;
 		}
@@ -662,8 +659,7 @@ char		*word_parsing(char **args, int *idx, char **env, char *buff)
             buff[k++] = args[*idx][++i];
         else if (quote == 0 && args[*idx][i] == '\\' && args[*idx][i + 1])
             buff[k++] = args[*idx][i];
-        else if (quote == 0 && ((args[*idx][i] == '|') || args[*idx][i] == '>') || (args[*idx][i] == '<') || \
-					(args[*idx][i] == ';'))
+        else if (quote == 0 && ((args[*idx][i] == '|') || args[*idx][i] == '>') || (args[*idx][i] == '<'))
 		{
 			break;
 		}
