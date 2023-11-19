@@ -260,7 +260,15 @@ void make_first_init(t_info *info, char *line)
 	info->content->args = ft_calloc(count, sizeof(char *) * (count + 1));
 	info->content->flag = 0;
 }
-
+int	ft_isalnum(int c)
+{
+	//// 그래서 여기서 추가
+	if (((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
+		|| ((c >= '0') && (c <= '9')) || (c == '_'))
+		return (1);
+	else
+		return (0);
+}
 
 /* key의 길이 + 1($문자) 만큼 인덱스를 밀어주면서, $를 제외한 키의 문자열을 반환 *//* i는 달러 위치 */
 /* e.x)  $USER *i의 값은 + 5만큼 해주고 USER를 반환 */
@@ -272,7 +280,11 @@ char	*find_env(char *str, int *j)
 
 	(*j)++;
 	i = *j;
-	while (str[i] && str[i] != '$')
+	////export 0a 처럼 환경변수 이름에 처음은 숫자가 들어가면 안됨
+	//// 환경변수 이름에느 숫자, 영어, _ 만 들어갈 수 있음
+	// if(str[i] >= '0' && str[i] <= '9')
+	// 	exit(1);
+	while (str[i] && str[i] != '$' && ft_isalnum(str[i]))
 		i++;
 	i--;
 	res = ft_strndup(str + *j, i - *j + 1);
@@ -399,15 +411,7 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
             k = 0;
             while (cmd->args[i][j])
             {
-                if (cmd->args[i][j] == quote)
-                    k++;
-                else if (quote == 0 && (cmd->args[i][j] == '\'' || cmd->args[i][j] == '\"'))
-                    k++;
-                else if (quote == '\"' && cmd->args[i][j] == '\\' && cmd->args[i][j + 1] )
-                    k++;
-                else if (quote == 0 && cmd->args[i][j] == '\\' && cmd->args[i][j + 1])
-                    k++;
-                else if (quote != '\'' && cmd->args[i][j] == '$' && cmd->args[i][j + 1])//이 조건만 아니면 모두 k++하는거 아닌ㄴ가?
+                if (quote != '\'' && cmd->args[i][j] == '$' && cmd->args[i][j + 1])//이 조건만 아니면 모두 k++하는거 아닌ㄴ가?
 				{
 					k--;
                     move_env_size(env, find_env(cmd->args[i], &j), &k);// <-여기 댕글링 포인터 처리하려면 줄수 나눠야해 <-여기 달러문자 인덱스 잘못돼서 잘못된 k값 넘겨줌.
@@ -457,15 +461,7 @@ char *set_buff(char *args_line, char **env)
 		// write(1, &args_line[i], 1);
 		// write(1, "  ", 2);
 		// printf("1ft_set_buff()k:%d\n", k);
-		if (args_line[i] == quote)
-			k++;
-		else if (quote == 0 && (args_line[i] == '\'' || args_line[i] == '\"'))
-			k++;
-		else if (quote == '\"' && args_line[i] == '\\' && args_line[i + 1])
-			k++;
-		else if (quote == 0 && args_line[i] == '\\' && args_line[i + 1])
-			k++;
-		else if (quote != '\'' && args_line[i] == '$' && args_line[i + 1])//이 조건만 아니면 모두 k++하는거 아닌ㄴ가?
+		if (quote != '\'' && args_line[i] == '$' && args_line[i + 1])//이 조건만 아니면 모두 k++하는거 아닌ㄴ가?
 		{
 			k--;
 			if (args_line[i + 1] == '?')
@@ -488,6 +484,22 @@ char *set_buff(char *args_line, char **env)
     buff = (char *)malloc((k + 1) * (sizeof(char)));
 	buff[k] = '\0';
     return (buff);
+}
+
+void expand_exit_code(char **buff, int *k, int *i)
+{
+    char *ppp = ft_itoa(exit_code);
+    int zzz = 0;
+
+    while (ppp[zzz])
+    {
+        (*buff)[*k] = ppp[zzz];
+        (*k)++;
+        zzz++;
+    }
+
+    (*i)++;
+    free_single((void **)&ppp);
 }
 
 char		*word_parsing_splitting(char **args, int *idx, char **env, char *buff)
@@ -518,19 +530,7 @@ char		*word_parsing_splitting(char **args, int *idx, char **env, char *buff)
 		{
 			buff[k] = '\0';
 			if (args[0][i + 1] == '?')
-			{
-				char *ppp = ft_itoa(exit_code);
-				int zzz = 0;
-				while (ppp[zzz])
-				{
-					buff[k] = ppp[zzz];
-					k++;
-					zzz++;
-				}
-				
-				i++;
-				free_single((void **)&ppp);
-			}
+				expand_exit_code(&buff, &k, &i);
 			else
 			{
             	check_split(&k, set_env_to_buf(env, find_env(args[0], &i), buff), idx, quote);
@@ -541,16 +541,16 @@ char		*word_parsing_splitting(char **args, int *idx, char **env, char *buff)
         	buff[k] = args[0][i];
             	k++;
         }
-	
 		i++;
 	}
 		buff[k] = '\0';
-
         res = ft_strdup(buff);
         free(buff);
 		buff = NULL;
 		return(res);
 }
+
+
 
 char		*word_parsing(char **args, int *idx, char **env, char *buff)
 {
@@ -582,22 +582,9 @@ char		*word_parsing(char **args, int *idx, char **env, char *buff)
 			
 			buff[k] = '\0';
 			if (args[*idx][i + 1] == '?')
-			{
-				char *ppp = ft_itoa(exit_code);
-				int zzz = 0;
-				while (ppp[zzz])
-				{
-					buff[k] = ppp[zzz];
-					k++;
-					zzz++;
-				}
-				i++;
-				free_single((void **)&ppp);
-			}
+				expand_exit_code(&buff, &k, &i);
 			else
-			{
             	k = set_env_to_buf(env, find_env(args[*idx], &i), buff);
-			}
 		}
 			else
 			{
@@ -612,6 +599,7 @@ char		*word_parsing(char **args, int *idx, char **env, char *buff)
 	buff = NULL;
 	return(res);
 }
+
 int		double_str_len(char **str)
 {
 	int idx;
@@ -632,6 +620,7 @@ char		**parsing_second_args(char **args, char **env)
 	//// 커맨드가 하나일 때 ex) ls, ls -al, a="ls -al" -> $a
 	if (double_str_len(args) == 1)
 	{
+		// printf("args[idx] = %s\n", args[idx]);
 		buff = set_buff(args[i], env);
 		args[0] = word_parsing_splitting(args, &idx, env, buff);
 		if (idx== 1)
@@ -646,6 +635,7 @@ char		**parsing_second_args(char **args, char **env)
 	{
 		while (args[idx])
 		{
+			printf("args[idx] = %s\n", args[idx]);
 			buff = set_buff(args[idx], env);
 			args[idx] = word_parsing(args, &idx, env, buff);
 			buff = NULL;
@@ -658,19 +648,26 @@ char		**parsing_second_args(char **args, char **env)
 /* 구분자 등 일차적인 파싱을 끝내고, 환경변수 확장 해줌.(이미 만든 cmd->args를) */
 void parsing_second(t_arvl *node, char **env)
 {
+	printf("in parsing_second()\n");
     t_arvl *crr; // t_list
     t_cmd *cmd;
-    
+    int prev_flag;
+
 	crr = node;
+	prev_flag = 0;
+
 	while (crr != NULL)
 	{
-		cmd = (t_cmd *)(crr->content);
-		cmd->args = parsing_second_args(cmd->args, env);
-        crr = crr->next;
-    }
+		if (prev_flag != 5)
+		{
+			cmd = (t_cmd *)(crr->content);
+			cmd->args = parsing_second_args(cmd->args, env);
+		}
+		prev_flag = cmd->flag;
+		crr = crr->next;
+	}
 	// printf("out parsing_second()\n");
 }
-
 void print_nodes_to_head(t_arvl *head)
 {
     t_arvl *current = head;
@@ -703,10 +700,7 @@ int check_line_error(char *line, int i, int flag)
 	while (line[i] == ' ')
 		i++;
 	if (line[i] == '\0' || line[i] == '|' || line[i] == '<' || line[i] == '>')
-	{
-		printf("syntax error\n");
 		return(0);
-	}
 	return(1);
 }
 
@@ -714,10 +708,7 @@ int error_case(char *line)
 {
 	int i= 0;
 	if (line[0] == '|')
-	{
-		printf("syntax error\n");
 		return(0);
-	}
 	while(line[i])
 	{
 		if ((line[i] == '>' && line[i + 1] == '>') || 
@@ -743,7 +734,10 @@ void	parsing(t_info *info, char *line, char **env)
 	if (cmd == NULL)
 		return ;
 	if (!(error_case(line)))
-		exit(1);
+	{
+		free(cmd);
+		return(str_error("syntax error", NULL));
+	}
 	make_first_init(info, cmd);
 	while (cmd[info->i])
 	{
@@ -755,10 +749,7 @@ void	parsing(t_info *info, char *line, char **env)
 		// 	push_args(info, cmd);
 	}
 	if (info->quote != 0)
-	{
-		printf("fuck\n");
-		exit(0);
-	}
+		return(str_error("Unclosed quotation mark", NULL));
 	// free_single((void *)&info->buff);
 	// print_nodes_to_head(info->head); //result
 	// printf("------------parsing check done--------------\n");
