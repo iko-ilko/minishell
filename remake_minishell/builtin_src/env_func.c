@@ -74,7 +74,11 @@ void	env_exe(t_data *data, char **arvs)
 	while (cur)
 	{
 		if (cur->value != NULL)
-			printf("%s=%s\n", cur->key, cur->value);
+		{
+			write(data->cur_pipe->in_out_fd[1], cur->key, ft_strlen(cur->key));
+			write(data->cur_pipe->in_out_fd[1], "=", 1);
+			write(data->cur_pipe->in_out_fd[1], cur->value, ft_strlen(cur->value));
+		}
 		cur = cur->next;
 	}
 }

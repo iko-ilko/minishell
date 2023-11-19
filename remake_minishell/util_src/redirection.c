@@ -6,13 +6,13 @@ void	redirect_file(t_redi *redi, t_pipe *pipe_data)
 	{
 		if (redi->flag == SIN_REDI_R || redi->flag == DOUB_REDI_R)
 		{
-			if (pipe_data->in_out_fd[1] != -1)
+			if (pipe_data->in_out_fd[1] != 1)
 				close(pipe_data->in_out_fd[1]);
 			pipe_data->in_out_fd[1] = redirect_file_out(redi->flag, redi->file_name);
 		}
 		else
 		{
-			if (pipe_data->in_out_fd[0] != -1)
+			if (pipe_data->in_out_fd[0] != 0)
 				close(pipe_data->in_out_fd[0]);
 			pipe_data->in_out_fd[0] = redirect_file_in(redi->flag, redi->file_name, &pipe_data->heredoc_f);
 		}
@@ -60,6 +60,13 @@ int	redirect_file_in(int flag, char *file_name, int *heredoc_f)
 		}
 		here_doc(file_name, fd);
 		*heredoc_f = 1;
+		close(fd);
+		fd = open("here_doc.temp", O_RDONLY);//히어독 WD옵션해도 하나는 닫혀서 따로 또 오픈해야함.read, wrirte
+		if (fd == -1)
+		{
+			my_perror("here_doc.temp");
+			return (-1);
+		}
 	}
 	return (fd);
 }

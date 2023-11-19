@@ -33,10 +33,6 @@
 # define SIN_REDI_L 4 // <
 # define DOUB_REDI_L 5 // <<
 
-/* parent or child process*/
-# define CHILD 0
-# define PARENT 1
-
 /* env linkedlist */
 typedef struct	s_envl
 {
@@ -117,6 +113,7 @@ typedef struct	s_data
 	t_envl		*envl;
 	char		**envp;
 	char		*pwd;//
+	char		**history;//
 
 	t_arvl		*arvl;
 	t_cmd_node	*cmd_node_head;
@@ -124,7 +121,7 @@ typedef struct	s_data
 	int			node_open_flag;
 	int			args_i;
 	int			pre_flag;
-	t_pipe		*pipe_temp;
+	t_pipe		*cur_pipe;
 
 	int			cur_pid;
 	int			last_exit_code;
@@ -132,6 +129,8 @@ typedef struct	s_data
 
 void	print_data_cmd(t_data *data);
 int		check_line(char **line);
+void	ft_putnbr_fd(int n, int fd);
+
 
 
 
@@ -172,11 +171,9 @@ void	wait_parent(t_data *data, t_pipe *pipe_data);
 
 
 /* ./builtin_src/buitin_func.c */
-int		if_buitin_func(t_data *data, t_pipe *pipe_data, char **arvs);
+int		if_buitin_func(t_data *data, char **arvs);
 /* 				cd_func.c */
-void	cd_home(t_data *data, char *error_str);
 void	cd_exe(t_data *data, char **arvs);
-
 /* 				exit_func.c */
 void	exit_exe(t_data *data, char **arvs);
 
@@ -206,7 +203,7 @@ void	more_shell(t_data *data, char **arvs, char **envp);
 /* util.src/pipe_func.c */
 char	**get_all_path(char **envp);
 char	*find_command(char *cmd, char **all_path);
-void	set_pipe(t_pipe *pip);
+void	set_pipe(t_data *data, t_pipe *pip);
 int		cnt_pipe(t_cmd_node *head);
 void	close_all_fd(t_pipe *pipe_data);
 

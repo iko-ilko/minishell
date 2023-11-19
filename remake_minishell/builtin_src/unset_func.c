@@ -36,7 +36,6 @@ void	unset_exe(t_data *data, char **arvs, int idx)
 	unset_exe(data, arvs, ++idx);
 	if (idx == 2)
 	{
-		printf("update envp!\n");
 		free_double(&data->envp);
 		update_envp(data, data->envl);
 	}

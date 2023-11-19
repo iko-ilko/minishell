@@ -59,7 +59,6 @@ void	every_init(t_info *info, t_data *data)
 	info->buff = NULL;
 	info->head = NULL;
 	info->content = NULL;
-	data->cur_pid = PARENT;
 	data->pre_flag = 0;
 	data->cmd_node_head = NULL; 
 	data->cmd_node_last = NULL;
@@ -80,9 +79,6 @@ void	init_pipe(t_data *data, t_pipe *pipe_data)
 	pipe_data->next_fd[1] = -1;
 	pipe_data->pre_fd[0] = -1;
 	pipe_data->pre_fd[1] = -1;
-	pipe_data->in_out_fd[0] = -1;
-	pipe_data->in_out_fd[1] = -1;
-	
-
-
+	pipe_data->in_out_fd[0] = 0;
+	pipe_data->in_out_fd[1] = 1;
 }

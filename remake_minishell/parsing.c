@@ -623,7 +623,7 @@ char		**parsing_second_args(char **args, char **env)
 		// printf("args[idx] = %s\n", args[idx]);
 		buff = set_buff(args[i], env);
 		args[0] = word_parsing_splitting(args, &idx, env, buff);
-		if (idx== 1)
+		if (idx== 1)////ㅈㅣ그ㅁ 여여기  분분기기는  의의미미없없음음
 		{
 			args_temp = args[0];
 			args = ft_split(args_temp, ' ');
@@ -635,7 +635,6 @@ char		**parsing_second_args(char **args, char **env)
 	{
 		while (args[idx])
 		{
-			printf("args[idx] = %s\n", args[idx]);
 			buff = set_buff(args[idx], env);
 			args[idx] = word_parsing(args, &idx, env, buff);
 			buff = NULL;
@@ -648,17 +647,16 @@ char		**parsing_second_args(char **args, char **env)
 /* 구분자 등 일차적인 파싱을 끝내고, 환경변수 확장 해줌.(이미 만든 cmd->args를) */
 void parsing_second(t_arvl *node, char **env)
 {
-	printf("in parsing_second()\n");
     t_arvl *crr; // t_list
     t_cmd *cmd;
     int prev_flag;
 
-	crr = node;
+	crr = node;////info노드를 아예 받아와서 info->head를 넘겨주는게 나을듯
 	prev_flag = 0;
 
 	while (crr != NULL)
 	{
-		if (prev_flag != 5)
+		if (prev_flag != 5)//지역변수가 아닌 구조체, 즉 info->prev_flag를 사용하기
 		{
 			cmd = (t_cmd *)(crr->content);
 			cmd->args = parsing_second_args(cmd->args, env);
@@ -733,11 +731,11 @@ void	parsing(t_info *info, char *line, char **env)
 	cmd = ft_strtrim(line, " ");
 	if (cmd == NULL)
 		return ;
-	if (!(error_case(line)))
-	{
-		free(cmd);
-		return(str_error("syntax error", NULL));
-	}
+	// if (!(error_case(line)))
+	// {
+	// 	free(cmd);
+	// 	return(str_error("syntax error", NULL));
+	// }
 	make_first_init(info, cmd);
 	while (cmd[info->i])
 	{

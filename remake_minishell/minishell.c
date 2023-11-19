@@ -2,7 +2,30 @@
 
 int		exit_code = 0;
 
+static void	from_left_num(int n, int fd)
+{
+	char	c;
 
+	if (n / 10 > 0)
+		from_left_num(n / 10, fd);
+	c = n % 10 + '0';
+	write(fd, &c, 1);
+}
+
+void	ft_putnbr_fd(int n, int fd)
+{
+	if (n == -2147483648)
+	{
+		write(fd, "-2147483648", 11);
+		return ;
+	}
+	if (n < 0)
+	{
+		write(fd, "-", 1);
+		n *= -1;
+	}
+	from_left_num(n, fd);
+}
 void	print_data_cmd(t_data *data)
 {
 	t_cmd_node	*cur;
@@ -35,16 +58,19 @@ void	print_data_cmd(t_data *data)
 
 int	check_line(char **line)
 {
-	int	i;
+	int		i;
+	char	c;
 
 	i = 0;
-	while ((*line)[i] && (*line)[i] == ' ')
-		i++;
-	if ((*line)[i] == '\0')
+	if (*line[i++] == '\0')
 	{
 		free(*line);
 		return (-1);
 	}
+	// while ((*line)[i] != NULL)
+	// {
+	// 	if ((*line)[i] == '')
+	// }
 	return (0);
 	// 이 함수 제대로 만들기
 }
@@ -78,7 +104,7 @@ int main(int arc, char **arv, char **envp)
 	    add_history(line);
 		every_init(&info, &data);
 		parsing(&info, line, data.envp);
-		print_nodes_to_head(info.head); //print info->head
+		// print_nodes_to_head(info.head); //print info->head
 		remake_arvl(&info, &data);
 		// free_arvl(&info);<-메모리 많이 잡아먹지도 않는데 아래서 한번에 해줄까?
 		print_data_cmd(&data);//print data->cmd_node_head

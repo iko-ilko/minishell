@@ -39,12 +39,11 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 		if (pipe_data->cmd_idx != pipe_data->pipe_cnt)
 			dup2(pipe_data->next_fd[1], 1);
 
-		if (pipe_data->in_out_fd[0] != -1)
+		if (pipe_data->in_out_fd[0] != 0)
 			dup2(pipe_data->in_out_fd[0], 0);
-		if (pipe_data->in_out_fd[1] != -1)
+		if (pipe_data->in_out_fd[1] != 1)
 			dup2(pipe_data->in_out_fd[1], 1);
-				
-		if (if_buitin_func(data, pipe_data, args) == 1)
+		if (if_buitin_func(data, args) == 1)
 		{
 			close_all_fd(pipe_data);
 			exit(0);//return
@@ -80,18 +79,20 @@ void	exe_data(t_data *data, char *root_file_name)
 	init_pipe(data, &pipe_data);//need to check
 	while (cur != NULL)
 	{
-		if (pipe_data.pipe_cnt > 0)
-			set_pipe(&pipe_data);
+		data->cur_pipe = &pipe_data;
+		if (pipe_data.pipe_cnt != 0)
+			set_pipe(data, &pipe_data);
 		redirect_file(cur->redi, &pipe_data); //<-히어독 파싱부분에가면 플래그 관련 없애면 됨. 아니면 파싱에서 쓰는 확장 함수 ..재사용 가능할까?
 		if (pipe_data.pipe_fail_flag == -1)//next_if_pipe_fail(data, &cur) cur 포인터 넘겨줘서 실패라면 continue
-		{//리다이렉션 실패시 에러메세지 출력하고 continue. 커맨드 실행 x
+		{
 			pipe_data.pipe_fail_flag = 0;
 			cur = cur->next;
 			continue ;
 		}
+
 		if (cur->args != NULL)
 		{
-			if (pipe_data.pipe_cnt == 0 && if_buitin_func(data, &pipe_data, cur->args) == 1)
+			if (pipe_data.pipe_cnt == 0 && if_buitin_func(data, cur->args) == 1)
 				;
 			else
 				execute_child(data, &pipe_data, cur->args);
@@ -102,6 +103,7 @@ void	exe_data(t_data *data, char *root_file_name)
 	}
 	wait_parent(data, &pipe_data);//여기 pre fd 줘도 될것같은데? 아니지 결국 같겠다 나중에 테스트.
 }
+
 			// if (ft_strcmp(root_file_name, cmd->args[0]) == 0)//more shell도 그냥 pipex에서 했던 실행에 인자 넣어줘도 될지 체크. 되면 파이프 있는지 체크하고 다른 함수 호출.
 			// 	more_shell(data, cmd->args, envp);
 			// else if (if_buitin_func(data, cmd->args) == 1)

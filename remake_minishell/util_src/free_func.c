@@ -21,6 +21,8 @@ void	free_double(char ***str)
 	int	i;
 
 	i = 0;
+	if (*str == NULL)
+		return ;
 	while ((*str)[i])
 	{
 		free((*str)[i]);

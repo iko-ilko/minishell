@@ -10,8 +10,17 @@ int	check_key(char *str, int unset_flag)
 {
 	int	i;
 
-	if (!((str[0] >= 'A' && str[0] <= 'Z') || (str[0] >= 'a' && str[0] <= 'z') || (str[0] == '_')))
+	if (!((str[0] >= 'A' && str[0] <= 'Z') || (str[0] >= 'a' && str[0] <= 'z')\
+		|| (str[0] == '_')))
 		return (-1);
+	i = 1;
+	while (str[i])
+	{
+		if (!((str[i] >= 'A' && str[i] <= 'Z') || (str[i] >= 'a' && str[i] <= 'z')\
+		|| (str[i] == '_') || (str[i] >= '0' && str[i] <= '9')))
+			return (-1);
+		i++;
+	}
 	if (unset_flag == DEL)
 	{
 		i = 0;
@@ -45,15 +54,18 @@ static void    print_all_export(t_data *data)
     cur = data->envl;
     while (cur)
     {
-		printf("%s", cur->key);
+		write(data->cur_pipe->in_out_fd[1], cur->key, ft_strlen(cur->key));
 		if (cur->value != NULL)
-			printf("=\"%s\"", cur->value);
-		
+		{
+			write(data->cur_pipe->in_out_fd[1], "\"=", 2);
+			write(data->cur_pipe->in_out_fd[1], cur->value, ft_strlen(cur->value));
+			write(data->cur_pipe->in_out_fd[1], "\"", 1);
+		}
 		// if (str_check_space(cur->value) == 1)
 		// 	printf("\"%s\"\n", cur->value);
 		// else if (cur->value != NULL)
 		// 	printf("%s", cur->value);
-		printf("\n");
+		write(data->cur_pipe->in_out_fd[1], "\n", 1);
         cur = cur->next;
     }
 }
@@ -113,14 +125,7 @@ void    export_exe(t_data *data, char **arvs, int idx)
 			modify_env(data, key, value);
 		else
 			add_env(data, key, value);
-		// printf("%s", key);//여기서부턴 출력
-		// if (value != NULL)
-		// 	printf("=");
-		// if (str_check_space(value) == 1)
-		// 	printf("\"%s\"\n", value);
-		// else if (value != NULL)
-		// 	printf("%s", value);
-		// printf("\n");
+
 	}
 	export_exe(data, arvs, ++idx);
 	if (idx == 2)
@@ -129,12 +134,6 @@ void    export_exe(t_data *data, char **arvs, int idx)
 		free_double(&data->envp);
 		update_envp(data, data->envl);
 	}
-    
-    // if (index == -2)
-    //     key = ft_strdup(arvs[idx]);
-    // else
-    //     key = ft_strndup(arvs[idx], index);
-    // value = ft_strdup(arvs[idx] + index + 1);
 
     //이 함수는 어차피 위에 함수에서 쓸 것이다. 일단 리스트에 넣어보고 출력값 비교하기.
 
