@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int		exit_code = 0;
+int		g_exit_code = 0;
 
 static void	from_left_num(int n, int fd)
 {
@@ -90,8 +90,8 @@ int main(int arc, char **arv, char **envp)
 		exit_error("No such file or directory", arv[1], 127);
     // do_signal();
 	init_envl(&data, envp, arv[0]);
-    signal(SIGINT, sigint_handler);
-    signal(SIGQUIT, SIG_DFL);//테스트로 디폴트 작동
+	rl_catch_signals = 0;//^C 출력 무시
+	set_signal(PARENT);
     // signal()
 	// 빌트인 커맨드 단독 일 때만 부모 프로세스에서 빌트인 실행
     while(1)
@@ -107,8 +107,8 @@ int main(int arc, char **arv, char **envp)
 		// print_nodes_to_head(info.head); //print info->head
 		remake_arvl(&info, &data);
 		// free_arvl(&info);<-메모리 많이 잡아먹지도 않는데 아래서 한번에 해줄까?
-		print_data_cmd(&data);//print data->cmd_node_head
-		printf("----------end parsing\n");
+		// print_data_cmd(&data);//print data->cmd_node_head
+		// printf("----------end parsing\n");
 		exe_data(&data, arv[0]);//root file name 필요없을듯 있으면 구조체에 ㄱ
 		free_every(&data, &info, &line);//with line
 

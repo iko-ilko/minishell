@@ -5,6 +5,8 @@
 
 #include "../minishell.h"
 
+extern int g_exit_code;
+
 t_envl	*find_key(t_data *data, char *key)
 {
 	t_envl	*cur;
@@ -66,7 +68,7 @@ void	add_env(t_data *data, char *key, char *value)
 	cur->next = new;
 }
 
-void	env_exe(t_data *data, char **arvs)
+void	env_exe(t_data *data, char **arvs, int exit_code)
 {
 	t_envl	*cur;
 
@@ -81,4 +83,8 @@ void	env_exe(t_data *data, char **arvs)
 		}
 		cur = cur->next;
 	}
+	if (data->cur_pid == 0)
+		exit(exit_code);
+	else
+		g_exit_code = exit_code;
 }

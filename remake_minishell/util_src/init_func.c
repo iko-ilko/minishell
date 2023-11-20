@@ -33,7 +33,6 @@ void	update_envp(t_data *data, t_envl *cur)
 {
 	int		i;
 	char	*temp;
-	printf("update_envp func\n");
 	i = 0;
 	data->envp = malloc(sizeof(char *) * (get_lstsize(cur) + 1));
 	while (cur != NULL)

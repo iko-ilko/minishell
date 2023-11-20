@@ -1,5 +1,8 @@
 #include "minishell.h"
-//
+
+extern int g_exit_code;
+
+
 void	here_doc(char *limiter, int here_doc_temp_fd)//redirection.c로 보내?말어?
 {
 	char	*line;
@@ -34,6 +37,7 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 		exit_error("fork error", NULL, 1);
 	else if (data->cur_pid == 0)
 	{
+		set_signal(CHILD);
 		if (pipe_data->cmd_idx != 0)
 			dup2(pipe_data->pre_fd[0], 0);
 		if (pipe_data->cmd_idx != pipe_data->pipe_cnt)
@@ -45,7 +49,7 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 			dup2(pipe_data->in_out_fd[1], 1);
 		if (if_buitin_func(data, args) == 1)
 		{
-			close_all_fd(pipe_data);
+			// close_all_fd(pipe_data);
 			exit(0);//return
 		}///
 
@@ -116,11 +120,51 @@ void	exe_data(t_data *data, char *root_file_name)
 
 void	wait_parent(t_data *data, t_pipe *pipe_data)
 {
-	int status;
+	int status_last;
+	int	status_others;
+	int	signo_last;
+	int	signo_others;
 
+	signo_others = 0;
+	signo_last = 0;
 	close_all_fd(pipe_data);
-	waitpid(data->cur_pid, &status, 0);
-	while (wait(NULL) != -1)
+	waitpid(data->cur_pid, &status_last, 0);
+	while (wait(&status_others) != -1)
+	{
+		if (signo_others != SIGQUIT)
+			signo_others = WTERMSIG(status_others);
 		;
-	data->last_exit_code = WEXITSTATUS(status);
+	}
+	if (WIFSIGNALED(status_last))
+	{
+		signo_last = WTERMSIG(status_last);
+		g_exit_code = 128 + signo_last;
+	}
+	else
+		g_exit_code = WEXITSTATUS(status_last);
+	if (signo_others == SIGQUIT || signo_last == SIGQUIT)
+		write(2, "Quit: 3\n", 8);
 }
+
+// void	wait_child(void)
+// {
+// 	int		status;
+// 	int		signo;
+// 	int		i;
+
+// 	i = 0;
+// 	while (wait(&status) != -1)
+// 	{
+// 		if (WIFSIGNALED(status))
+// 		{
+// 			signo = WTERMSIG(status);
+// 			if (signo == SIGINT && i++ == 0)
+// 				ft_putstr_fd("^C\n", STDERR_FILENO);
+// 			else if (signo == SIGQUIT && i++ == 0)
+// 				ft_putstr_fd("^\\Quit: 3\n", STDERR_FILENO);
+// 			g_exit_code = 128 + signo;
+// 		}
+// 		else
+// 			g_exit_code = WEXITSTATUS(status);
+// 	}
+// }

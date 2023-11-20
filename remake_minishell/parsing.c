@@ -1,8 +1,6 @@
 #include "minishell.h"
 
-extern int exit_code;
-//	printf("env_size() envv[i]:%s\n", envv[i]); <- 이거 인자로 넣으면 세그폴트 왜?
-int	node_cnt = 1;
+extern int g_exit_code;
 
 char *ft_itoa(int nbr) 
 {
@@ -430,14 +428,14 @@ char *ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env)
     return (buff);
 }
 
-int get_exit_code_len(int exit_code)
+int get_exit_code_len(int g_exit_code)
 {
 	int len;
 	int temp;
 
-	if (exit_code == 0)
+	if (g_exit_code == 0)
 		return (1);
-	temp = exit_code;
+	temp = g_exit_code;
 	len = 0;
 	while(temp)
 	{
@@ -467,7 +465,7 @@ char *set_buff(char *args_line, char **env)
 			if (args_line[i + 1] == '?')
 			{
 				i++;
-				k = get_exit_code_len(exit_code);
+				k = get_exit_code_len(g_exit_code);
 			}
 			else
 			{
@@ -488,7 +486,7 @@ char *set_buff(char *args_line, char **env)
 
 void expand_exit_code(char **buff, int *k, int *i)
 {
-    char *ppp = ft_itoa(exit_code);
+    char *ppp = ft_itoa(g_exit_code);
     int zzz = 0;
 
     while (ppp[zzz])

@@ -144,8 +144,6 @@ void	remake_arvl(t_info *info, t_data *data)
 		pre_flag = cur_cmd->flag;
 		cur = cur->next;
 	}
-
-	printf("remake done\n");
 }
 	//<< limiter cat -e > file | ls | wc > outfile
 	//info->head free and NULL

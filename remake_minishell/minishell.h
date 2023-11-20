@@ -33,6 +33,10 @@
 # define SIN_REDI_L 4 // <
 # define DOUB_REDI_L 5 // <<
 
+/* parent, child */
+# define CHILD 0
+# define PARENT 1
+
 /* env linkedlist */
 typedef struct	s_envl
 {
@@ -124,7 +128,6 @@ typedef struct	s_data
 	t_pipe		*cur_pipe;
 
 	int			cur_pid;
-	int			last_exit_code;
 }	t_data;
 
 void	print_data_cmd(t_data *data);
@@ -173,27 +176,27 @@ void	wait_parent(t_data *data, t_pipe *pipe_data);
 /* ./builtin_src/buitin_func.c */
 int		if_buitin_func(t_data *data, char **arvs);
 /* 				cd_func.c */
-void	cd_exe(t_data *data, char **arvs);
+void	cd_exe(t_data *data, char **arvs, int exit_code);
 /* 				exit_func.c */
 void	exit_exe(t_data *data, char **arvs);
 
 /* 				export_func.c */
 int		check_key(char *str, int unset_flag);
-void    export_exe(t_data *data, char **arvs, int idx);
+void    export_exe(t_data *data, char **arvs, int exit_code);
 
 t_envl	*find_key(t_data *data, char *key);//파싱에서도 쓸 수 있게 노드를 반환
 /* 				env_func.c */
-void	env_exe(t_data *data, char **arvs);
+void	env_exe(t_data *data, char **arvs, int exit_code);
 int		find_index(char *str, char c);
 void	modify_env(t_data *data, char *key, char *value);
 void	add_env(t_data *data, char *key, char *value);
 
 /* 				echo_func.c */
-void	echo_exe(t_data *data, char **arvs);
+void	echo_exe(t_data *data, char **arvs, int exit_code);
 /* 				unset_func.c*/
-void	unset_exe(t_data *data, char **arvs, int idx);
+void	unset_exe(t_data *data, char **arvs, int exit_code);
 /* 				pwd_func.c*/
-void	pwd_exe(t_data *data, char **arvs);
+void	pwd_exe(t_data *data, char **arvs, int exit_code);
 
 /* ./child_process/shell_child.c */
 void	more_shell(t_data *data, char **arvs, char **envp);
@@ -234,8 +237,10 @@ void	update_envp(t_data *data, t_envl *cur);
 void	init_pipe(t_data *data, t_pipe *pipe_data);
 
 /* 			/signal_func.c */
+void	set_signal(int flag);
 void    sigint_handler(int signum);
 void    sigquit_handler(int signum);
+
 /*			/free_func.c */
 void	free_vars(t_data *data);
 void	free_double(char ***str);
