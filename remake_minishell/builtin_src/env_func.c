@@ -7,6 +7,20 @@
 
 extern int g_exit_code;
 
+char	*get_env_value(t_data *data, char *key)
+{
+	t_envl	*cur;
+
+	cur = data->envl;
+	while (cur)
+	{
+		if (ft_strcmp(cur->key, key) == 0)
+			return (cur->value);
+		cur = cur->next;
+	}
+	return (NULL);
+}
+
 t_envl	*find_key(t_data *data, char *key)
 {
 	t_envl	*cur;
@@ -46,13 +60,9 @@ void	add_env(t_data *data, char *key, char *value)
 	t_envl	*new;
 
 	new = make_env_node(data, key, value);
-	if (new == NULL)
-		exit_error("malloc failed\n", NULL, 1);//
 	if (data->envl == NULL)
 	{
 		data->envl = new;
-		if (data->envl == NULL)
-			exit_error("malloc failed\n", NULL, 1);//
 		return ;
 	}
 	if (ft_strcmp(data->envl->key, key) > 0)
@@ -68,7 +78,7 @@ void	add_env(t_data *data, char *key, char *value)
 	cur->next = new;
 }
 
-void	env_exe(t_data *data, char **arvs, int exit_code)
+void	env_exe(t_data *data, char **arvs)
 {
 	t_envl	*cur;
 
@@ -84,7 +94,5 @@ void	env_exe(t_data *data, char **arvs, int exit_code)
 		cur = cur->next;
 	}
 	if (data->cur_pid == 0)
-		exit(exit_code);
-	else
-		g_exit_code = exit_code;
+		exit(g_exit_code);
 }

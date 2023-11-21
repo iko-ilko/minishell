@@ -2,7 +2,7 @@
 
 extern int g_exit_code;
 
-void	echo_exe(t_data *data, char **arvs, int exit_code)
+void	echo_exe(t_data *data, char **arvs)
 {
 	int	n_flag;
 	int	i;
@@ -20,7 +20,5 @@ void	echo_exe(t_data *data, char **arvs, int exit_code)
 	if (n_flag == 0)
 		write(data->cur_pipe->in_out_fd[1], "\n", 1);
 	if (data->cur_pid == 0)
-		exit(exit_code);
-	else
-		g_exit_code = exit_code;
+		exit(g_exit_code);
 }

@@ -6,7 +6,7 @@
 
 extern int g_exit_code;
 
-void	pwd_exe(t_data *data, char **arvs, int exit_code)
+void	pwd_exe(t_data *data, char **arvs)
 {
 	char	*pwd;
 
@@ -17,7 +17,5 @@ void	pwd_exe(t_data *data, char **arvs, int exit_code)
 	write(data->cur_pipe->in_out_fd[1], "\n", 1);
 	free(pwd);
 	if (data->cur_pid == 0)
-		exit(exit_code);
-	else
-		g_exit_code = exit_code;
+		exit(g_exit_code);
 }

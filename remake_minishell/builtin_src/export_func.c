@@ -68,7 +68,7 @@ static void    print_all_export(t_data *data)
 //음 ...함수 빼야하네 ..재귀 안쓰면 수정이 꽤 있을것같으니 재귀는 냅두자 ..
 //  / //// 무조건 밸류는 큰따옴표임 ㅠㅠ
 //반복문으로 바꾸자 ..
-void    export_exe(t_data *data, char **arvs, int exit_code)
+void    export_exe(t_data *data, char **arvs)
 {
     int     index;
     char    *key;
@@ -92,7 +92,7 @@ void    export_exe(t_data *data, char **arvs, int exit_code)
 			char *temp = ft_strjoin("export: ", arvs[idx]);
 			str_error("not a valid identifier", temp);
 			free_single((void **)&temp);
-			exit_code = 1;
+			g_exit_code = 1;
 		}
 		else
 		{
@@ -113,7 +113,5 @@ void    export_exe(t_data *data, char **arvs, int exit_code)
 	free_double(&data->envp);
 	update_envp(data, data->envl);
 	if (data->cur_pid == 0)
-		exit(exit_code);
-	else
-		g_exit_code = exit_code;
+		exit(g_exit_code);
 }

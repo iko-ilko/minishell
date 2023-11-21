@@ -2,7 +2,7 @@
 
 extern int g_exit_code;
 
-void	unset_exe(t_data *data, char **arvs, int exit_code)
+void	unset_exe(t_data *data, char **arvs)
 {
 	t_envl	*cur;
 	t_envl	*pre;
@@ -42,7 +42,5 @@ void	unset_exe(t_data *data, char **arvs, int exit_code)
 	free_double(&data->envp);
 	update_envp(data, data->envl);
 	if (data->cur_pid == 0)
-		exit(exit_code);
-	else
-		g_exit_code = exit_code;
+		exit(g_exit_code);
 }

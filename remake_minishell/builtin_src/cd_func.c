@@ -57,68 +57,67 @@ void	cd_home(t_data *data, char *error_str)
 {
 	char	*home_dir;
 
-	home_dir = find_key(data, "HOME")->value;
+	home_dir = get_env_value(data, "HOME");
 	if (home_dir == NULL)
 	{
-		home_dir = getenv("HOME");
-		chdir(home_dir);
+
+		if (home_dir == NULL || chdir(home_dir) == -1)
+		{
+			if(home_dir == NULL)
+				str_error("HOME not set anywhere..", "cd");
+			else
+				perror(error_str);
+			g_exit_code = 1;
+		}
+		printf("???g_exit_code : %d\n", g_exit_code);
 	}
 	else
-		chdir(home_dir);
+	{
+		if (chdir(home_dir) == -1)
+		{
+			perror(error_str);
+			g_exit_code = 1;
+		}
+	}
 	free_single((void *)&home_dir);
 }
 
+void	set_pwd_env(t_data *data, char *cwd_temp)
+{
+	char	*temp;
+
+	temp = getcwd(NULL, 0);
+	if (temp == NULL || cwd_temp == NULL)
+	{
+		str_error("getcwd failed", "cd");
+		g_exit_code = 1;
+		return ;
+	}
+	modify_env(data, "PWD", temp);
+	modify_env(data, "OLDPWD", cwd_temp);
+	free_single((void *)&temp);
+}
 ///////////////일단 리스트 함수들 만들고 export, unset, pwd 명령어 구현하고 cd구현 마무리하자.
 //cd $HOME은 파싱 부분에서 확장될것이니까 cd $만 처리하자.
 // ㄷㅓ브ㄹ프리남 cd .. 해ㅛㅆㄴㅇ릃 ㄸ깨
-void	cd_exe(t_data *data, char **arvs, int exit_code)
+void	cd_exe(t_data *data, char **arvs)
 {
-여기여기여기
 	char	*error_str;
 	char	*cwd_temp;
-
+	
 	error_str = ft_strjoin("minishell: cd: ", arvs[1]);
-	if (arvs[1] == NULL)
-		return ;
 	cwd_temp = getcwd(NULL, 0);
-	if (cwd_temp != NULL)
-		find_key(data, "OLDPWD")->value = cwd_temp;
-	else
-		find_key(data, "OLDPWD")->value = find_key(data, "PWD")->value;
-	free_single((void *)&cwd_temp);
-	if (ft_strcmp(arvs[1], "~") == 0)
+	if (arvs[1] == NULL || ft_strcmp(arvs[1], "~") == 0)
 		cd_home(data, error_str);
 	else if (chdir(arvs[1]) == -1)
+	{
 		perror(error_str);
+		g_exit_code = 1;
+	}
+	if (g_exit_code == 0)
+	set_pwd_env(data, cwd_temp);
 	free_single((void *)&error_str);
-여기여기여기여기여기여기여기여기여기 위가 전 코드인데 이거 집가서 붙이기 ~ HOME 같은 분기로 나누기.
-
-
-	char	*error_str;
-	char	*cwd_temp;
-
-	error_str = ft_strjoin("minishell: cd: ", arvs[1]);
-	if (arvs[1] == NULL || ft_strcmp(arvs[1], "~") == 0)//HOME으로
-	{
-		cd_home(data, error_str);
-	}
-	else
-	cwd_temp = getcwd(NULL, 0);
-	if (cwd_temp != NULL)
-		find_key(data, "OLDPWD")->value = cwd_temp;
-	else
-		find_key(data, "OLDPWD")->value = find_key(data, "PWD")->value;
-	free_single((void *)&cwd_temp);
-	if (chdir(arvs[1]) == -1)
-	{
-		perror(error_str);
-		exit_code = 1;
-	}
 	if (data->cur_pid == 0)
-		exit(exit_code);
-	else
-		g_exit_code = exit_code;
-	printf("cd exit_code : %d\n", exit_code);
+		exit(g_exit_code);
 	printf("cd g_exit_code : %d\n", g_exit_code);
-
 }

@@ -176,27 +176,29 @@ void	wait_parent(t_data *data, t_pipe *pipe_data);
 /* ./builtin_src/buitin_func.c */
 int		if_buitin_func(t_data *data, char **arvs);
 /* 				cd_func.c */
-void	cd_exe(t_data *data, char **arvs, int exit_code);
+void	set_pwd_env(t_data *data, char *cwd_temp);
+void	cd_exe(t_data *data, char **arvs);
 /* 				exit_func.c */
 void	exit_exe(t_data *data, char **arvs);
 
 /* 				export_func.c */
 int		check_key(char *str, int unset_flag);
-void    export_exe(t_data *data, char **arvs, int exit_code);
+void    export_exe(t_data *data, char **arvs);
 
 t_envl	*find_key(t_data *data, char *key);//파싱에서도 쓸 수 있게 노드를 반환
 /* 				env_func.c */
-void	env_exe(t_data *data, char **arvs, int exit_code);
+void	env_exe(t_data *data, char **arvs);
 int		find_index(char *str, char c);
 void	modify_env(t_data *data, char *key, char *value);
 void	add_env(t_data *data, char *key, char *value);
+char	*get_env_value(t_data *data, char *key);
 
 /* 				echo_func.c */
-void	echo_exe(t_data *data, char **arvs, int exit_code);
+void	echo_exe(t_data *data, char **arvs);
 /* 				unset_func.c*/
-void	unset_exe(t_data *data, char **arvs, int exit_code);
+void	unset_exe(t_data *data, char **arvs);
 /* 				pwd_func.c*/
-void	pwd_exe(t_data *data, char **arvs, int exit_code);
+void	pwd_exe(t_data *data, char **arvs);
 
 /* ./child_process/shell_child.c */
 void	more_shell(t_data *data, char **arvs, char **envp);
