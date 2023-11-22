@@ -93,7 +93,7 @@ void	set_pwd_env(t_data *data, char *cwd_temp)
 		g_exit_code = 1;
 		return ;
 	}
-	modify_env(data, "PWD", temp);
+	modify_env(data, "PWD", ft_strdup(temp));
 	modify_env(data, "OLDPWD", cwd_temp);
 	free_single((void *)&temp);
 }
