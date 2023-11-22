@@ -121,8 +121,8 @@ char *get_args_one_size(char *line)
 	{
 		i++;
 	}
-	while (line[i] && ((line[i] != ' ') && (line[i] != '|') && (line[i] != '>' && \
-			(line[i] != '<'))))
+	while (line[i] && (line[i] != '|') && (line[i] != '>' && \
+			(line[i] != '<')))
 		{
 			i++;
 			j++;
