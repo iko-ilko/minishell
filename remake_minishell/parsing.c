@@ -542,6 +542,7 @@ char		*word_parsing_splitting(char **args, int *idx, char **env, char *buff)
         }
 		i++;
 	}
+		free_single((void **)&args[0]);
 		buff[k] = '\0';
         res = ft_strdup(buff);
         free(buff);
@@ -594,8 +595,9 @@ char		*word_parsing(char **args, int *idx, char **env, char *buff)
         }
 	buff[k] = '\0';
 	res = ft_strdup(buff);
-	free(buff);
+	free_single((void **)&buff);
 	buff = NULL;
+	printf("args:%s\n", args[*idx]);
 	return(res);
 }
 
@@ -649,6 +651,7 @@ void parsing_second(t_arvl *node, char **env)
     t_arvl *crr; // t_list
     t_cmd *cmd;
     int prev_flag;
+	char	temp_args;
 
 	crr = node;////info노드를 아예 받아와서 info->head를 넘겨주는게 나을듯
 	prev_flag = 0;
@@ -750,6 +753,7 @@ void	parsing(t_info *info, char *line, char **env)
 	// free_single((void *)&info->buff);
 	// print_nodes_to_head(info->head); //result
 	// printf("------------parsing check done--------------\n");
+	free_single((void *)&cmd);
 	parsing_second(info->head, env);
 	free_single((void *)&info->buff);
 }//push args 첫번째에 널이 들어간다 왜지? 

@@ -1,7 +1,7 @@
 #include "../minishell.h"
 
 //세그폴트 뜸뜸
-void	free_vars(t_data *data)
+void	 free_last(t_data *data)
 {
 	t_envl	*next_env;
 	t_envl	*cur_env;
@@ -15,7 +15,7 @@ void	free_vars(t_data *data)
 		free_single((void **)&cur_env->value);
 		free(cur_env);
 		cur_env = next_env;
-	}
+	}//envp
 }
 
 void	free_double(char ***str)
@@ -36,7 +36,7 @@ void	free_double(char ***str)
 
 void	free_single(void **p)
 {
-	if (*p == NULL)
+	if (p == NULL || *p == NULL)
 		return ;
 
 	free(*p);
@@ -49,6 +49,7 @@ void	clear_t_avrl(t_arvl **head)
 	t_arvl	*next;
 	t_cmd	*cmd;
 
+	
 	cur = *head;
 	while (cur != NULL)
 	{
@@ -92,5 +93,5 @@ void	free_every(t_data *data, t_info *info, char **line)
 	free_single((void **)line);
 	clear_t_avrl(&info->head);
 	clear_t_cmd_node(&data->cmd_node_head);
-	
+
 }

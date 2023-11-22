@@ -16,12 +16,14 @@
 //arvs[1]의 엑싯코드로 종료.
 //만약 arvs[2] (즉, 두번째 인자)가 있다면 에러 메세지 출력하고 종료.
 //만약 arvs[1]이 범위가 벗어나거나 숫자가 아니면 에러 메세지 출력하고 종료.
-void	exit_exe(t_data *data, char **arvs)
+void	exit_exe(t_data *data, t_info *info, char **arvs)
 {
 	int		exit_code = 0;//임시
 
 	write(data->cur_pipe->in_out_fd[1], "exit\n", 5);
-	free_vars(data);
+	// free_every(data, info, NULL);
+	free_last(data);
+
 	//릭 정리하고
 	//check_arv_number() 는 숫자인지 체크하고 long long 범위 안넘는지 체크
 	// if (check_arv_number(arvs) == -1)

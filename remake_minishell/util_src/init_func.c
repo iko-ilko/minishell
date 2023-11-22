@@ -58,6 +58,7 @@ void	every_init(t_info *info, t_data *data)
 	info->buff = NULL;
 	info->head = NULL;
 	info->content = NULL;
+	data->cur_pid = -1;
 	data->pre_flag = 0;
 	data->cmd_node_head = NULL; 
 	data->cmd_node_last = NULL;
