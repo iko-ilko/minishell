@@ -127,23 +127,27 @@ void	wait_parent(t_data *data, t_pipe *pipe_data)
 
 	signo_others = 0;
 	signo_last = 0;
+	status_last = 0;
+	status_others = 0;
 	close_all_fd(pipe_data);
 	waitpid(data->cur_pid, &status_last, 0);
 	while (wait(&status_others) != -1)
 	{
 		if (signo_others != SIGQUIT)
 			signo_others = WTERMSIG(status_others);
-		;
 	}
-	if (WIFSIGNALED(status_last))
+	if (WIFSIGNALED(status_last) != 0)
 	{
 		signo_last = WTERMSIG(status_last);
 		g_exit_code = 128 + signo_last;
 	}
 	else
 		g_exit_code = WEXITSTATUS(status_last);
-	if (signo_others == SIGQUIT || signo_last == SIGQUIT)
+	// printf("signo_last:%d signo_others:%d g_exit_code:%d\n", signo_last, signo_others, g_exit_code);
+	if (signo_last == SIGQUIT)
 		write(2, "Quit: 3\n", 8);
+	// else if (signo_others == SIGQUIT)
+	// 	write(2, "^C", 1);
 }
 
 // void	wait_child(void)

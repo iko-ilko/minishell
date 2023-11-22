@@ -1,5 +1,7 @@
 #include "../minishell.h"
 
+extern int g_exit_code;
+
 
 //ANSI 이스케이프 코드도 사용해야할듯 ... 커서 제대로 찍으려면... 허용된 t 뭐시기 함수들 사용해야할듯...
 // 각각 시그널에 맞는 핸들러 함수를 인자로 주거나 IGN, DFL, 주면 될듯?
@@ -11,6 +13,15 @@
 //child_sigint_handler(int signum)
 // {
 
+// }
+
+// void aa(int signum)
+// {
+// 	write(1, "\n", 1);
+//     rl_on_new_line();
+// 	rl_replace_line("", 0);//readline()함수에 준 문자열 지우기.(엔터 안치고 남아있던 문자열)
+// 	rl_redisplay();//readline()함수에 준 문자열 출력.
+// 	write(1, "^C", 2);
 // }
 void	set_signal(int flag)
 {
@@ -35,6 +46,7 @@ void    sigint_handler(int signum)//핸들러 함수는 부모,자식으로 나�
     rl_on_new_line();
 	rl_replace_line("", 0);//readline()함수에 준 문자열 지우기.(엔터 안치고 남아있던 문자열)
 	rl_redisplay();//readline()함수에 준 문자열 출력.
+	g_exit_code = 1;
 }
 
 // void	sigquit_handler(int signum)

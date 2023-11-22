@@ -115,9 +115,8 @@ void	cd_exe(t_data *data, char **arvs)
 		g_exit_code = 1;
 	}
 	if (g_exit_code == 0)
-	set_pwd_env(data, cwd_temp);
+		set_pwd_env(data, cwd_temp);
 	free_single((void *)&error_str);
 	if (data->cur_pid == 0)
 		exit(g_exit_code);
-	printf("cd g_exit_code : %d\n", g_exit_code);
 }
