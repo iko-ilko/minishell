@@ -111,8 +111,6 @@ int main(int arc, char **arv, char **envp)
 		// printf("----------end parsing\n");
 		exe_data(&data, arv[0]);//root file name 필요없을듯 있으면 구조체에 ㄱ
 		free_every(&data, &info, &line);//with line
-
-
     }
 	// atexit(a);
 }

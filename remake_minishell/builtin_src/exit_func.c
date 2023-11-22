@@ -28,4 +28,3 @@ void	exit_exe(t_data *data, char **arvs)
 	// 	return ;
 	exit(0);
 }
-

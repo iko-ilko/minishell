@@ -26,7 +26,7 @@ void    envp_to_envl(t_data *data, char **envp, char *rootfile)
 		add_env(data, key, value);
         i++;
     }
-	add_env(data, "OLDPWD", NULL);
+	add_env(data, ft_strdup("OLDPWD"), NULL);
 }
 
 void	update_envp(t_data *data, t_envl *cur)

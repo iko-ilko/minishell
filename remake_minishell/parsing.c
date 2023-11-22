@@ -86,6 +86,7 @@ int		count_token(char *input)//이 함수 작성자가 이렇게 구현한 이�
 	int		sepa_idx;
 	char	*p;
 
+
 	// p = ft_calloc(ft_strlen(input) + 1, sizeof(char));
 	// ft_strcpy(p, input);
 	sepa_idx = 0;
@@ -98,7 +99,7 @@ int		count_token(char *input)//이 함수 작성자가 이렇게 구현한 이�
 	// 	exit_error("syntax error near unexpected token", NULL, 258);//이 에러로 핸들링 하면 좋은데 호출이 꽤 늦은 함수라 여기서 되는지는 일단 엑싯 박아놓고 테스트 해보자.
 	p = get_pre_sepa_str(input, sepa_idx);//이 함수는 말록을 해줘야함(이 함수에서 말록)
 	count_token = 1;
-	if (ft_strtok(p, ' ') != NULL)//여기 strtok은 매번 말록함
+	if (ft_strtok(p, ' ') != NULL)
 	{
 		while (ft_strtok(NULL, ' ') != NULL)
 			count_token++;
