@@ -88,14 +88,15 @@ int main(int arc, char **arv, char **envp)
 
 	if (arv[1] != NULL)
 		exit_error("No such file or directory", arv[1], 127);
-    // do_signal();
 	init_envl(&data, envp, arv[0]);
-	rl_catch_signals = 0;//^C 출력 무시
-	set_signal(PARENT);
-    // signal()
+	// set_signal(PARENT);
 	// 빌트인 커맨드 단독 일 때만 부모 프로세스에서 빌트인 실행
+	// rl_catch_signals = 0;
     while(1)
     {
+		set_signal(PARENT);
+	// signal(SIGINT, sigint_handler_1);
+	// signal(SIGQUIT, SIG_IGN);
         line = readline("minishell$ ");
 		if (line == NULL)//<-파상 안에서 하는 trim 여기서 할까? 아님 파싱에서 syntax error 잡히면 -1 리턴하고 그러면 라인 free하고 continue되게 할까?
 			break ;
@@ -106,9 +107,10 @@ int main(int arc, char **arv, char **envp)
 		parsing(&info, line, data.envp);
 		// print_nodes_to_head(info.head); //print info->head
 		remake_arvl(&info, &data);
-		// free_arvl(&info);<-메모리 많이 잡아먹지도 않는데 아래서 한번에 해줄까?
 		// print_data_cmd(&data);//print data->cmd_node_head
 		// printf("----------end parsing\n");
+		set_signal(CHILD);//<---이가 왜 메인으로 빼니까 되냐ㅡㅡ
+
 		exe_data(&data, arv[0]);//root file name 필요없을듯 있으면 구조체에 ㄱ
 		free_every(&data, &info, &line);//with line
     }

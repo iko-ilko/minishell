@@ -15,33 +15,40 @@ extern int g_exit_code;
 
 // }
 
-// void aa(int signum)
-// {
-// 	write(1, "\n", 1);
-//     rl_on_new_line();
-// 	rl_replace_line("", 0);//readline()함수에 준 문자열 지우기.(엔터 안치고 남아있던 문자열)
-// 	rl_redisplay();//readline()함수에 준 문자열 출력.
-// 	write(1, "^C", 2);
-// }
+void aa(int signum)
+{
+	write(1, "\n", 1);
+    rl_on_new_line();
+	rl_replace_line("", 0);//readline()함수에 준 문자열 지우기.(엔터 안치고 남아있던 문자열)
+	// rl_redisplay();//readline()함수에 준 문자열 출력.
+	write(1, "^Caaaaaaaaaaaaaaaaaaaaaaaa", 26);
+}
 void	set_signal(int flag)
 {
 	if (flag == PARENT)
 	{
-		signal(SIGINT, sigint_handler);
+		rl_catch_signals = 0;//^C 출력 무시 <- 얘 있다해서 핸들러 함수가 안되는거 아닌데 ㅗㅇ ㅐ자식 안돼 ㅠㅠ
+		signal(SIGINT, sigint_handler_1);
 		signal(SIGQUIT, SIG_IGN);
 	}
 	else
 	{
-		signal(SIGINT, SIG_DFL);
-		// signal(SIGQUIT, sigquit_handler);
-		signal(SIGQUIT, SIG_DFL);
+		signal(SIGINT, sigint_handler_2);//<---이가 왜 메인으로 빼니까 되냐ㅡㅡ
+		signal(SIGQUIT, aa);//<-자식 이 핸들링 함수 수정 필
 	}
 }
 
-
-void    sigint_handler(int signum)//핸들러 함수는 부모,자식으로 나누지말고 함수별로 나누자 main, here_doc, exe
+void    sigint_handler_2(int signum)//핸들러 함수는 부모,자식으로 나누지말고 함수별로 나누자 main, here_doc, exe
 {
-	rl_catch_signals = 0;//^C 출력 무시
+    write(1, "\n", 1);
+    rl_on_new_line();
+	rl_replace_line("", 0);//readline()함수에 준 문자열 지우기.(엔터 안치고 남아있던 문자열)
+	g_exit_code = 1;
+}////????
+
+
+void    sigint_handler_1(int signum)//핸들러 함수는 부모,자식으로 나누지말고 함수별로 나누자 main, here_doc, exe
+{
     write(1, "\n", 1);
     rl_on_new_line();
 	rl_replace_line("", 0);//readline()함수에 준 문자열 지우기.(엔터 안치고 남아있던 문자열)

@@ -5,7 +5,7 @@
 // 파이프 뿐만 아니라 리다이렉션이면 표준 입출력 바꿔야한다...
 // 리다이렉션은 굳이 파이프 안만들어도 되는게 다른 프로세스로 넘겨주는게 아니라 그냥 파일 디스크립터 바꿔주면 되니까..dup2로
 // 위 작업은 굳이 각 함수가 아니라 여기 아래 빌트인 핸들링 하는 함수에서 해도 되겠는데?
-int	if_buitin_func(t_data *data, char **arvs, t_info *info)//리다이렉션 때문에write
+int	if_buitin_func(t_data *data, char **arvs)//리다이렉션 때문에write
 {
 	if (ft_strcmp(arvs[0], "cd") == 0)
 		cd_exe(data, arvs);
@@ -20,7 +20,7 @@ int	if_buitin_func(t_data *data, char **arvs, t_info *info)//리다이렉션 때
 	else if (ft_strcmp(arvs[0], "env") == 0)
 		env_exe(data, arvs);
 	else if (ft_strcmp(arvs[0], "exit") == 0)
-		exit_exe(data, info, arvs);
+		exit_exe(data, arvs);
 	else
 		return (0);
 	return (1);

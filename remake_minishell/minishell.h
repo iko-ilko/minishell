@@ -168,18 +168,18 @@ void	parsing(t_info *info, char *line, char **env);
 
 
 /* execute.c */
-void	exe_data(t_data *data, t_info *info, char *root_file_name);
+void	exe_data(t_data *data, char *root_file_name);
 void	here_doc(char *limiter, int here_doc_temp_fd);
 void	wait_parent(t_data *data, t_pipe *pipe_data);
 
 
 /* ./builtin_src/buitin_func.c */
-int		if_buitin_func(t_data *data, char **arvs, t_info *info);
+int		if_buitin_func(t_data *data, char **arvs);
 /* 				cd_func.c */
 void	set_pwd_env(t_data *data, char *cwd_temp);
 void	cd_exe(t_data *data, char **arvs);
 /* 				exit_func.c */
-void	exit_exe(t_data *data, t_info *info, char **arvs);
+void	exit_exe(t_data *data, char **arvs);
 
 /* 				export_func.c */
 int		check_key(char *str, int unset_flag);
@@ -242,7 +242,8 @@ void	init_pipe(t_data *data, t_pipe *pipe_data);
 void aa(int signum);
 
 void	set_signal(int flag);
-void    sigint_handler(int signum);
+void    sigint_handler_1(int signum);
+void    sigint_handler_2(int signum);
 void    sigquit_handler(int signum);
 
 /*			/free_func.c */

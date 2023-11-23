@@ -7,15 +7,15 @@ void	 free_last(t_data *data)
 	t_envl	*cur_env;
 
 
-	cur_env = data->envl;
-	while (cur_env != NULL)
-	{
-		next_env = cur_env->next;
-		free_single((void **)&cur_env->key);
-		free_single((void **)&cur_env->value);
-		free(cur_env);
-		cur_env = next_env;
-	}//envp
+	// cur_env = data->envl;
+	// while (cur_env != NULL)
+	// {
+	// 	next_env = cur_env->next;
+	// 	free_single((void **)&cur_env->key);
+	// 	free_single((void **)&cur_env->value);
+	// 	free(cur_env);
+	// 	cur_env = next_env;
+	// }//envp
 }
 
 void	free_double(char ***str)

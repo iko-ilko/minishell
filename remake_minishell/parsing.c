@@ -595,9 +595,8 @@ char		*word_parsing(char **args, int *idx, char **env, char *buff)
         }
 	buff[k] = '\0';
 	res = ft_strdup(buff);
-	free_single((void **)&buff);
+	free_single((void **)&buff);////
 	buff = NULL;
-	printf("args:%s\n", args[*idx]);
 	return(res);
 }
 

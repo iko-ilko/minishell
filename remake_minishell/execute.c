@@ -37,7 +37,7 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 		exit_error("fork error", NULL, 1);
 	else if (data->cur_pid == 0)
 	{
-		set_signal(CHILD);
+		// set_signal(CHILD);
 		if (pipe_data->cmd_idx != 0)
 			dup2(pipe_data->pre_fd[0], 0);
 		if (pipe_data->cmd_idx != pipe_data->pipe_cnt)
@@ -79,6 +79,7 @@ void	exe_data(t_data *data, char *root_file_name)
 	t_cmd_node	*cur;
 	t_pipe		pipe_data;	
 
+	// set_signal(CHILD);
 	cur = data->cmd_node_head;
 	init_pipe(data, &pipe_data);//need to check
 	while (cur != NULL)
@@ -106,6 +107,8 @@ void	exe_data(t_data *data, char *root_file_name)
 		cur = cur->next;
 	}
 	wait_parent(data, &pipe_data);//여기 pre fd 줘도 될것같은데? 아니지 결국 같겠다 나중에 테스트.
+	// set_signal(PARENT);
+
 }
 
 			// if (ft_strcmp(root_file_name, cmd->args[0]) == 0)//more shell도 그냥 pipex에서 했던 실행에 인자 넣어줘도 될지 체크. 되면 파이프 있는지 체크하고 다른 함수 호출.
@@ -146,6 +149,16 @@ void	wait_parent(t_data *data, t_pipe *pipe_data)
 	// printf("signo_last:%d signo_others:%d g_exit_code:%d\n", signo_last, signo_others, g_exit_code);
 	if (signo_last == SIGQUIT)
 		write(2, "Quit: 3\n", 8);
+	else if (signo_last == SIGINT)
+	{
+		// write(2, "\n", 1);
+		// rl_on_new_line();
+		// rl_replace_line("", 0);
+	}
+	
+	// write(1, "\n", 1);
+    // rl_on_new_line();
+	// rl_replace_line("", 0);//readline()함수에 준 문자열 지우기.(엔터 안치고 남아있던 문자열)
 	// else if (signo_others == SIGQUIT)
 	// 	write(2, "^C", 1);
 }
