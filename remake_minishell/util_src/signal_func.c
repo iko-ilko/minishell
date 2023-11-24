@@ -27,18 +27,18 @@ void	set_signal(int flag)
 {
 	if (flag == PARENT)
 	{
-		rl_catch_signals = 0;//^C 출력 무시 <- 얘 있다해서 핸들러 함수가 안되는거 아닌데 ㅗㅇ ㅐ자식 안돼 ㅠㅠ
-		signal(SIGINT, sigint_handler_1);
+		// rl_catch_signals = 0;//^C 출력 무시 <- 얘 있다해서 핸들러 함수가 안되는거 아닌데 ㅗㅇ ㅐ자식 안돼 ㅠㅠ
+		signal(SIGINT, parent_sigint_handler);
 		signal(SIGQUIT, SIG_IGN);
 	}
-	else
+	else if (HEREDOC)
 	{
-		signal(SIGINT, sigint_handler_2);//<---이가 왜 메인으로 빼니까 되냐ㅡㅡ
-		signal(SIGQUIT, aa);//<-자식 이 핸들링 함수 수정 필
+		signal(SIGINT, parent_sigint_handler);//<---이가 왜 메인으로 빼니까 되냐ㅡㅡ
+		signal(SIGQUIT, SIG_DFL);//<-자식 이 핸들링 함수 수정 필
 	}
 }
 
-void    sigint_handler_2(int signum)//핸들러 함수는 부모,자식으로 나누지말고 함수별로 나누자 main, here_doc, exe
+void    child_sigint_handler(int signum)//핸들러 함수는 부모,자식으로 나누지말고 함수별로 나누자 main, here_doc, exe
 {
     write(1, "\n", 1);
     rl_on_new_line();
@@ -47,7 +47,7 @@ void    sigint_handler_2(int signum)//핸들러 함수는 부모,자식으로 �
 }////????
 
 
-void    sigint_handler_1(int signum)//핸들러 함수는 부모,자식으로 나누지말고 함수별로 나누자 main, here_doc, exe
+void    parent_sigint_handler(int signum)//핸들러 함수는 부모,자식으로 나누지말고 함수별로 나누자 main, here_doc, exe
 {
     write(1, "\n", 1);
     rl_on_new_line();

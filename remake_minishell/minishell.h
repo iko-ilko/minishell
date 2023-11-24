@@ -34,8 +34,8 @@
 # define DOUB_REDI_L 5 // <<
 
 /* parent, child */
-# define CHILD 0
 # define PARENT 1
+# define HEREDOC 2
 
 /* env linkedlist */
 typedef struct	s_envl
@@ -242,8 +242,8 @@ void	init_pipe(t_data *data, t_pipe *pipe_data);
 void aa(int signum);
 
 void	set_signal(int flag);
-void    sigint_handler_1(int signum);
-void    sigint_handler_2(int signum);
+void    parent_sigint_handler(int signum);
+void    child_sigint_handler(int signum);
 void    sigquit_handler(int signum);
 
 /*			/free_func.c */

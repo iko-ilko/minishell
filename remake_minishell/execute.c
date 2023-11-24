@@ -7,7 +7,7 @@ void	here_doc(char *limiter, int here_doc_temp_fd)//redirection.c로 보내?말�
 {
 	char	*line;
 //시그널 처리
-
+	set_signal(HEREDOC);
 	while (1)
 	{
 		line = readline("> ");//->개행과 EOF도 저장 해줘야 하나?
@@ -25,6 +25,7 @@ void	here_doc(char *limiter, int here_doc_temp_fd)//redirection.c로 보내?말�
 	}
 	free_single((void *)&line);
 	close(here_doc_temp_fd);
+	signal(SIGINT, child_sigint_handler);
 }
 
 
@@ -37,7 +38,7 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 		exit_error("fork error", NULL, 1);
 	else if (data->cur_pid == 0)
 	{
-		// set_signal(CHILD);
+		signal(SIGQUIT, SIG_DFL);
 		if (pipe_data->cmd_idx != 0)
 			dup2(pipe_data->pre_fd[0], 0);
 		if (pipe_data->cmd_idx != pipe_data->pipe_cnt)
@@ -79,7 +80,7 @@ void	exe_data(t_data *data, char *root_file_name)
 	t_cmd_node	*cur;
 	t_pipe		pipe_data;	
 
-	// set_signal(CHILD);
+	signal(SIGINT, child_sigint_handler);
 	cur = data->cmd_node_head;
 	init_pipe(data, &pipe_data);//need to check
 	while (cur != NULL)
