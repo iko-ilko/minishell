@@ -6,7 +6,7 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 19:30:26 by ilko              #+#    #+#             */
-/*   Updated: 2023/11/22 22:18:12 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/24 19:20:15 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,6 +168,13 @@ char *ft_itoa(int nbr) ;
 size_t  ft_strlcat(char *dst, char *src, size_t dstsize);
 char	*ft_substr(char *s, unsigned int start, size_t len);
 void	end_of_line(t_info *info, char *line);
+void parsing_args(char **args, char *buff, int *idx, char **env);
+char *res_dup(char **args, char *buff, int k, int *idx);
+void	init_set_buff(int *i, int *k);
+void	init_word_parsing(int *quote, int *i, int *k);
+int	check_quote(char **args, int *idx, int i, int *quote);
+void	expand_exit_code(char **buff, int *k, int *i);
+
 
 /* execute.c */
 void	exe_data(t_data *data, char *root_file_name);
@@ -288,4 +295,5 @@ void	my_perror(char *infile_name);
 
 
 #endif
+
 

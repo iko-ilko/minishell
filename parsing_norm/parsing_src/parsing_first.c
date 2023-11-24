@@ -6,7 +6,7 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 18:07:06 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/22 21:49:53 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/24 19:15:06 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,44 @@ void	parsing_check(char *line, t_info *info)
 		end_of_line(info, line);
 }
 
+int	check_line_error(char *line, int i, int flag)
+{
+	if (flag == 1)
+		i++;
+	if (flag == 2)
+		i += 2;
+	while (line[i] == ' ')
+		i++;
+	if (line[i] == '\0' || line[i] == '|' || line[i] == '<' || line[i] == '>')
+		return (0);
+	return (1);
+}
+
+int	error_case(char *line)
+{
+	int	i;
+
+	i = 0;
+	if (line[0] == '|')
+		return (0);
+	while (line[i])
+	{
+		if ((line[i] == '>' && line[i + 1] == '>') || \
+			(line[i] == '<' && line[i + 1] == '<'))
+		{
+			if (!check_line_error(line, i, 2))
+				return (0);
+		}
+		else if (line[i] == '>' || line[i] == '<' || line[i] == '|')
+		{
+			if (!check_line_error(line, i, 1))
+				return (0);
+		}
+		i++;
+	}
+	return (1);
+}
+
 void	parsing(t_info *info, char *line, char **env)
 {
 	char	*cmd;
@@ -64,11 +102,11 @@ void	parsing(t_info *info, char *line, char **env)
 	cmd = ft_strtrim(line, " ");
 	if (cmd == NULL)
 		return ;
-	// if (!(error_case(line)))
-	// {
-	// 	free(cmd);
-	// 	return(str_error("syntax error", NULL));
-	// }
+	if (!(error_case(line)))
+	{
+		free(cmd);
+		return (str_error("syntax error", NULL));
+	}
 	make_first_init(info, cmd);
 	while (cmd[info->i])
 	{

@@ -76,12 +76,12 @@ void	clear_t_cmd_node(t_cmd_node **head)
 		while (redi != NULL)
 		{
 			next_redi = redi->next;
-			free_single((void *)&redi->file_name);
+			free_single((void *)&redi->file_name);////<-왜 일일차차원
 			free(redi);
 			redi = next_redi;
 		}
 		next = cmd->next;
-		free_double((void *)&cmd->args);
+		free_double((void *)&cmd->args);////<-char ***
 		free(cmd);
 		cmd = next;
 	}

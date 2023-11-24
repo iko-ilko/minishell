@@ -6,32 +6,32 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 20:52:41 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/22 21:52:55 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/24 19:16:45 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-extern int g_exit_code;
+extern int	g_exit_code;
 
-int get_exit_code_len(int g_exit_code)
+int	get_exit_code_len(int g_exit_code)
 {
-	int len;
-	int temp;
+	int	len;
+	int	temp;
 
 	if (g_exit_code == 0)
 		return (1);
 	temp = g_exit_code;
 	len = 0;
-	while(temp)
+	while (temp)
 	{
 		temp /= 10;
 		len++;
 	}
-	return(len);
+	return (len);
 }
 
-void move_env_size(char **envv, char *env, int *k)
+void	move_env_size(char **envv, char *env, int *k)
 {
 	int	i;
 	int	env_len;
@@ -66,16 +66,23 @@ char	*find_env(char *str, int *j)
 	return (res);
 }
 
-char *set_buff(char *args_line, char **env)
+char	*make_buff(int k)
 {
-    int quote;
-    int i;
-    int k;
-    char *buff;
+	char	*buff;
 
-	i = 0;
-	k = 0;
-	while (args_line[i])
+	buff = (char *)malloc((k + 1) * (sizeof(char)));
+	buff[k] = '\0';
+	return (buff);
+}
+
+char	*set_buff(char *args_line, char **env)
+{
+	int	quote;
+	int	i;
+	int	k;
+
+	init_set_buff(&i, &k);
+	while (args_line[++i])
 	{
 		if (quote != '\'' && args_line[i] == '$' && args_line[i + 1])
 		{
@@ -93,9 +100,6 @@ char *set_buff(char *args_line, char **env)
 		}
 		else
 			k++;
-	i++;
 	}
-    buff = (char *)malloc((k + 1) * (sizeof(char)));
-	buff[k] = '\0';
-    return (buff);
+	return (make_buff(k));
 }
