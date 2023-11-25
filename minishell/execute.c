@@ -12,11 +12,8 @@ void	here_doc(char *limiter, int here_doc_temp_fd)//redirection.c로 보내?말�
 	{
 		line = readline("> ");//->개행과 EOF도 저장 해줘야 하나?
 		//환경변수 확장
-		if (!line)
-		{
-			str_error("readline error", NULL);
-			break ;
-		}
+		if (line == NULL)
+			return ;
 		if (!ft_strcmp(limiter, line))
 			break ;
 		write(here_doc_temp_fd, line, ft_strlen(line));
@@ -25,7 +22,7 @@ void	here_doc(char *limiter, int here_doc_temp_fd)//redirection.c로 보내?말�
 	}
 	free_single((void *)&line);
 	close(here_doc_temp_fd);
-	signal(SIGINT, child_sigint_handler);
+	signal(SIGINT, parent_sigint_handler);
 }
 
 
@@ -80,7 +77,7 @@ void	exe_data(t_data *data, char *root_file_name)
 	t_cmd_node	*cur;
 	t_pipe		pipe_data;	
 
-	signal(SIGINT, child_sigint_handler);
+	signal(SIGINT, parent_sigint_handler);
 	cur = data->cmd_node_head;
 	init_pipe(data, &pipe_data);//need to check
 	while (cur != NULL)

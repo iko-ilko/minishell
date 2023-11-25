@@ -15,19 +15,11 @@ extern int g_exit_code;
 
 // }
 
-void aa(int signum)
-{
-	write(1, "\n", 1);
-    rl_on_new_line();
-	rl_replace_line("", 0);//readline()함수에 준 문자열 지우기.(엔터 안치고 남아있던 문자열)
-	// rl_redisplay();//readline()함수에 준 문자열 출력.
-	write(1, "^Caaaaaaaaaaaaaaaaaaaaaaaa", 26);
-}
 void	set_signal(int flag)
 {
 	if (flag == PARENT)
 	{
-		// rl_catch_signals = 0;//^C 출력 무시 <- 얘 있다해서 핸들러 함수가 안되는거 아닌데 ㅗㅇ ㅐ자식 안돼 ㅠㅠ
+		rl_catch_signals = 0;//^C 출력 무시 <- 얘 있다해서 핸들러 함수가 안되는거 아닌데 ㅗㅇ ㅐ자식 안돼 ㅠㅠ
 		signal(SIGINT, parent_sigint_handler);
 		signal(SIGQUIT, SIG_IGN);
 	}
@@ -38,13 +30,6 @@ void	set_signal(int flag)
 	}
 }
 
-void    child_sigint_handler(int signum)//핸들러 함수는 부모,자식으로 나누지말고 함수별로 나누자 main, here_doc, exe
-{
-    write(1, "\n", 1);
-    rl_on_new_line();
-	rl_replace_line("", 0);//readline()함수에 준 문자열 지우기.(엔터 안치고 남아있던 문자열)
-	g_exit_code = 1;
-}////????
 
 
 void    parent_sigint_handler(int signum)//핸들러 함수는 부모,자식으로 나누지말고 함수별로 나누자 main, here_doc, exe

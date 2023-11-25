@@ -251,12 +251,8 @@ void	update_envp(t_data *data, t_envl *cur);
 void	init_pipe(t_data *data, t_pipe *pipe_data);
 
 /* 			/signal_func.c */
-void aa(int signum);
-
 void	set_signal(int flag);
 void    parent_sigint_handler(int signum);
-void    child_sigint_handler(int signum);
-void    sigquit_handler(int signum);
 
 /*			/free_func.c */
 void	free_last(t_data *data);
