@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-void	redirect_file(t_redi *redi, t_pipe *pipe_data)
+void	redirect_file(char **envp, t_redi *redi, t_pipe *pipe_data)
 {//전에 오픈한거 있으면(-1이 아니겠지?) 이 시점에 close 해주기
 	while (redi != NULL)
 	{
@@ -14,7 +14,7 @@ void	redirect_file(t_redi *redi, t_pipe *pipe_data)
 		{
 			if (pipe_data->in_out_fd[0] != 0)
 				close(pipe_data->in_out_fd[0]);
-			pipe_data->in_out_fd[0] = redirect_file_in(redi->flag, redi->file_name, &pipe_data->heredoc_f);
+			pipe_data->in_out_fd[0] = redirect_file_in(envp, redi->flag, redi->file_name, &pipe_data->heredoc_f);
 		}
 		redi = redi->next;
 	}
@@ -37,7 +37,7 @@ int	redirect_file_out(int flag, char *file_name)
 	}
 	return (fd);
 }
-int	redirect_file_in(int flag, char *file_name, int *heredoc_f)
+int	redirect_file_in(char **envp, int flag, char *file_name, int *heredoc_f)
 {
 	int	fd;
 
@@ -58,7 +58,7 @@ int	redirect_file_in(int flag, char *file_name, int *heredoc_f)
 			my_perror("here_doc.temp");
 			return (-1);
 		}
-		here_doc(file_name, fd);
+		here_doc(envp, file_name, fd);
 		*heredoc_f = 1;
 		close(fd);
 		fd = open("here_doc.temp", O_RDONLY);//히어독 WD옵션해도 하나는 닫혀서 따로 또 오픈해야함.read, wrirte

@@ -2,27 +2,92 @@
 
 extern int g_exit_code;
 
+// char	*set_buff_h(char *args_line, char **env)
+// {
+// 	int	i;
+// 	int	k;
 
-void	here_doc(char *limiter, int here_doc_temp_fd)//redirection.c로 보내?말어?
+// 	init_set_buff(&i, &k);
+// 	while (args_line[++i])
+// 	{
+// 		if (args_line[i] == '$' && args_line[i + 1])
+// 		{
+// 			k--;
+// 			if (args_line[i + 1] == '?')
+// 			{
+// 				i++;
+// 				k = get_exit_code_len(g_exit_code);
+// 			}
+// 			else
+// 			{
+// 				move_env_size(env, find_env(args_line, &i), &k);
+// 				continue ;
+// 			}
+// 		}
+// 		else
+// 			k++;
+// 	}
+// 	return (ft_calloc(k + 1, sizeof(char)));
+// }
+
+// char	*word_parsing_h(char *line, int *idx, char **env, char *buff)
+// {
+// 	int	i;
+// 	int	k;
+// 	int	j;
+
+// 	init_word_parsing(NULL, &i, &k);//세그 뜰 수도
+// 	while (line[++i])
+// 	{
+// 		if (line[i] == '$' && line[i + 1])
+// 		{
+// 			buff[k] = '\0';
+// 			if (line[i + 1] == '?')
+// 				expand_exit_code(&buff, &k, &i);
+// 			else
+// 				k = set_env_to_buf(env, find_env(line, &i), buff);
+// 		}
+// 		else
+// 			buff[k++] = line[i];
+// 	}
+// 	return (res_dup(line, buff, k, idx));
+// }
+
+// char	*expand_here_doc(char **envp, char **line)
+// {
+// 	char	*res;
+
+// 	res = set_buff_h(*line, envp);
+
+// 	if ((*line)[1] == '\0')
+// 		return (ft_strdup("$\n"));
+// 	else if ((*line)[1] == '?')
+// 		return (ft_itoa(g_exit_code));
+	
+// 	while (envl != NULL)
+
+// }
+void	here_doc(char **envp, char *limiter, int here_doc_temp_fd)//redirection.c로 보내?말어?
 {
 	char	*line;
-//시그널 처리
+
 	set_signal(HEREDOC);
 	while (1)
 	{
 		line = readline("> ");//->개행과 EOF도 저장 해줘야 하나?
-		//환경변수 확장
+		//환경변수 확장 -> 이건 내가 만들어도 될듯. 밸류가 없거나 널문자면 그냥 개행 반환()
 		if (line == NULL)
 			return ;
 		if (!ft_strcmp(limiter, line))
 			break ;
+		// line = expand_here_doc(envp, &line);
 		write(here_doc_temp_fd, line, ft_strlen(line));
 		write(here_doc_temp_fd, "\n", 1);
 		free(line);
 	}
 	free_single((void *)&line);
 	close(here_doc_temp_fd);
-	signal(SIGINT, parent_sigint_handler);
+	set_signal(CHILD);
 }
 
 
@@ -77,7 +142,7 @@ void	exe_data(t_data *data, char *root_file_name)
 	t_cmd_node	*cur;
 	t_pipe		pipe_data;	
 
-	signal(SIGINT, parent_sigint_handler);
+	set_signal(CHILD);
 	cur = data->cmd_node_head;
 	init_pipe(data, &pipe_data);//need to check
 	while (cur != NULL)
@@ -85,7 +150,7 @@ void	exe_data(t_data *data, char *root_file_name)
 		data->cur_pipe = &pipe_data;
 		if (pipe_data.pipe_cnt != 0)
 			set_pipe(data, &pipe_data);
-		redirect_file(cur->redi, &pipe_data); //<-히어독 파싱부분에가면 플래그 관련 없애면 됨. 아니면 파싱에서 쓰는 확장 함수 ..재사용 가능할까?
+		redirect_file(data->envp, cur->redi, &pipe_data); //<-히어독 파싱부분에가면 플래그 관련 없애면 됨. 아니면 파싱에서 쓰는 확장 함수 ..재사용 가능할까?
 		if (pipe_data.pipe_fail_flag == -1)//next_if_pipe_fail(data, &cur) cur 포인터 넘겨줘서 실패라면 continue
 		{
 			pipe_data.pipe_fail_flag = 0;

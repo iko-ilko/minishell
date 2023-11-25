@@ -23,27 +23,41 @@ void	set_signal(int flag)
 		signal(SIGINT, parent_sigint_handler);
 		signal(SIGQUIT, SIG_IGN);
 	}
-	else if (HEREDOC)
+	else if (flag == CHILD)
+	{
+		signal(SIGINT, child_sigint_handler);
+		signal(SIGQUIT, SIG_IGN);
+	}
+	else if (flag == HEREDOC)
 	{
 		signal(SIGINT, parent_sigint_handler);//<---이가 왜 메인으로 빼니까 되냐ㅡㅡ
-		signal(SIGQUIT, SIG_DFL);//<-자식 이 핸들링 함수 수정 필
+		signal(SIGQUIT, SIG_IGN);//<-자식 이 핸들링 함수 수정 필
+		signal(SIGTERM, here_doc_sigterm_handler);
 	}
 }
 
+void	here_doc_sigterm_handler(int signum)
+{
+	write(1, "here_doc_sigterm_handler\n", 26);
+	write(1, "\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	// g_exit_code = 1;
+}
 
+void    child_sigint_handler(int signum)//핸들러 함수는 부모,자식으로 나누지말고 함수별로 나누자 main, here_doc, exe
+{
+    write(1, "\n", 1);
+    rl_on_new_line();
+	rl_replace_line("", 0);//readline()함수에 준 문자열 지우기.
+	// g_exit_code = 1;
+}
 
 void    parent_sigint_handler(int signum)//핸들러 함수는 부모,자식으로 나누지말고 함수별로 나누자 main, here_doc, exe
 {
     write(1, "\n", 1);
     rl_on_new_line();
-	rl_replace_line("", 0);//readline()함수에 준 문자열 지우기.(엔터 안치고 남아있던 문자열)
+	rl_replace_line("", 0);//readline()함수에 준 문자열 지우기.
 	rl_redisplay();//readline()함수에 준 문자열 출력.
-	g_exit_code = 1;
+	// g_exit_code = 1;
 }
-
-// void	sigquit_handler(int signum)
-// {write(1, "quit\n", 5);
-// 	exit(1);
-// 	// rl_on_new_line();
-// 	// rl_redisplay();
-// }

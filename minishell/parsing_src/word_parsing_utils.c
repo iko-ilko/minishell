@@ -46,7 +46,6 @@ char	*make_buff(int k)
 {
 	char	*buff;
 
-	buff = (char *)malloc((k + 1) * (sizeof(char)));
-	buff[k] = '\0';
+	buff = ft_calloc(k + 1, sizeof(char));
 	return (buff);
 }

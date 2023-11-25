@@ -446,39 +446,33 @@ int get_exit_code_len(int g_exit_code)
 	return(len);
 }
 
-char *set_buff(char *args_line, char **env)
+char *set_buff(char *line, char **env)
 {
-    int quote;
     int i;
     int k;
     char *buff;
 
 	i = 0;
 	k = 0;
-	while (args_line[i])
+	while (line[i])
 	{
-		// write(1, &args_line[i], 1);
-		// write(1, "  ", 2);
-		// printf("1ft_set_buff()k:%d\n", k);
-		if (quote != '\'' && args_line[i] == '$' && args_line[i + 1])//이 조건만 아니면 모두 k++하는거 아닌ㄴ가?
+		if (line[i] == '$' && line[i + 1])
 		{
 			k--;
-			if (args_line[i + 1] == '?')
+			if (line[i + 1] == '?')
 			{
 				i++;
 				k = get_exit_code_len(g_exit_code);
 			}
 			else
 			{
-				move_env_size(env, find_env(args_line, &i), &k);// <-여기 댕글링 포인터 처리하려면 줄수 나눠야해 <-여기 달러문자 인덱스 잘못돼서 잘못된 k값 넘겨줌.
+				move_env_size(env, find_env(line, &i), &k);// <-여기 댕글링 포인터 처리하려면 줄수 나눠야해 <-여기 달러문자 인덱스 잘못돼서 잘못된 k값 넘겨줌.
 				continue ;
 			}
 		}
 		else
-		{
 			k++;
-		}
-	i++;
+		i++;
 	}
     buff = (char *)malloc((k + 1) * (sizeof(char)));
 	buff[k] = '\0';
@@ -501,7 +495,7 @@ void expand_exit_code(char **buff, int *k, int *i)
     free_single((void **)&ppp);
 }
 
-char		*word_parsing_splitting(char **args, int *idx, char **env, char *buff)
+char		*word_parsing_splitting(char *args, int *idx, char **env, char *buff)
 {
     int quote;
 	int i;
@@ -511,38 +505,38 @@ char		*word_parsing_splitting(char **args, int *idx, char **env, char *buff)
 	i = 0;
 	quote = 0;
 	k = 0;
-	while(args[0][i])
+	while(args[i])
     {
-		if (args[0][i] == quote)
+		if (args[i] == quote)
         quote = 0;
-        else if (quote == 0 && (args[0][i] == '\'' || args[0][i] == '\"'))
-            quote = args[0][i];
-        else if (quote == '\"' && args[0][i] == '\\' && args[0][i + 1] )
-            buff[k++] = args[0][++i];
-        else if (quote == 0 && args[0][i] == '\\' && args[0][i + 1])
-            buff[k++] = args[0][i];
-        else if (quote == 0 && ((args[0][i] == '|') || args[0][i] == '>') || (args[0][i] == '<'))
+        else if (quote == 0 && (args[i] == '\'' || args[i] == '\"'))
+            quote = args[i];
+        else if (quote == '\"' && args[i] == '\\' && args[i + 1] )
+            buff[k++] = args[++i];
+        else if (quote == 0 && args[i] == '\\' && args[i + 1])
+            buff[k++] = args[i];
+        else if (quote == 0 && ((args[i] == '|') || args[i] == '>') || (args[i] == '<'))
         {
 			break;
 		}
-        else if (quote != '\'' && args[0][i] == '$' && args[0][i + 1])
+        else if (quote != '\'' && args[i] == '$' && args[i + 1])
 		{
 			buff[k] = '\0';
-			if (args[0][i + 1] == '?')
+			if (args[i + 1] == '?')
 				expand_exit_code(&buff, &k, &i);
 			else
 			{
-            	check_split(&k, set_env_to_buf(env, find_env(args[0], &i), buff), idx, quote);
+            	check_split(&k, set_env_to_buf(env, find_env(args, &i), buff), idx, quote);
 			}
 		}
         else
         {
-        	buff[k] = args[0][i];
+        	buff[k] = args[i];
             	k++;
         }
 		i++;
 	}
-		free_single((void **)&args[0]);
+		free_single((void **)&args);
 		buff[k] = '\0';
         res = ft_strdup(buff);
         free(buff);

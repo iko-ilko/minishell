@@ -33,7 +33,8 @@
 # define SIN_REDI_L 4 // <
 # define DOUB_REDI_L 5 // <<
 
-/* parent, child */
+/* parent, child, heredoc */
+# define CHILD 0
 # define PARENT 1
 # define HEREDOC 2
 
@@ -150,6 +151,7 @@ void	set_content(t_info *info, char *line, t_arvl **node, int flag);
 char	*ft_substr(char *s, unsigned int start, size_t len);
 char	*ft_strtrim(char *s1, char *set);
 void 	parsing_check(char *line, t_info *info);
+char	*make_buff(int k);
 void	make_first_init(t_info *info, char *line);
 int		ft_isalnum(int c);
 char	*find_env(char *str, int *j);
@@ -181,7 +183,7 @@ void	expand_exit_code(char **buff, int *k, int *i);
 
 /* execute.c */
 void	exe_data(t_data *data, char *root_file_name);
-void	here_doc(char *limiter, int here_doc_temp_fd);
+void	here_doc(char **envp, char *limiter, int here_doc_temp_fd);
 void	wait_parent(t_data *data, t_pipe *pipe_data);
 
 
@@ -216,7 +218,6 @@ void	pwd_exe(t_data *data, char **arvs);
 void	more_shell(t_data *data, char **arvs, char **envp);
 /* 				execute_child.c */
 
-
 /* util.src/pipe_func.c */
 char	**get_all_path(char **envp);
 char	*find_command(char *cmd, char **all_path);
@@ -224,17 +225,14 @@ void	set_pipe(t_data *data, t_pipe *pip);
 int		cnt_pipe(t_cmd_node *head);
 void	close_all_fd(t_pipe *pipe_data);
 
-
 /*			/remake_func.c */
 void	remake_arvl(t_info *info, t_data *data);
 void	set_data_args(t_data *data, t_arvl *cur, int pre_flag, int par_i);
 
-
-
 /* 			/redirect_func.c */
-void	redirect_file(t_redi *redi, t_pipe *pipe_data);
+void	redirect_file(char **envp, t_redi *redi, t_pipe *pipe_data);
 int		redirect_file_out(int flag, char *file_name);
-int		redirect_file_in(int flag, char *file_name, int *heredoc_f);
+int		redirect_file_in(char **envp, int flag, char *file_name, int *heredoc_f);
 
 /*			/list_func.c */
 t_envl	*make_env_node(t_data *data, char *key, char *value);
@@ -253,6 +251,9 @@ void	init_pipe(t_data *data, t_pipe *pipe_data);
 /* 			/signal_func.c */
 void	set_signal(int flag);
 void    parent_sigint_handler(int signum);
+void    child_sigint_handler(int signum);
+void	here_doc_sigterm_handler(int signum);
+
 
 /*			/free_func.c */
 void	free_last(t_data *data);
