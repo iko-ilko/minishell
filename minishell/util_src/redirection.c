@@ -1,49 +1,72 @@
 #include "../minishell.h"
 
-void	redirect_file_out(t_data *data, t_pipe *pipe_data, t_cmd *cmd)
+void	redirect_file(t_redi *redi, t_pipe *pipe_data)
+{//전에 오픈한거 있으면(-1이 아니겠지?) 이 시점에 close 해주기
+	while (redi != NULL)
+	{
+		if (redi->flag == SIN_REDI_R || redi->flag == DOUB_REDI_R)
+		{
+			if (pipe_data->in_out_fd[1] != 1)
+				close(pipe_data->in_out_fd[1]);
+			pipe_data->in_out_fd[1] = redirect_file_out(redi->flag, redi->file_name);
+		}
+		else
+		{
+			if (pipe_data->in_out_fd[0] != 0)
+				close(pipe_data->in_out_fd[0]);
+			pipe_data->in_out_fd[0] = redirect_file_in(redi->flag, redi->file_name, &pipe_data->heredoc_f);
+		}
+		redi = redi->next;
+	}
+
+}
+
+
+int	redirect_file_out(int flag, char *file_name)
 {
 	int	fd;
 
-	if (cmd == NULL)
-		exit_error("syntax error near unexpected token `newline'", NULL, 258);//258??
-	if (cmd->flag == EXE_SIN_REDI_R || cmd->flag == SIN_REDI_R)
-		fd = open(cmd->args[0], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (flag == SIN_REDI_R)
+		fd = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else
-		fd = open(cmd->args[0], O_WRONLY | O_CREAT | O_APPEND, 0644);
+		fd = open(file_name, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd == -1)
 	{
-		my_perror(cmd->args[0]);
-		return ;
+		my_perror(file_name);
+		return (-1);
 	}
-	dup2(fd, STDOUT_FILENO);
-	close(fd);
+	return (fd);
 }
-void	redirect_file_in(t_data *data, t_pipe *pipe_data, t_cmd *cmd)
+int	redirect_file_in(int flag, char *file_name, int *heredoc_f)
 {
-	int fd;
+	int	fd;
 
-	if (cmd == NULL)
-		exit_error("syntax error near unexpected token `newline'", NULL, 258);//258??
-	if (cmd->flag == EXE_SIN_REDI_L || cmd->flag == SIN_REDI_L)
+	if (flag == SIN_REDI_L)
 	{
-		fd = open(cmd->args[0], O_RDONLY);
+		fd = open(file_name, O_RDONLY);
 		if (fd == -1)
 		{
-			my_perror(cmd->args[0]);
-			return ;
+			my_perror(file_name);
+			return (-1);
 		}
-		dup2(fd, STDIN_FILENO);
-		close(fd);
 	}
 	else
 	{
-		fd = open("here_doc.temp", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		fd = open("here_doc.temp", O_WRONLY | O_CREAT | O_TRUNC, 0644);//히어독 WD옵션해도 하나는 닫혀서 따로 또 오픈해야함.read, wrirte
 		if (fd == -1)
 		{
 			my_perror("here_doc.temp");
-			return ;
+			return (-1);
 		}
-		here_doc(cmd->args[0], fd);
-		pipe_data->heredoc_f = 1;
+		here_doc(file_name, fd);
+		*heredoc_f = 1;
+		close(fd);
+		fd = open("here_doc.temp", O_RDONLY);//히어독 WD옵션해도 하나는 닫혀서 따로 또 오픈해야함.read, wrirte
+		if (fd == -1)
+		{
+			my_perror("here_doc.temp");
+			return (-1);
+		}
 	}
+	return (fd);
 }

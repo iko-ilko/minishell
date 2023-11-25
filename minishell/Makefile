@@ -18,6 +18,7 @@ SRCS = minishell.c parsing.c execute.c \
 	./util_src/signal_func.c \
 	./util_src/init_func.c \
 	./util_src/free_func.c \
+	./util_src/remake_func.c \
 	\
 	./str_src/str_func1.c \
 	./str_src/str_func2.c \
@@ -33,13 +34,12 @@ all: $(NAME)
 	
 
 $(NAME): $(OBJS)
-	$(CC) -fsanitize=address $(OBJS) -lreadline -o $(NAME)
+	$(CC) -g3 -fsanitize=address $(OBJS) -lreadline -o $(NAME)
 #	$(CC) -g3 $(OBJS) -lreadline -o $(NAME)
 
 %.o:%.c
-	$(CC) -fsanitize=address -c $< -o $@
+	$(CC) -g3 -fsanitize=address -c $< -o $@
 #	$(CC) -g3 -c $< -o $@
-
 
 clean:
 	rm -rf $(OBJS)

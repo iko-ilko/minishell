@@ -21,6 +21,8 @@ char	*find_command(char *cmd, char **all_path)
 	char	*temp;
 	char	*result;
 
+	// write(1, cmd, ft_strlen(cmd));
+	// write(1, "?\n", 2);
 	if (cmd[0] == '/' && access(cmd, X_OK) == 0)
 		return (ft_strdup(cmd));
 	i = -1;
@@ -37,57 +39,54 @@ char	*find_command(char *cmd, char **all_path)
 	return (NULL);
 }
 
-void	set_pipe(t_pipe *pip)
+void	set_pipe(t_data *data, t_pipe *pip)
 {
+	(pip->cmd_idx)++;
 // 	지금 생각하고있는 구조는 여기서 파이프 만들고 초기화 해주는게 맞을듯. 각 파이프와 널 까지 노드들에서만 해당되는 리다이렉션 fd 값일테니까..
 // 그럼 pre, next를 음 ....redi구조체에서 받아온 fd값..을 뭘로 초기화? 아니 애초에 이 시점에 dup2로 건들여주는게 맞나?
 // 일단 파싱에서의 리다이렉션 함수 만들고 생각해보자 ..
-	(pip->cmd_idx)++;
-	if (pip->cmd_idx > 2)
+	if (pip->cmd_idx > 1)
 	{
 		close(pip->pre_fd[0]);
 		close(pip->pre_fd[1]);
 	}
 	pip->pre_fd[0] = pip->next_fd[0];
 	pip->pre_fd[1] = pip->next_fd[1];
-	if (pip->pipe_cnt - pip->cmd_idx >= 0 && pipe(pip->next_fd) == -1)//첫번째조건 체크해봐야함.
+	pip->in_out_fd[0] = 0;
+	pip->in_out_fd[1] = 1;
+
+	pip->pipe_fail_flag = pipe(pip->next_fd);
+	if (pip->pipe_cnt - pip->cmd_idx > 0 && pip->pipe_fail_flag == -1)//첫번째조건 체크해봐야함.
 		perror("minishell: ");
-	else if (pip->pipe_cnt - pip->cmd_idx >= 0)
-	{
-		dup2(pip->next_fd[0], 0);
-		dup2(pip->next_fd[1], 1);
-	}
-	//여기서 파이프 만들면 fd 1, 0로 초기화 해줘야하나?
+
 }
 
-int	cnt_pipe(t_arvl *arvl)
+int	cnt_pipe(t_cmd_node *cmd)
 {
-	int		cnt;
-	t_cmd	*cmd;
-	t_arvl	*cur;
+	int	cnt;
 
 	cnt = 0;
-	cur = arvl;
-	while (cur != NULL)
+	while (cmd != NULL)
 	{
-		cmd = (t_cmd *)cur->content;
-		if (cmd->flag == PIPE)
-			cnt++;
-		cur = cur->next;
+		cnt++;
+		cmd = cmd->next;
 	}
-	printf("cnt: %d\n", cnt);
+	if (cnt > 0)
+	cnt--;
 	return (cnt);
 }
-
-void	wait_parent(t_data *data, int fd[2])
+void	close_all_fd(t_pipe *pipe_data)
 {
-	int status;
-
-	close(fd[0]);
-	close(fd[1]);
-	printf("last: %d\n", data->last_exit_code);
-	waitpid(data->cur_pid, &status, 0);
-	while (wait(NULL) != -1)
-		;
-	data->last_exit_code = WEXITSTATUS(status);
+	if (pipe_data->pre_fd[0] != -1)
+		close(pipe_data->pre_fd[0]);
+	if (pipe_data->pre_fd[1] != -1)
+		close(pipe_data->pre_fd[1]);
+	if (pipe_data->next_fd[0] != -1)
+		close(pipe_data->next_fd[0]);
+	if (pipe_data->next_fd[1] != -1)
+		close(pipe_data->next_fd[1]);
+	if (pipe_data->in_out_fd[0] != 0)
+		close(pipe_data->in_out_fd[0]);
+	if (pipe_data->in_out_fd[1] != 1)
+		close(pipe_data->in_out_fd[1]);
 }

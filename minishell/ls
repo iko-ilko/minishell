@@ -1,0 +1,36 @@
+1
+pipe_cnt: 0, cmd_idx: 2
+2
+3
+cat?
+1
+pipe_cnt: 0, cmd_idx: 2
+2
+3
+ls?
+Makefile
+b
+builtin_src
+cat
+child_process_src
+d
+error_done_src
+execute.c
+execute.o
+file
+here_doc.temp
+infile
+libft_utils.c
+libft_utils_two.c
+limiter
+minishell
+minishell.c
+minishell.h
+minishell.o
+outfile
+parsing.c
+parsing.o
+pipex
+str_src
+test.c
+util_src

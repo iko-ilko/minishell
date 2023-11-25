@@ -14,41 +14,88 @@
 // 아마도 빌트인 함수라 바로 실행해서 그런듯 ..
 #include "../minishell.h"
 
-int	get_slash_idx(char *pwd)
-{
-	int	i;
+extern int g_exit_code;
 
-	i = 0;
-	while (pwd[i++])
-		;
-	while (pwd[--i] != '/')
-		;
-	return (i);
+// int	get_slash_idx(char *pwd)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (pwd[i++])
+// 		;
+// 	while (pwd[--i] != '/')
+// 		;
+// 	return (i);
+// }
+
+// void	change_pwd(t_data *data, char *dir)
+// {
+// 	int		idx;
+// 	char	*temp;
+
+// 	idx = 0;
+// 	if (dir[0] == '/')
+// 	{
+// 		free(data->pwd);
+// 		data->pwd = ft_strdup(dir);
+// 	}
+// 	else if (ft_strcmp(dir, ".") == 0)
+// 		return ;
+// 	else if (ft_strcmp(dir, "..") == 0)
+// 	{
+// 		idx = get_slash_idx(data->pwd);
+// 		temp = data->pwd;
+// 		if (idx == 0)
+// 			data->pwd = ft_strdup("/");
+// 		else
+// 			data->pwd = ft_strndup(data->pwd, idx);
+// 		free(temp);
+// 	}
+// }
+
+void	cd_home(t_data *data, char *error_str)
+{
+	char	*home_dir;
+
+	home_dir = get_env_value(data, "HOME");
+	if (home_dir == NULL)
+	{
+
+		if (home_dir == NULL || chdir(home_dir) == -1)
+		{
+			if(home_dir == NULL)
+				str_error("HOME not set anywhere..", "cd");
+			else
+				perror(error_str);
+			g_exit_code = 1;
+		}
+		printf("???g_exit_code : %d\n", g_exit_code);
+	}
+	else
+	{
+		if (chdir(home_dir) == -1)
+		{
+			perror(error_str);
+			g_exit_code = 1;
+		}
+	}
+	free_single((void *)&home_dir);
 }
 
-void	change_pwd(t_data *data, char *dir)
+void	set_pwd_env(t_data *data, char *cwd_temp)
 {
-	int		idx;
 	char	*temp;
 
-	idx = 0;
-	if (dir[0] == '/')
+	temp = getcwd(NULL, 0);
+	if (temp == NULL || cwd_temp == NULL)
 	{
-		free(data->pwd);
-		data->pwd = ft_strdup(dir);
-	}
-	else if (ft_strcmp(dir, ".") == 0)
+		str_error("getcwd failed", "cd");
+		g_exit_code = 1;
 		return ;
-	else if (ft_strcmp(dir, "..") == 0)
-	{
-		idx = get_slash_idx(data->pwd);
-		temp = data->pwd;
-		if (idx == 0)
-			data->pwd = ft_strdup("/");
-		else
-			data->pwd = ft_strndup(data->pwd, idx);
-		free(temp);
 	}
+	modify_env(data, "PWD", ft_strdup(temp));
+	modify_env(data, "OLDPWD", cwd_temp);
+	free_single((void *)&temp);
 }
 ///////////////일단 리스트 함수들 만들고 export, unset, pwd 명령어 구현하고 cd구현 마무리하자.
 //cd $HOME은 파싱 부분에서 확장될것이니까 cd $만 처리하자.
@@ -57,32 +104,19 @@ void	cd_exe(t_data *data, char **arvs)
 {
 	char	*error_str;
 	char	*cwd_temp;
-
+	
 	error_str = ft_strjoin("minishell: cd: ", arvs[1]);
-	if (arvs[1] == NULL)//HOME으로
-		return ;
 	cwd_temp = getcwd(NULL, 0);
-	if (cwd_temp != NULL)
-		find_key(data, "OLDPWD")->value = cwd_temp;
-	else
-		find_key(data, "OLDPWD")->value = find_key(data, "PWD")->value;
-	free(cwd_temp);
-	if (chdir(arvs[1]) == -1)
-		perror(error_str);
-	else if (ft_strcmp(arvs[1], ".") != 0)
+	if (arvs[1] == NULL || ft_strcmp(arvs[1], "~") == 0)
+		cd_home(data, error_str);
+	else if (chdir(arvs[1]) == -1)
 	{
-		cwd_temp = getcwd(NULL, 0);
-		if (find_key(data, "PWD") == NULL)
-			add_env(data, "PWD", cwd_temp);
-		else
-			modify_env(data, "PWD", cwd_temp);
-		free(cwd_temp);
+		perror(error_str);
+		g_exit_code = 1;
 	}
-
-	// printf("\n$PWD:%s\n", find_key(data, "PWD")->value);
-	// printf("$OLDPWD:%s\n", find_key(data, "OLDPWD")->value);
-
-	// printf("!%s---%p\n", data->pwd, data->pwd);
-	// printf("?%s---%p\n", getcwd(NULL, 0), getcwd(NULL, 0));
-	// system("pwd");
+	if (g_exit_code == 0)
+		set_pwd_env(data, cwd_temp);
+	free_single((void *)&error_str);
+	if (data->cur_pid == 0)
+		exit(g_exit_code);
 }

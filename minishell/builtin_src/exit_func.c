@@ -13,6 +13,9 @@
 
 #include "../minishell.h"
 
+extern int g_exit_code;
+
+
 //arvs[1]의 엑싯코드로 종료.
 //만약 arvs[2] (즉, 두번째 인자)가 있다면 에러 메세지 출력하고 종료.
 //만약 arvs[1]이 범위가 벗어나거나 숫자가 아니면 에러 메세지 출력하고 종료.
@@ -20,11 +23,12 @@ void	exit_exe(t_data *data, char **arvs)
 {
 	int		exit_code = 0;//임시
 
-	free_vars(data);
-	//릭 정리하고
-	//check_arv_number() 는 숫자인지 체크하고 long long 범위 안넘는지 체크
-	// if (check_arv_number(arvs) == -1)
-	// 	return ;
-	exit(exit_code);
-}
+	write(data->cur_pipe->in_out_fd[1], "exit\n", 5);
+	// free_last(data);
 
+	// if arvs[1]이 숫자면 g_exit_code에 저장.하고, <- 음수면 unsigned int 범위를 넘어가서 언더 플로우일으켜서 양수값으로 변경
+	// long long 범위를 넘어가거나(push_swap에서 쓴 아토이 쓰기) 숫자가 아니면 에러 메세지 출력하고 종료.<- exit code는 255가 됨.
+	// else if arvs[2]가 있다면 exit_code는 1이 되고, 에러 메세지 출력하고 return. <- if else if 는 우분투에서 테스트 한 결과(arvs[1]이 우선)
+
+	exit(0);
+}

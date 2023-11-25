@@ -33,12 +33,10 @@
 # define SIN_REDI_L 4 // <
 # define DOUB_REDI_L 5 // <<
 
-// # define EXE_NONE 10
-// # define EXE_PIPE 11
-# define EXE_DOUB_REDI_R 10
-# define EXE_DOUB_REDI_L 11
-# define EXE_SIN_REDI_R 12
-# define EXE_SIN_REDI_L 13
+/* parent, child */
+# define PARENT 1
+# define HEREDOC 2
+
 /* env linkedlist */
 typedef struct	s_envl
 {
@@ -61,7 +59,6 @@ typedef struct	s_cmd
 {
 	int		flag;
 	char	**args;
-	// t_redi	*redi;
 }	t_cmd;
 
 /* redirection token. if NULL = none */
@@ -85,8 +82,8 @@ typedef struct	s_info
 typedef struct s_redi
 {
 	int		flag;
-	int		fd;
-	// char	*file_name;
+	// int		fd;
+	char	*file_name;
 	struct s_redi *next;
 }	t_redi;
 
@@ -108,25 +105,35 @@ typedef struct 	t_pipe
 
 	char	**all_path;
 	char	*cur_cmd_path;
+	
+	int		pipe_fail_flag;
 	int		pre_fd[2];
 	int		next_fd[2];
+	int		in_out_fd[2];
 }	t_pipe;
 
 typedef struct	s_data
 {
-	t_cmd_node	*cmd;
 	t_envl		*envl;
 	char		**envp;
 	char		*pwd;//
 	char		**history;//
 
+	t_arvl		*arvl;
+	t_cmd_node	*cmd_node_head;
+	t_cmd_node	*cmd_node_last;
+	int			node_open_flag;
 	int			args_i;
 	int			pre_flag;
-	// t_pipe	pipe_data; 함수 내에서 선언하자.
+	t_pipe		*cur_pipe;
 
 	int			cur_pid;
-	int			last_exit_code;
 }	t_data;
+
+void	print_data_cmd(t_data *data);
+int		check_line(char **line);
+void	ft_putnbr_fd(int n, int fd);
+
 
 
 
@@ -163,18 +170,20 @@ void	parsing(t_info *info, char *line, char **env);
 /* execute.c */
 void	exe_data(t_data *data, char *root_file_name);
 void	here_doc(char *limiter, int here_doc_temp_fd);
+void	wait_parent(t_data *data, t_pipe *pipe_data);
 
 
 /* ./builtin_src/buitin_func.c */
 int		if_buitin_func(t_data *data, char **arvs);
 /* 				cd_func.c */
+void	set_pwd_env(t_data *data, char *cwd_temp);
 void	cd_exe(t_data *data, char **arvs);
 /* 				exit_func.c */
 void	exit_exe(t_data *data, char **arvs);
 
 /* 				export_func.c */
 int		check_key(char *str, int unset_flag);
-void    export_exe(t_data *data, char **arvs, int idx);
+void    export_exe(t_data *data, char **arvs);
 
 t_envl	*find_key(t_data *data, char *key);//파싱에서도 쓸 수 있게 노드를 반환
 /* 				env_func.c */
@@ -182,11 +191,12 @@ void	env_exe(t_data *data, char **arvs);
 int		find_index(char *str, char c);
 void	modify_env(t_data *data, char *key, char *value);
 void	add_env(t_data *data, char *key, char *value);
+char	*get_env_value(t_data *data, char *key);
 
 /* 				echo_func.c */
 void	echo_exe(t_data *data, char **arvs);
 /* 				unset_func.c*/
-void	unset_exe(t_data *data, char **arvs, int idx);
+void	unset_exe(t_data *data, char **arvs);
 /* 				pwd_func.c*/
 void	pwd_exe(t_data *data, char **arvs);
 
@@ -198,15 +208,21 @@ void	more_shell(t_data *data, char **arvs, char **envp);
 /* util.src/pipe_func.c */
 char	**get_all_path(char **envp);
 char	*find_command(char *cmd, char **all_path);
-void	set_pipe(t_pipe *pip);
-int		cnt_pipe(t_arvl *arvl);
-void	wait_parent(t_data *data, int fd[2]);
+void	set_pipe(t_data *data, t_pipe *pip);
+int		cnt_pipe(t_cmd_node *head);
+void	close_all_fd(t_pipe *pipe_data);
+
+
+/*			/remake_func.c */
+void	remake_arvl(t_info *info, t_data *data);
+void	set_data_args(t_data *data, t_arvl *cur, int pre_flag, int par_i);
 
 
 
 /* 			/redirect_func.c */
-void	redirect_file_out(t_data *data, t_pipe *pipe_data, t_cmd *cmd);
-void	redirect_file_in(t_data *data, t_pipe *pipe_data, t_cmd *cmd);
+void	redirect_file(t_redi *redi, t_pipe *pipe_data);
+int		redirect_file_out(int flag, char *file_name);
+int		redirect_file_in(int flag, char *file_name, int *heredoc_f);
 
 /*			/list_func.c */
 t_envl	*make_env_node(t_data *data, char *key, char *value);
@@ -216,18 +232,26 @@ void	ft_lstadd_back(t_arvl **lst, t_arvl *new);
 int		get_lstsize(t_envl *cur);
 
 /* 			/init_func.c */
-void	init_exe_data(t_info *info, t_data *data, char **envp, char *rootfile);
+void	init_envl(t_data *data, char **envp, char *rootfile);
+void	every_init(t_info *info, t_data *data);
 void	envp_to_envl(t_data *data, char **envp, char *rootfile);
 void	update_envp(t_data *data, t_envl *cur);
 void	init_pipe(t_data *data, t_pipe *pipe_data);
 
 /* 			/signal_func.c */
-void    sigint_handler(int signum);
+void aa(int signum);
+
+void	set_signal(int flag);
+void    parent_sigint_handler(int signum);
+void    child_sigint_handler(int signum);
 void    sigquit_handler(int signum);
+
 /*			/free_func.c */
-void	free_vars(t_data *data);
+void	free_last(t_data *data);
 void	free_double(char ***str);
 void	free_single(void **str);
+void	free_every(t_data *data, t_info *info, char **line);
+
 //구조체, 또는 노드 전체, 또는 노드 하나 프리하는 함수
 
 /* ./str_src/str_func1.c */

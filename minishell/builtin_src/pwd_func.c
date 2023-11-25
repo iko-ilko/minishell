@@ -4,6 +4,8 @@
 
 #include "../minishell.h"
 
+extern int g_exit_code;
+
 void	pwd_exe(t_data *data, char **arvs)
 {
 	char	*pwd;
@@ -11,6 +13,9 @@ void	pwd_exe(t_data *data, char **arvs)
 	pwd = getcwd(NULL, 0);
 	if (pwd == NULL)
 		pwd = ft_strdup(find_key(data, "PWD")->value);
-	printf("%s\n", pwd);
+	write(data->cur_pipe->in_out_fd[1], pwd, ft_strlen(pwd));
+	write(data->cur_pipe->in_out_fd[1], "\n", 1);
 	free(pwd);
+	if (data->cur_pid == 0)
+		exit(g_exit_code);
 }
