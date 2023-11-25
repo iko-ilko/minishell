@@ -1,0 +1,13 @@
+{
+	"lldb.dereferencePointers": true,
+	"lldb.consoleMode": "commands",
+	"lldb.displayFormat": "auto",
+	"files.associations": {
+		"locale": "c",
+		"array": "c",
+		"iterator": "c",
+		"string": "c",
+		"string_view": "c",
+		"vector": "c"
+	}
+}
