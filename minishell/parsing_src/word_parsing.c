@@ -6,48 +6,47 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 20:58:23 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/25 20:20:37 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/25 20:39:41 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-extern int g_exit_code;
+extern int	g_exit_code;
 
-void		check_split(int *k, int z, int *idx, char quote)
+void	check_split(int *k, int z, int *idx, char quote)
 {
 	*k = z;
 	if (quote != '\"')
 		*idx = 1;
 }
 
-void expand_exit_code(char **buff, int *k, int *i)
+void	expand_exit_code(char **buff, int *k, int *i)
 {
-    char *ppp = ft_itoa(g_exit_code);
-    int zzz = 0;
+	char	*exit;
+	int		j;
 
-    while (ppp[zzz])
-    {
-        (*buff)[*k] = ppp[zzz];
-        (*k)++;
-        zzz++;
-    }
-
-    (*i)++;
-    free_single((void **)&ppp);
+	j = 0;
+	exit = ft_itoa(g_exit_code);
+	while (exit[j])
+	{
+		(*buff)[*k] = exit[j];
+		(*k)++;
+		j++;
+	}
+	(*i)++;
+	free_single((void **)&exit);
 }
 
-int			set_env_to_buf(char **envv, char *env, char *buf)
+int	set_env_to_buf(char **envv, char *env, char *buf)
 {
-	int		i;
+	int	i;
 
 	i = -1;
-
 	while (envv[++i])
 	{
 		if (check_unset(env, envv[i]))
 		{
-			// printf("set_env_to_buf() env:%sbuf:%s\n", env, buf);
 			ft_strlcat(buf, \
 			envv[i] + ft_strlen(env) + 1, ft_strlen(envv[i]) + ft_strlen(buf));
 			break ;

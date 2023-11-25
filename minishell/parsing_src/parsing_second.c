@@ -6,15 +6,15 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 20:49:38 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/25 20:12:19 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/25 20:44:12 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int		double_str_len(char **str)
+int	double_str_len(char **str)
 {
-	int idx;
+	int	idx;
 
 	idx = 0;
 	while (str[idx])
@@ -22,13 +22,12 @@ int		double_str_len(char **str)
 	return (idx);
 }
 
-
-char		**parsing_second_args(char **args, char **env)
+char	**parsing_second_args(char **args, char **env)
 {
-	char *buff;
-	int i;
-	int idx;
-	char *args_temp;
+	char	*buff;
+	int		i;
+	int		idx;
+	char	*args_temp;
 
 	i = 0;
 	idx = 0;
@@ -38,19 +37,18 @@ char		**parsing_second_args(char **args, char **env)
 		args[idx] = word_parsing(args, &idx, env, buff);
 		buff = NULL;
 		idx++;
-    }
-	return(args);
+	}
+	return (args);
 }
 
-void parsing_second(t_arvl *node, char **env)
+void	parsing_second(t_arvl *node, char **env)
 {
-    t_arvl *crr;
-    t_cmd *cmd;
-    int prev_flag;
+	t_arvl	*crr;
+	t_cmd	*cmd;
+	int		prev_flag;
 
 	crr = node;
 	prev_flag = 0;
-
 	while (crr != NULL)
 	{
 		if (prev_flag != 5)

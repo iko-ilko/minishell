@@ -6,7 +6,7 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 21:15:09 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/25 20:18:23 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/25 20:45:57 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,3 +36,17 @@ char	*res_dup(char **args, char *buff, int k, int *idx)
 	return (res);
 }
 
+void	init_set_buff(int *i, int *k)
+{
+	*i = -1;
+	*k = 0;
+}
+
+char	*make_buff(int k)
+{
+	char	*buff;
+
+	buff = (char *)malloc((k + 1) * (sizeof(char)));
+	buff[k] = '\0';
+	return (buff);
+}

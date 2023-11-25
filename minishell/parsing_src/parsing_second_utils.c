@@ -6,32 +6,32 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 20:52:41 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/25 20:16:09 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/25 20:45:48 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-extern int g_exit_code;
+extern int	g_exit_code;
 
-int get_exit_code_len(int g_exit_code)
+int	get_exit_code_len(int g_exit_code)
 {
-	int len;
-	int temp;
+	int	len;
+	int	temp;
 
 	if (g_exit_code == 0)
 		return (1);
 	temp = g_exit_code;
 	len = 0;
-	while(temp)
+	while (temp)
 	{
 		temp /= 10;
 		len++;
 	}
-	return(len);
+	return (len);
 }
 
-void move_env_size(char **envv, char *env, int *k)
+void	move_env_size(char **envv, char *env, int *k)
 {
 	int	i;
 	int	env_len;
@@ -48,7 +48,7 @@ void move_env_size(char **envv, char *env, int *k)
 		}
 		i++;
 	}
-	free(env);
+	free (env);
 }
 
 void	init_word_parsing(int *quote, int *i, int *k)
@@ -71,20 +71,6 @@ char	*find_env(char *str, int *j)
 	res = ft_strndup(str + *j, i - *j + 1);
 	*j = i;
 	return (res);
-}
-
-void	init_set_buff(int *i, int *k)
-{
-	*i = -1;
-	*k = 0;
-}
-char	*make_buff(int k)
-{
-	char	*buff;
-
-	buff = (char *)malloc((k + 1) * (sizeof(char)));
-	buff[k] = '\0';
-	return (buff);
 }
 
 char	*set_buff(char *args_line, char **env)
