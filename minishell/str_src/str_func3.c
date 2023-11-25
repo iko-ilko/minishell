@@ -19,39 +19,13 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (res);
 }
 
-// int	str_check_space(char *str)
-// {
-// 	int	i;
-
-// 	if (str == NULL)
-// 		return (0);
-// 	i = -1;
-// 	while (str[++i])
-// 	{
-// 		if (str[i] == ' ')
-// 			return (1);
-// 	}
-// 	return (0);
-// }
-// cat $USER \f | cat
-char	*ft_strtrim(char *s1, char *set)
+int	ft_isalnum(int c)
 {
-	size_t	start;
-	size_t	end;
-	char	*res;
-
-	start = 0;
-	if (s1 == 0 || set == 0)
+	if (((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
+		|| ((c >= '0') && (c <= '9')) || (c == '_'))
+		return (1);
+	else
 		return (0);
-	end = ft_strlen(s1);
-	while (s1[start] && ft_strchr(set, s1[start]))
-			start++;
-	while (end > 0 && s1[end - 1] && ft_strchr(set, s1[end - 1]))
-			end--;
-	if (start > end)
-		return (ft_strdup(""));
-	res = ft_substr(s1, start, end - start);
-	return (res);
 }
 
 char	*ft_strcpy(char *dest, char *src)

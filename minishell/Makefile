@@ -1,5 +1,5 @@
 CC = cc #-Wall -Wextra -Werror
-SRCS = minishell.c parsing.c execute.c \
+SRCS = minishell.c execute.c \
 	./builtin_src/builtin_main.c \
     ./builtin_src/cd_func.c \
     ./builtin_src/echo_func.c \
@@ -24,6 +24,15 @@ SRCS = minishell.c parsing.c execute.c \
 	./str_src/str_func2.c \
 	./str_src/str_func3.c \
 	./str_src/str_func4.c \
+	\
+	./parsing_src/parsing_first.c \
+	./parsing_src/parsing_init.c \
+	./parsing_src/parsing_init_utils.c \
+	./parsing_src/parsing_second_utils.c \
+	./parsing_src/parsing_second.c \
+	./parsing_src/parsing_set.c \
+	./parsing_src/word_parsing.c \
+	./parsing_src/word_parsing_utils.c \
 	\
 	./error_done_src/error.c
 NAME = minishell

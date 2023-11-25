@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
+/*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 19:30:26 by ilko              #+#    #+#             */
-/*   Updated: 2023/10/06 17:16:36 by ilko             ###   ########.fr       */
+/*   Updated: 2023/11/25 20:27:34 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,18 @@ char	*set_buff(char *args_line, char **env);
 void	parsing_second(t_arvl *node, char **env);
 void	print_nodes_to_head(t_arvl *head);
 void	parsing(t_info *info, char *line, char **env);
+char		*word_parsing_splitting(char **args, int *idx, char **env, char *buff);
+char		*word_parsing(char **args, int *idx, char **env, char *buff);
+char *ft_itoa(int nbr) ;
+size_t  ft_strlcat(char *dst, char *src, size_t dstsize);
+char	*ft_substr(char *s, unsigned int start, size_t len);
+void	end_of_line(t_info *info, char *line);
+void	init_word_parsing(int *quote, int *i, int *k);
+char *res_dup(char **args, char *buff, int k, int *idx);
+void	init_set_buff(int *i, int *k);
+int	check_quote(char **args, int *idx, int i, int *quote);
+void	expand_exit_code(char **buff, int *k, int *i);
+
 
 
 
