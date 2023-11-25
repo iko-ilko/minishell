@@ -60,10 +60,9 @@ void	cd_home(t_data *data, char *error_str)
 	home_dir = get_env_value(data, "HOME");
 	if (home_dir == NULL)
 	{
-
 		if (home_dir == NULL || chdir(home_dir) == -1)
 		{
-			if(home_dir == NULL)
+			if (home_dir == NULL)
 				str_error("HOME not set anywhere..", "cd");
 			else
 				perror(error_str);
@@ -104,7 +103,7 @@ void	cd_exe(t_data *data, char **arvs)
 {
 	char	*error_str;
 	char	*cwd_temp;
-	
+
 	error_str = ft_strjoin("minishell: cd: ", arvs[1]);
 	cwd_temp = getcwd(NULL, 0);
 	if (arvs[1] == NULL || ft_strcmp(arvs[1], "~") == 0)

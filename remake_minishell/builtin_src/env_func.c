@@ -3,9 +3,9 @@
 //envl에 정렬하지 않고 저장하고, export할때만 정렬해서 출력하자.
 //env는 밸밸ㄱ류가 널이면 아예 출력 x. export 는 출력 o
 
-#include "../minishell.h"
+extern	int	g_exit_code;
 
-extern int g_exit_code;
+#include "../minishell.h"
 
 char	*get_env_value(t_data *data, char *key)
 {

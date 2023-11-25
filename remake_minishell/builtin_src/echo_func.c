@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-extern int g_exit_code;
+extern int	g_exit_code;
 
 void	echo_exe(t_data *data, char **arvs)
 {
