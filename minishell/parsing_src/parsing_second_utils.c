@@ -6,7 +6,7 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 20:52:41 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/26 18:42:19 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/26 20:21:16 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,21 +75,19 @@ char	*find_env(char *str, int *j)
 
 char	*set_buff(char *args_line, char **env)
 {
-	int	quote;
 	int	i;
 	int	k;
 
 	init_set_buff(&i, &k);
 	while (args_line[++i])
 	{
-		if (quote != '\'' && args_line[i] == '$' && args_line[i + 1])
+		if (args_line[i] == '$' && args_line[i + 1])
 		{
 			k--;
 			if (args_line[i + 1] == '?')
-			{
-				i++;
-				k = get_exit_code_len(g_exit_code);
-			}
+				k += get_exit_code_len(g_exit_code);
+			else if (!(ft_isalnum(args_line[i + 1])))
+				k++;
 			else
 			{
 				move_env_size(env, find_env(args_line, &i), &k);

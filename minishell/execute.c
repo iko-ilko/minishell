@@ -82,26 +82,14 @@ char	*res_dup_one(char *args, char *buff, int k)
 
 char		*word_parsing_splitting(char *args, char **env, char *buff)
 {
-    int quote;
 	int i;
 	int k;
 
-	init_word_parsing(&quote, &i, &k);
+	i = -1;
+	k = 0;
 	while(args[++i])
     {
-		if (args[i] == quote)
-		{
-			buff[k++] = args[i];
-        	quote = 0;
-		}
-		else if (quote == 0 && (args[i] == '\'' || args[i] == '\"'))
-		{
-			buff[k++] = args[i];
-            quote = args[i];
-		}
-		else if (quote == 0 && ((args[i] == '|') || args[i] == '>') || (args[i] == '<'))
-			break;
-        else if (quote != '\'' && args[i] == '$' && args[i + 1])
+		if (args[i] == '$' && args[i + 1])
 		{
 			buff[k] = '\0';
 			if (args[i + 1] == '?')
