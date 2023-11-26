@@ -6,7 +6,7 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 20:58:23 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/25 20:39:41 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/26 17:55:13 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,20 +56,6 @@ int	set_env_to_buf(char **envv, char *env, char *buf)
 	return ((int)ft_strlen(buf));
 }
 
-int	check_quote(char **args, int *idx, int i, int *quote)
-{
-	if (args[*idx][i] == *quote)
-	{
-		*quote = 0;
-		return (0);
-	}
-	else if (quote == 0 && (args[*idx][i] == '\'' || args[*idx][i] == '\"'))
-	{
-		*quote = args[*idx][i];
-		return (0);
-	}
-	return (1);
-}
 
 char	*word_parsing(char **args, int *idx, char **env, char *buff)
 {
@@ -81,10 +67,13 @@ char	*word_parsing(char **args, int *idx, char **env, char *buff)
 	init_word_parsing(&quote, &i, &k);
 	while (args[*idx][++i])
 	{
-		j = check_quote(args, idx, i, &quote);
-		if (quote == 0 && j == 1 && ((args[*idx][i] == '|') || \
-			args[*idx][i] == '>') || (args[*idx][i] == '<'))
-			break ;
+		if (args[*idx][i] == quote)
+			quote = 0;
+        else if (quote == 0 && (args[*idx][i] == '\'' || args[*idx][i] == '\"'))
+            quote = args[*idx][i];
+        else if (quote == 0 && ((args[*idx][i] == '|') || args[*idx][i] == '>') || \
+			(args[*idx][i] == '<'))
+			break;
 		else if (quote != '\'' && args[*idx][i] == '$' && args[*idx][i + 1])
 		{
 			buff[k] = '\0';

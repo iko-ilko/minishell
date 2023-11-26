@@ -6,7 +6,7 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 20:52:41 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/25 20:45:48 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/26 17:59:36 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ char	*set_buff(char *args_line, char **env)
 			else
 			{
 				move_env_size(env, find_env(args_line, &i), &k);
+				i--;
 				continue ;
 			}
 		}

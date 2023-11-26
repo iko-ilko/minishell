@@ -67,10 +67,65 @@ extern int g_exit_code;
 // 	while (envl != NULL)
 
 // }
+
+char		*word_parsing_splitting(char *args, int *idx, char **env, char *buff)
+{
+    int quote;
+	int i;
+	int k;
+	char *res;
+
+	i = 0;
+	quote = 0;
+	k = 0;
+	while(args[i])
+    {
+		if (args[i] == quote)
+        quote = 0;
+        else if (quote == 0 && (args[i] == '\'' || args[i] == '\"'))
+            quote = args[i];
+        else if (quote == 0 && ((args[i] == '|') || args[i] == '>') || (args[i] == '<'))
+        {
+			break;
+		}
+        else if (quote != '\'' && args[i] == '$' && args[i + 1])
+		{
+			buff[k] = '\0';
+			if (args[i + 1] == '?')
+				expand_exit_code(&buff, &k, &i);
+			else
+            	check_split(&k, set_env_to_buf(env, find_env(args, &i), buff), idx, quote);
+		}
+        else
+        {
+        	buff[k] = args[i];
+            	k++;
+        }
+		i++;
+	}
+		free_single((void **)&args);
+		buff[k] = '\0';
+        res = ft_strdup(buff);
+        free(buff);
+		buff = NULL;
+		return(res);
+}
+
+char		*parsing_second_args_tt(char *args, char **env)
+{
+	char *buff;
+	int i = 0;
+	int idx = 0;
+
+	buff = set_buff(args, env);
+	args = word_parsing_splitting(args, &idx, env, buff);
+	return(args);
+}
+
 void	here_doc(char **envp, char *limiter, int here_doc_temp_fd)//redirection.c로 보내?말어?
 {
 	char	*line;
-
+	int i;
 	set_signal(HEREDOC);
 	while (1)
 	{
@@ -80,6 +135,12 @@ void	here_doc(char **envp, char *limiter, int here_doc_temp_fd)//redirection.c�
 			return ;
 		if (!ft_strcmp(limiter, line))
 			break ;
+		i = 0;
+		while (line[i])
+		{
+			line = parsing_second_args_tt(line, envp);
+			i++;
+		}
 		// line = expand_here_doc(envp, &line);
 		write(here_doc_temp_fd, line, ft_strlen(line));
 		write(here_doc_temp_fd, "\n", 1);
