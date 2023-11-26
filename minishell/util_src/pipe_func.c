@@ -21,8 +21,6 @@ char	*find_command(char *cmd, char **all_path)
 	char	*temp;
 	char	*result;
 
-	// write(1, cmd, ft_strlen(cmd));
-	// write(1, "?\n", 2);
 	if (cmd[0] == '/' && access(cmd, X_OK) == 0)
 		return (ft_strdup(cmd));
 	i = -1;
@@ -75,18 +73,14 @@ int	cnt_pipe(t_cmd_node *cmd)
 	cnt--;
 	return (cnt);
 }
-void	close_all_fd(t_pipe *pipe_data)
+
+int	next_if_pipe_fail(t_pipe *pipe_data, t_cmd_node **cur)
 {
-	if (pipe_data->pre_fd[0] != -1)
-		close(pipe_data->pre_fd[0]);
-	if (pipe_data->pre_fd[1] != -1)
-		close(pipe_data->pre_fd[1]);
-	if (pipe_data->next_fd[0] != -1)
-		close(pipe_data->next_fd[0]);
-	if (pipe_data->next_fd[1] != -1)
-		close(pipe_data->next_fd[1]);
-	if (pipe_data->in_out_fd[0] != 0)
-		close(pipe_data->in_out_fd[0]);
-	if (pipe_data->in_out_fd[1] != 1)
-		close(pipe_data->in_out_fd[1]);
+	if (pipe_data->pipe_fail_flag == -1)//next_if_pipe_fail(data, &cur) cur 포인터 넘겨줘서 실패라면 continue
+	{
+		pipe_data->pipe_fail_flag = 0;
+		*cur = (*cur)->next;
+		return (-1);
+	}
+	return (0);
 }

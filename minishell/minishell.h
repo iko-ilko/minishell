@@ -185,7 +185,6 @@ char	*res_dup_one(char *args, char *buff, int k);
 
 /* execute.c */
 void	exe_data(t_data *data, char *root_file_name);
-void	here_doc(char **envp, char *limiter, int here_doc_temp_fd);
 void	wait_parent(t_data *data, t_pipe *pipe_data);
 
 
@@ -225,7 +224,7 @@ char	**get_all_path(char **envp);
 char	*find_command(char *cmd, char **all_path);
 void	set_pipe(t_data *data, t_pipe *pip);
 int		cnt_pipe(t_cmd_node *head);
-void	close_all_fd(t_pipe *pipe_data);
+int		next_if_pipe_fail(t_pipe *pipe_data, t_cmd_node **cur);
 
 /*			/remake_func.c */
 void	remake_arvl(t_info *info, t_data *data);
@@ -236,12 +235,24 @@ void	redirect_file(char **envp, t_redi *redi, t_pipe *pipe_data);
 int		redirect_file_out(int flag, char *file_name);
 int		redirect_file_in(char **envp, int flag, char *file_name, int *heredoc_f);
 
+/*			/here_doc.c */
+char	*res_dup_one(char *args, char *buff, int k);
+char	*word_parsing_splitting(char *args, char **env, char *buff);
+char	*parsing_second_args_tt(char *args, char **env);
+void	here_doc(char **envp, char *limiter, int here_doc_temp_fd);
+
+
 /*			/list_func.c */
 t_envl	*make_env_node(t_data *data, char *key, char *value);
 t_arvl	*ft_lstnew(void *content);
 t_arvl	*ft_lstlast(t_arvl *lst);
 void	ft_lstadd_back(t_arvl **lst, t_arvl *new);
 int		get_lstsize(t_envl *cur);
+
+/*			list_func2.c*/
+void	clear_t_avrl(t_arvl **head);
+void	clear_t_cmd_node(t_cmd_node **head);
+
 
 /* 			/init_func.c */
 void	init_envl(t_data *data, char **envp, char *rootfile);
@@ -258,10 +269,11 @@ void	here_doc_sigterm_handler(int signum);
 
 
 /*			/free_func.c */
-void	free_last(t_data *data);
 void	free_double(char ***str);
 void	free_single(void **str);
 void	free_every(t_data *data, t_info *info, char **line);
+void	close_all_fd(t_pipe *pipe_data);
+
 
 //구조체, 또는 노드 전체, 또는 노드 하나 프리하는 함수
 
@@ -284,6 +296,9 @@ int		ft_strncmp(char *s1, char *s2, int n);
 
 /* ./str_src/str_func4.c */
 char	*ft_strtok(char *str, char sepa);
+
+/* ./str_src/str_func5.c */
+int 	ft_atoi(const char *str);
 
 
 

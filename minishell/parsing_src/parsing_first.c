@@ -126,4 +126,5 @@ void	parsing(t_info *info, char *line, char **env)
 		return (str_error("Unclosed quotation mark", NULL));
 	parsing_second(info->head, env);
 	free_single((void *)&info->buff);
+	free_single((void *)&cmd);
 }

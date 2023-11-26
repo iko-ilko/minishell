@@ -1,7 +1,7 @@
 #include "../minishell.h"
 
 void	redirect_file(char **envp, t_redi *redi, t_pipe *pipe_data)
-{//전에 오픈한거 있으면(-1이 아니겠지?) 이 시점에 close 해주기
+{
 	while (redi != NULL)
 	{
 		if (redi->flag == SIN_REDI_R || redi->flag == DOUB_REDI_R)
@@ -18,6 +18,8 @@ void	redirect_file(char **envp, t_redi *redi, t_pipe *pipe_data)
 		}
 		redi = redi->next;
 	}
+	if (pipe_data->heredoc_f == 1)
+		printf("rediinoutfd[0]: %d\n", pipe_data->in_out_fd[0]);
 
 }
 

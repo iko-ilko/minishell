@@ -24,7 +24,7 @@ void	exit_exe(t_data *data, char **arvs)
 	int		exit_code = 0;//임시
 
 	write(data->cur_pipe->in_out_fd[1], "exit\n", 5);
-	// free_last(data);
+	free_double(&data->envp);
 
 	// if arvs[1]이 숫자면 g_exit_code에 저장.하고, <- 음수면 unsigned int 범위를 넘어가서 언더 플로우일으켜서 양수값으로 변경
 	// long long 범위를 넘어가거나(push_swap에서 쓴 아토이 쓰기) 숫자가 아니면 에러 메세지 출력하고 종료.<- exit code는 255가 됨.

@@ -18,11 +18,21 @@ void    envp_to_envl(t_data *data, char **envp, char *rootfile)
     i = 0;
     while (envp[i])
     {
-        key = ft_strndup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
-		if (ft_strcmp(key, "SHELL") == 0)
-			value = ft_strdup(rootfile);
+		if (ft_strchr(envp[i], '=') == 0)
+		{
+			key = ft_strdup(envp[i]);
+			value = NULL;
+		}
 		else
-    	    value = ft_strdup(ft_strchr(envp[i], '=') + 1);
+		{
+	    	key = ft_strndup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
+			if (ft_strcmp(key, "SHELL") == 0)
+				value = ft_strdup(rootfile);
+			else if (ft_strcmp(key, "SHLVL") == 0)
+				value = ft_itoa(ft_atoi(ft_strchr(envp[i], '=') + 1) + 1);
+			else
+    	    	value = ft_strdup(ft_strchr(envp[i], '=') + 1);
+		}
 		add_env(data, key, value);
         i++;
     }

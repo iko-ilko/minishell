@@ -14,7 +14,9 @@ SRCS = minishell.c execute.c \
 	\
 	./util_src/pipe_func.c \
 	./util_src/redirection.c \
+	./util_src/here_doc.c \
 	./util_src/list_func.c \
+	./util_src/list_func2.c \
 	./util_src/signal_func.c \
 	./util_src/init_func.c \
 	./util_src/free_func.c \
@@ -24,6 +26,7 @@ SRCS = minishell.c execute.c \
 	./str_src/str_func2.c \
 	./str_src/str_func3.c \
 	./str_src/str_func4.c \
+	./str_src/str_func5.c \
 	\
 	./parsing_src/parsing_first.c \
 	./parsing_src/parsing_init.c \
