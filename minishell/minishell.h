@@ -6,7 +6,7 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 19:30:26 by ilko              #+#    #+#             */
-/*   Updated: 2023/11/26 17:51:56 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/26 18:15:09 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,6 @@ char	*set_buff(char *args_line, char **env);
 void	parsing_second(t_arvl *node, char **env);
 void	print_nodes_to_head(t_arvl *head);
 void	parsing(t_info *info, char *line, char **env);
-char		*word_parsing_splitting(char *args, int *idx, char **env, char *buff);
 char		*word_parsing(char **args, int *idx, char **env, char *buff);
 char *ft_itoa(int nbr) ;
 size_t  ft_strlcat(char *dst, char *src, size_t dstsize);
@@ -178,7 +177,10 @@ void	init_set_buff(int *i, int *k);
 int	check_quote(char **args, int *idx, int i, int *quote);
 void	expand_exit_code(char **buff, int *k, int *i);
 
-char		*parsing_second_args_tt(char *args, char **env);
+//excute.c -> herdoc
+char		*parsing_second_args_one(char *args, char **env);
+char		*word_parsing_splitting(char *args, int *idx, char **env, char *buff);
+char	*res_dup_one(char *args, char *buff, int k, int *idx);
 
 
 /* execute.c */

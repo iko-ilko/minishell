@@ -6,7 +6,7 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 20:58:23 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/26 17:55:13 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/26 18:03:51 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ char	*word_parsing(char **args, int *idx, char **env, char *buff)
 	int	quote;
 	int	i;
 	int	k;
-	int	j;
 
 	init_word_parsing(&quote, &i, &k);
 	while (args[*idx][++i])

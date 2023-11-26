@@ -67,48 +67,45 @@ extern int g_exit_code;
 // 	while (envl != NULL)
 
 // }
+char	*res_dup_one(char *args, char *buff, int k, int *idx)
+{
+	char *res;
+
+	free_single((void **)&args);
+		buff[k] = '\0';
+        res = ft_strdup(buff);
+        free(buff);
+		buff = NULL;
+		return(res);
+}
 
 char		*word_parsing_splitting(char *args, int *idx, char **env, char *buff)
 {
     int quote;
 	int i;
 	int k;
-	char *res;
 
-	i = 0;
-	quote = 0;
-	k = 0;
-	while(args[i])
+	init_word_parsing(&quote, &i, &k);
+	while(args[++i])
     {
 		if (args[i] == quote)
         quote = 0;
         else if (quote == 0 && (args[i] == '\'' || args[i] == '\"'))
             quote = args[i];
         else if (quote == 0 && ((args[i] == '|') || args[i] == '>') || (args[i] == '<'))
-        {
 			break;
-		}
         else if (quote != '\'' && args[i] == '$' && args[i + 1])
 		{
 			buff[k] = '\0';
 			if (args[i + 1] == '?')
 				expand_exit_code(&buff, &k, &i);
 			else
-            	check_split(&k, set_env_to_buf(env, find_env(args, &i), buff), idx, quote);
+            	k = set_env_to_buf(env, find_env(args, &i), buff);
 		}
         else
-        {
-        	buff[k] = args[i];
-            	k++;
-        }
-		i++;
+        	buff[k++] = args[i];
 	}
-		free_single((void **)&args);
-		buff[k] = '\0';
-        res = ft_strdup(buff);
-        free(buff);
-		buff = NULL;
-		return(res);
+	return (res_dup_one(args, buff, k, idx));
 }
 
 char		*parsing_second_args_tt(char *args, char **env)
@@ -117,8 +114,8 @@ char		*parsing_second_args_tt(char *args, char **env)
 	int i = 0;
 	int idx = 0;
 
-	buff = set_buff(args, env);
-	args = word_parsing_splitting(args, &idx, env, buff);
+		buff = set_buff(args, env);
+		args = word_parsing_splitting(args, &idx, env, buff);
 	return(args);
 }
 
