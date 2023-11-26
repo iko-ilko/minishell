@@ -6,7 +6,7 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 19:30:26 by ilko              #+#    #+#             */
-/*   Updated: 2023/11/26 18:15:09 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/26 19:07:52 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,8 +179,8 @@ void	expand_exit_code(char **buff, int *k, int *i);
 
 //excute.c -> herdoc
 char		*parsing_second_args_one(char *args, char **env);
-char		*word_parsing_splitting(char *args, int *idx, char **env, char *buff);
-char	*res_dup_one(char *args, char *buff, int k, int *idx);
+char		*word_parsing_splitting(char *args, char **env, char *buff);
+char	*res_dup_one(char *args, char *buff, int k);
 
 
 /* execute.c */

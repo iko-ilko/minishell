@@ -67,19 +67,20 @@ extern int g_exit_code;
 // 	while (envl != NULL)
 
 // }
-char	*res_dup_one(char *args, char *buff, int k, int *idx)
+
+char	*res_dup_one(char *args, char *buff, int k)
 {
-	char *res;
+	char	*res;
 
 	free_single((void **)&args);
-		buff[k] = '\0';
-        res = ft_strdup(buff);
-        free(buff);
-		buff = NULL;
-		return(res);
+	buff[k] = '\0';
+	res = ft_strdup(buff);
+	free(buff);
+	buff = NULL;
+	return(res);
 }
 
-char		*word_parsing_splitting(char *args, int *idx, char **env, char *buff)
+char		*word_parsing_splitting(char *args, char **env, char *buff)
 {
     int quote;
 	int i;
@@ -89,10 +90,16 @@ char		*word_parsing_splitting(char *args, int *idx, char **env, char *buff)
 	while(args[++i])
     {
 		if (args[i] == quote)
-        quote = 0;
-        else if (quote == 0 && (args[i] == '\'' || args[i] == '\"'))
+		{
+			buff[k++] = args[i];
+        	quote = 0;
+		}
+		else if (quote == 0 && (args[i] == '\'' || args[i] == '\"'))
+		{
+			buff[k++] = args[i];
             quote = args[i];
-        else if (quote == 0 && ((args[i] == '|') || args[i] == '>') || (args[i] == '<'))
+		}
+		else if (quote == 0 && ((args[i] == '|') || args[i] == '>') || (args[i] == '<'))
 			break;
         else if (quote != '\'' && args[i] == '$' && args[i + 1])
 		{
@@ -105,17 +112,15 @@ char		*word_parsing_splitting(char *args, int *idx, char **env, char *buff)
         else
         	buff[k++] = args[i];
 	}
-	return (res_dup_one(args, buff, k, idx));
+	return (res_dup_one(args, buff, k));
 }
 
 char		*parsing_second_args_tt(char *args, char **env)
 {
 	char *buff;
 	int i = 0;
-	int idx = 0;
-
 		buff = set_buff(args, env);
-		args = word_parsing_splitting(args, &idx, env, buff);
+		args = word_parsing_splitting(args, env, buff);
 	return(args);
 }
 
@@ -136,8 +141,11 @@ void	here_doc(char **envp, char *limiter, int here_doc_temp_fd)//redirection.cë¡
 		while (line[i])
 		{
 			line = parsing_second_args_tt(line, envp);
+			if (line[0] == '\0')
+				break;
 			i++;
 		}
+
 		// line = expand_here_doc(envp, &line);
 		write(here_doc_temp_fd, line, ft_strlen(line));
 		write(here_doc_temp_fd, "\n", 1);
