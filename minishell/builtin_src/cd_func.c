@@ -78,7 +78,6 @@ void	cd_home(t_data *data, char *error_str)
 			g_exit_code = 1;
 		}
 	}
-	free_single((void *)&home_dir);
 }
 
 void	set_pwd_env(t_data *data, char *cwd_temp)
@@ -92,9 +91,9 @@ void	set_pwd_env(t_data *data, char *cwd_temp)
 		g_exit_code = 1;
 		return ;
 	}
-	modify_env(data, "PWD", ft_strdup(temp));
-	modify_env(data, "OLDPWD", cwd_temp);
-	free_single((void *)&temp);
+	modify_env(data, ft_strdup("PWD"), ft_strdup(temp));
+	modify_env(data, ft_strdup("OLDPWD"), ft_strdup(cwd_temp));
+	free_single((void **)&temp);
 }
 ///////////////일단 리스트 함수들 만들고 export, unset, pwd 명령어 구현하고 cd구현 마무리하자.
 //cd $HOME은 파싱 부분에서 확장될것이니까 cd $만 처리하자.
@@ -116,6 +115,7 @@ void	cd_exe(t_data *data, char **arvs)
 	if (g_exit_code == 0)
 		set_pwd_env(data, cwd_temp);
 	free_single((void *)&error_str);
+	free_single((void *)&cwd_temp);
 	if (data->cur_pid == 0)
 		exit(g_exit_code);
 }

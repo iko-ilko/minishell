@@ -58,14 +58,13 @@ void	here_doc(char **envp, char *limiter, int here_doc_temp_fd)//redirection.cë¡
 		if (!ft_strcmp(limiter, line))
 			break ;
 		i = 0;
-		while (line[i])
-		{
+		while (line[i])////
+		{////
 			line = parsing_second_args_tt(line, envp);
-			if (line[0] == '\0')
-				break;
-			i++;
-		}
-
+			if (line[0] == '\0')////
+				break;////
+			i++;////
+		}////
 		// line = expand_here_doc(envp, &line);
 		write(here_doc_temp_fd, line, ft_strlen(line));
 		write(here_doc_temp_fd, "\n", 1);

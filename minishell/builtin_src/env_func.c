@@ -45,7 +45,9 @@ void	modify_env(t_data *data, char *key, char *value)
 		if (ft_strcmp(cur->key, key) == 0)
 		{
 			if (cur->value != NULL)
-				free(cur->value);
+				free_single((void **)&cur->value);
+			free_single((void **)&cur->key);
+			cur->key = key;
 			cur->value = value;
 			return ;
 		}

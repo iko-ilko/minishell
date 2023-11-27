@@ -30,7 +30,7 @@ void	unset_exe(t_data *data, char **arvs)
 						pre->next = cur->next;
 					free_single((void **)&cur->key);//free_envl함수로 노드한개 또는 전체노드(플래그로 구분할까?)
 					free_single((void **)&cur->value);
-					free_single((void **)&cur);
+					free(cur);
 					break ;
 				}
 				pre = cur;
