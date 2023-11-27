@@ -12,7 +12,7 @@ char	**get_all_path(char **envp)
 			return (ft_split(envp[i] + 5, ':'));
 		}
 	}
-	return (0);
+	return (0); 
 }
 
 char	*find_command(char *cmd, char **all_path)

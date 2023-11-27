@@ -82,6 +82,7 @@ void	init_pipe(t_data *data, t_pipe *pipe_data)
 	pipe_data->cmd_idx = -1;
 	pipe_data->pipe_cnt = cnt_pipe(data->cmd_node_head);
 	pipe_data->heredoc_f = 0;
+	pipe_data->simple_cmd_flag = 0;
 	pipe_data->all_path = get_all_path(data->envp);
 	pipe_data->cur_cmd_path = NULL;
 	pipe_data->next_fd[0] = -1;

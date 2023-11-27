@@ -14,6 +14,7 @@ fiel
 fiel1
 file
 file1
+here_doc.temp
 infile
 libft_utils.c
 libft_utils_two.c
@@ -34,5 +35,4 @@ parsing_src
 str_src
 test.c
 tmp
-util_src
 util_src

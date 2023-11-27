@@ -12,7 +12,6 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 	else if (data->cur_pid == 0)
 	{
 		signal(SIGQUIT, SIG_DFL);
-		printf("child inoutfd[0]: %d\n", pipe_data->in_out_fd[0]);
 		if (pipe_data->cmd_idx != 0)
 			dup2(pipe_data->pre_fd[0], 0);
 		if (pipe_data->cmd_idx != pipe_data->pipe_cnt)
@@ -25,11 +24,11 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 			exit(0);
 		close_all_fd(pipe_data);
 		pipe_data->cur_cmd_path = find_command(args[0], pipe_data->all_path);
-		write(2, "arg[0]: ", 8);
-		write(2, args[0], ft_strlen(args[0]));
-		write(2, "\n", 1);
 		if (ft_strcmp(args[0], "./minishell") == 0)
+		{
+			data->cur_pid = CHILD;
 			execve(args[0], args, data->envp);
+		}
 		else if (execve(pipe_data->cur_cmd_path, args, data->envp) == -1)
 		{
 			exit_error("command not found", args[0], 127);}
@@ -57,7 +56,7 @@ void	exe_data(t_data *data, char *root_file_name)
 		if (cur->args != NULL)//->run_args()
 		{
 			if (pipe_data.pipe_cnt == 0 && if_buitin_func(data, cur->args) == 1)
-				;
+				pipe_data.simple_cmd_flag = 1 ;
 			else
 				execute_child(data, &pipe_data, cur->args);
 		}
@@ -65,7 +64,9 @@ void	exe_data(t_data *data, char *root_file_name)
 			unlink("here_doc.temp");
 		cur = cur->next;
 	}
-	wait_parent(data, &pipe_data);
+	free_double(&pipe_data.all_path);
+	if (pipe_data.simple_cmd_flag == 0)
+		wait_parent(data, &pipe_data);
 }
 
 void	wait_parent(t_data *data, t_pipe *pipe_data)
@@ -79,7 +80,6 @@ void	wait_parent(t_data *data, t_pipe *pipe_data)
 	signo_last = 0;
 	status_last = 0;
 	status_others = 0;
-	free_double(&pipe_data->all_path);
 	close_all_fd(pipe_data);
 	waitpid(data->cur_pid, &status_last, 0);
 	while (wait(&status_others) != -1)

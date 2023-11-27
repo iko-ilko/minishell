@@ -69,7 +69,6 @@ void	cd_home(t_data *data, char *error_str)
 				perror(error_str);
 			g_exit_code = 1;
 		}
-		printf("???g_exit_code : %d\n", g_exit_code);
 	}
 	else
 	{

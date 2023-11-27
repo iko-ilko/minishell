@@ -18,9 +18,6 @@ void	redirect_file(char **envp, t_redi *redi, t_pipe *pipe_data)
 		}
 		redi = redi->next;
 	}
-	if (pipe_data->heredoc_f == 1)
-		printf("rediinoutfd[0]: %d\n", pipe_data->in_out_fd[0]);
-
 }
 
 

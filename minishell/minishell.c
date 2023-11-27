@@ -78,25 +78,31 @@ void a()
 {
     system("leaks minishell");
 }
+
 int main(int arc, char **arv, char **envp)
 {
 	t_info	info;
 	t_data	data;
     char    *line;
-	int 	i = 0;
 
 
 	if (arv[1] != NULL)
 		exit_error("No such file or directory", arv[1], 127);
 	init_envl(&data, envp, arv[0]);
-	// set_signal(PARENT);
-	// 빌트인 커맨드 단독 일 때만 부모 프로세스에서 빌트인 실행
-	// rl_catch_signals = 0;
+	// char *temp = get_env_value(&data, "SHELL");
+	// if (temp != NULL)
+	// {
+	// 	if (ft_strcmp(temp, arv[0]) == 0)
+	// 		data.master_flag = CHILD;
+	// 	else
+	// 		data.master_flag = PARENT;
+	// 	free(temp);
+	// }
+	// else
+	// 	data.master_flag = PARENT;
     while(1)
     {
 		set_signal(PARENT);
-	// signal(SIGINT, parent_sigint_handler);
-	// signal(SIGQUIT, SIG_IGN);
         line = readline("minishell$ ");
 		if (line == NULL)//<-파상 안에서 하는 trim 여기서 할까? 아님 파싱에서 syntax error 잡히면 -1 리턴하고 그러면 라인 free하고 continue되게 할까?
 			break ;
@@ -109,24 +115,10 @@ int main(int arc, char **arv, char **envp)
 		remake_arvl(&info, &data);
 		// print_data_cmd(&data);//print data->cmd_node_head
 		// printf("----------end parsing\n");
-		// set_signal(CHILD);//<---이가 왜 메인으로 빼니까 되냐ㅡㅡ
-
 		exe_data(&data, arv[0]);//root file name 필요없을듯 있으면 구조체에 ㄱ
 		free_every(&data, &info, &line);//with line
     }
+	free_double(&data.envp);
+	clear_t_envl_node(&data.envl);
 	// atexit(a);
 }
-//함수 잘 빼자 .. if_more_shell() -> shell_child.c , save_history()
-
-
-
-
-// ft_set_buf
-
-// set_env_to_buf
-
-
-// int		set_env_to_buf(char **envv, char *key, char *buf);
-// int 	env_size(char **envv, char *key, int k);
-// char	*ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env);
-// void	parsing_second(t_arvl *node, char **env);

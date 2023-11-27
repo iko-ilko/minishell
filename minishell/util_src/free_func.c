@@ -21,7 +21,6 @@ void	free_single(void **p)
 {
 	if (p == NULL || *p == NULL)
 		return ;
-
 	free(*p);
 	*p = NULL;
 }

@@ -21,14 +21,25 @@ extern int g_exit_code;
 //만약 arvs[1]이 범위가 벗어나거나 숫자가 아니면 에러 메세지 출력하고 종료.
 void	exit_exe(t_data *data, char **arvs)
 {
-	int		exit_code = 0;//임시
+	int	suc_flag;
+	int	exit_code;
 
-	write(data->cur_pipe->in_out_fd[1], "exit\n", 5);
+	write(2, "exit\n", 5);
+	suc_flag = 0;
+	exit_code = ft_atous_minishell(arvs[1], &suc_flag);
+	if (arvs[1] != NULL && suc_flag == FAIL)
+	{
+		write(2, "minishell: exit: ", 17);
+		write(2, arvs[1], ft_strlen(arvs[1]));
+		write(2, ": numeric argument required\n", 28);
+	}
+	else if (arvs[1] != NULL && arvs[2] != NULL)
+	{
+		g_exit_code = 1;
+		write(2, "minishell: exit: too many arguments\n", 36);
+		return ;
+	}
 	free_double(&data->envp);
-
-	// if arvs[1]이 숫자면 g_exit_code에 저장.하고, <- 음수면 unsigned int 범위를 넘어가서 언더 플로우일으켜서 양수값으로 변경
-	// long long 범위를 넘어가거나(push_swap에서 쓴 아토이 쓰기) 숫자가 아니면 에러 메세지 출력하고 종료.<- exit code는 255가 됨.
-	// else if arvs[2]가 있다면 exit_code는 1이 되고, 에러 메세지 출력하고 return. <- if else if 는 우분투에서 테스트 한 결과(arvs[1]이 우선)
-
-	exit(0);
+	exit(exit_code);
+	g_exit_code = exit_code;
 }

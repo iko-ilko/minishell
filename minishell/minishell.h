@@ -38,6 +38,12 @@
 # define PARENT 1
 # define HEREDOC 2
 
+/* exit args success, fail */
+# define SUCCESS 0
+# define FAIL 1
+
+/* child minishell pid */
+
 /* env linkedlist */
 typedef struct	s_envl
 {
@@ -55,16 +61,11 @@ typedef	struct	s_arvl
 }	t_arvl;
 
 /* command token */
-/* flag는 현재 구분자의 flag로 사용되고 있지만 후에 파일을 오픈한 fd값으로도 활용하려면 -1을 곱해줘서 음수로 만든다음 실행에서는 음수값을 양수로 바꿔서 활용 */
 typedef struct	s_cmd
 {
 	int		flag;
 	char	**args;
 }	t_cmd;
-
-/* redirection token. if NULL = none */
-
-
 
 //p_i parsing index, j = buff index, i = line index
 typedef struct	s_info
@@ -83,7 +84,6 @@ typedef struct	s_info
 typedef struct s_redi
 {
 	int		flag;
-	// int		fd;
 	char	*file_name;
 	struct s_redi *next;
 }	t_redi;
@@ -103,6 +103,7 @@ typedef struct 	t_pipe
 	int		cmd_idx;
 	int		pipe_cnt;
 	int		heredoc_f;
+	int		simple_cmd_flag;
 
 	char	**all_path;
 	char	*cur_cmd_path;
@@ -120,6 +121,7 @@ typedef struct	s_data
 	char		*pwd;//
 	char		**history;//
 
+	int 		master_flag;
 	t_arvl		*arvl;
 	t_cmd_node	*cmd_node_head;
 	t_cmd_node	*cmd_node_last;
@@ -161,7 +163,6 @@ int		set_env_to_buf(char **envv, char *env, char *buf);
 void	check_split(int *k, int z, int *idx, char quote);
 int     check_unset_sub(char *str, char *envv);
 void 	move_env_size(char **envv, char *env, int *k);
-// char	*ft_set_buff(t_cmd *cmd, t_arvl *crr, int idx, char **env);
 char	*set_buff(char *args_line, char **env);
 void	parsing_second(t_arvl *node, char **env);
 void	print_nodes_to_head(t_arvl *head);
@@ -174,7 +175,7 @@ void	end_of_line(t_info *info, char *line);
 void	init_word_parsing(int *quote, int *i, int *k);
 char *res_dup(char **args, char *buff, int k, int *idx);
 void	init_set_buff(int *i, int *k);
-int	check_quote(char **args, int *idx, int i, int *quote);
+int	check_quote(char **args, int *idx, int i, int *quote);//?
 void	expand_exit_code(char **buff, int *k, int *i);
 
 //excute.c -> herdoc
@@ -191,16 +192,18 @@ void	wait_parent(t_data *data, t_pipe *pipe_data);
 /* ./builtin_src/buitin_func.c */
 int		if_buitin_func(t_data *data, char **arvs);
 /* 				cd_func.c */
+
 void	set_pwd_env(t_data *data, char *cwd_temp);
 void	cd_exe(t_data *data, char **arvs);
+
 /* 				exit_func.c */
 void	exit_exe(t_data *data, char **arvs);
 
 /* 				export_func.c */
 int		check_key(char *str, int unset_flag);
 void    export_exe(t_data *data, char **arvs);
+t_envl	*find_key(t_data *data, char *key);
 
-t_envl	*find_key(t_data *data, char *key);//파싱에서도 쓸 수 있게 노드를 반환
 /* 				env_func.c */
 void	env_exe(t_data *data, char **arvs);
 int		find_index(char *str, char c);
@@ -215,7 +218,7 @@ void	unset_exe(t_data *data, char **arvs);
 /* 				pwd_func.c*/
 void	pwd_exe(t_data *data, char **arvs);
 
-/* ./child_process/shell_child.c */
+/* ./child_process/shell_child.c *///???
 void	more_shell(t_data *data, char **arvs, char **envp);
 /* 				execute_child.c */
 
@@ -252,6 +255,8 @@ int		get_lstsize(t_envl *cur);
 /*			list_func2.c*/
 void	clear_t_avrl(t_arvl **head);
 void	clear_t_cmd_node(t_cmd_node **head);
+void	clear_t_envl_node(t_envl **head);
+
 
 
 /* 			/init_func.c */
@@ -270,7 +275,7 @@ void	here_doc_sigterm_handler(int signum);
 
 /*			/free_func.c */
 void	free_double(char ***str);
-void	free_single(void **str);
+void	free_single(void **p);
 void	free_every(t_data *data, t_info *info, char **line);
 void	close_all_fd(t_pipe *pipe_data);
 
@@ -298,7 +303,8 @@ int		ft_strncmp(char *s1, char *s2, int n);
 char	*ft_strtok(char *str, char sepa);
 
 /* ./str_src/str_func5.c */
-int 	ft_atoi(const char *str);
+int 			ft_atoi(char *str);
+unsigned char 	ft_atous_minishell(char *str, int *error);
 
 
 

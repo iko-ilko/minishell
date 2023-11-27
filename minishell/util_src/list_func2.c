@@ -45,3 +45,20 @@ void	clear_t_cmd_node(t_cmd_node **head)
 	}
 	*head = NULL;
 }
+
+void	clear_t_envl_node(t_envl **head)
+{
+	t_envl	*cur;
+	t_envl	*next;
+
+	cur = *head;
+	while (cur != NULL)
+	{
+		next = cur->next;
+		free_single((void **)&cur->key);
+		free_single((void **)&cur->value);
+		free(cur);
+		cur = next;
+	}
+	*head = NULL;
+}
