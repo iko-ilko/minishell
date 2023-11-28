@@ -24,7 +24,8 @@ void	exit_exe(t_data *data, char **arvs)
 	int	suc_flag;
 	int	exit_code;
 
-	write(2, "exit\n", 5);
+	if (data->cur_pipe->pipe_cnt == 0)
+		write(2, "exit\n", 5);
 	suc_flag = 0;
 	exit_code = ft_atous_minishell(arvs[1], &suc_flag);
 	if (arvs[1] != NULL && suc_flag == FAIL)
