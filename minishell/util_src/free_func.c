@@ -28,6 +28,8 @@ void	free_single(void **p)
 void	free_every(t_data *data, t_info *info, char **line)
 {
 	free_single((void **)line);
+	// if (info->parsing_failed = FAIL)
+	// 	return ;
 	clear_t_avrl(&info->head);
 	clear_t_cmd_node(&data->cmd_node_head);
 

@@ -15,6 +15,8 @@ void	unset_exe(t_data *data, char **arvs)
 		{
 			char *temp = ft_strjoin("unset: ", arvs[idx]);
 			str_error("not a valid identifier", temp);
+			free_single((void **)&temp);
+			g_exit_code = 1;
 		}
 		else
 		{
@@ -41,6 +43,4 @@ void	unset_exe(t_data *data, char **arvs)
 	}
 	free_double(&data->envp);
 	update_envp(data, data->envl);
-	if (data->cur_pid == 0)
-		exit(g_exit_code);
 }

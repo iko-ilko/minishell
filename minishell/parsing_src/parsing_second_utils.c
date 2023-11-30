@@ -6,7 +6,7 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 20:52:41 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/26 20:21:16 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/29 20:41:16 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,11 @@ void	move_env_size(char **envv, char *env, int *k)
 	free (env);
 }
 
-void	init_word_parsing(int *quote, int *i, int *k)
+void	init_word_parsing(int *quote, int i_k[2])
 {
-	*i = -1;
+	i_k[I] = -1;
+	i_k[K] = 0;
 	*quote = 0;
-	*k = 0;
 }
 
 char	*find_env(char *str, int *j)

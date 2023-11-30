@@ -38,9 +38,13 @@
 # define PARENT 1
 # define HEREDOC 2
 
-/* exit args success, fail */
+/* pasrse line or exit args success, fail */
 # define SUCCESS 0
 # define FAIL 1
+
+/* index in parsing */
+# define I 0
+# define K 1
 
 /* child minishell pid */
 
@@ -77,6 +81,7 @@ typedef struct	s_info
 	int		prev_flag;
 	char	quote;
 	char 	*buff;
+	int		parsing_failed;
 	t_arvl	*head;
 	t_cmd	*content;
 }	t_info;
@@ -134,8 +139,6 @@ typedef struct	s_data
 }	t_data;
 
 void	print_data_cmd(t_data *data);
-int		check_line(char **line);
-void	ft_putnbr_fd(int n, int fd);
 
 
 
@@ -147,7 +150,7 @@ char	*ft_strtok(char *str, char sepa);
 int		check_sepa(char c);
 char	*get_pre_sepa_str(char *input, int sepa_idx);
 int		count_token(char *input);
-char 	*get_args_one_size(char *line);
+char 	*get_args_one_size(char *line, t_info *info);
 void	push_args(t_info *info, char *line);
 void	set_content(t_info *info, char *line, t_arvl **node, int flag);
 char	*ft_substr(char *s, unsigned int start, size_t len);
@@ -172,7 +175,7 @@ char *ft_itoa(int nbr) ;
 size_t  ft_strlcat(char *dst, char *src, size_t dstsize);
 char	*ft_substr(char *s, unsigned int start, size_t len);
 void	end_of_line(t_info *info, char *line);
-void	init_word_parsing(int *quote, int *i, int *k);
+void	init_word_parsing(int *quote, int i_k[2]);
 char *res_dup(char **args, char *buff, int k, int *idx);
 void	init_set_buff(int *i, int *k);
 int	check_quote(char **args, int *idx, int i, int *quote);//?

@@ -6,7 +6,7 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 20:01:09 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/22 21:06:01 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/29 19:55:09 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,24 +35,41 @@ int	count_token(char *input)
 	return (count_token);
 }
 
-char	*get_args_one_size(char *line)
+void	push_i_j(int *i, int *j)
+{
+	(*i)++;
+	(*j)++;
+}
+
+void	init_i_j(int *i, int *j)
+{
+	*i = 0;
+	*j = 0;
+}
+
+char	*get_args_one_size(char *line, t_info *info)
 {
 	int		i;
 	int		j;
 	char	*res;
 
-	i = 0;
-	j = 0;
+	init_i_j(&i, &j);
 	while (line[i] && ((line[i] >= 0 && line[i] <= 32) || (line[i] == '|') || \
 			(line[i] == '>') || (line[i] == '<')))
-	{
 		i++;
-	}
-	while (line[i] && (line[i] != '|') && (line[i] != '>' && \
-			(line[i] != '<')))
+	while (line[i] && (line[i] != '|') && (line[i] != '>') && \
+			(line[i] != '<'))
 	{
-			i++;
-			j++;
+		if (line[i] && line[i] == '\'' || line[i] == '\"')
+		{
+			info->quote = line[i];
+			push_i_j(&i, &j);
+			while (line[i] && line[i] != info->quote)
+				push_i_j(&i, &j);
+			info->quote = 0;
+		}
+		if (line[i])
+			push_i_j(&i, &j);
 	}
 	res = ft_calloc(j + 1, sizeof(char));
 	res[j] = '\0';

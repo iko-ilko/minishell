@@ -6,7 +6,7 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 18:07:06 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/25 20:36:43 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/29 20:20:44 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	make_first_init(t_info *info, char *line)
 	info->j = 0;
 	info->quote = 0;
 	info->head = NULL;
-	info->buff = get_args_one_size(line);
+	info->buff = get_args_one_size(line, info);
 	info->content = (t_cmd *)malloc(sizeof(t_cmd));
 	count = count_token(line);
 	info->content->args = ft_calloc(count, sizeof(char *) * (count + 1));
@@ -43,13 +43,13 @@ void	parsing_check(char *line, t_info *info)
 		line[info->i + 1] != '>')
 		set_content(info, line, &info->head, SIN_REDI_R);
 	else if (info->quote == 0 && line[info->i] == '>' && \
-		line[info->i] == '>')
+		line[info->i + 1] == '>')
 		set_content(info, line, &info->head, DOUB_REDI_R);
 	else if (info->quote == 0 && line[info->i] == '<' && \
-			line[info->i + 1] != '<')
+		line[info->i + 1] != '<')
 		set_content(info, line, &info->head, SIN_REDI_L);
 	else if (info->quote == 0 && line[info->i] == '<' && \
-			line[info->i + 1] == '<')
+		line[info->i + 1] == '<')
 		set_content(info, line, &info->head, DOUB_REDI_L);
 	else
 		info->buff[info->j++] = line[info->i];
@@ -109,11 +109,12 @@ void	parsing(t_info *info, char *line, char **env)
 	char	*cmd;
 
 	cmd = ft_strtrim(line, " ");
-	if (cmd == NULL)
-		return ;
-	if (!(error_case(line)))
+	if (cmd == NULL || !(error_case(line)))
 	{
-		free(cmd);
+		info->parsing_failed = FAIL;
+		if (cmd == NULL)
+			return ;
+		free_single((void **)&cmd);
 		return (str_error("syntax error", NULL));
 	}
 	make_first_init(info, cmd);
@@ -123,8 +124,11 @@ void	parsing(t_info *info, char *line, char **env)
 		info->i++;
 	}
 	if (info->quote != 0)
+	{
+		info->parsing_failed = FAIL;
 		return (str_error("Unclosed quotation mark", NULL));
+	}
 	parsing_second(info->head, env);
-	free_single((void *)&info->buff);
-	free_single((void *)&cmd);
+	free_single((void **)&cmd);
+
 }

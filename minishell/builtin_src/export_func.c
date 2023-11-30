@@ -112,6 +112,4 @@ void    export_exe(t_data *data, char **arvs)
 	}
 	free_double(&data->envp);
 	update_envp(data, data->envl);
-	if (data->cur_pid == 0)
-		exit(g_exit_code);
 }

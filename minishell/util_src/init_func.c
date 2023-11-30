@@ -36,14 +36,16 @@ void    envp_to_envl(t_data *data, char **envp, char *rootfile)
 		add_env(data, key, value);
         i++;
     }
-	// add_env(data, ft_strdup("OLDPWD"), NULL);
 }
 
 void	update_envp(t_data *data, t_envl *cur)
 {
 	int		i;
 	char	*temp;
+
 	i = 0;
+	if (data->envp != NULL)
+		free_double(&data->envp);
 	data->envp = malloc(sizeof(char *) * (get_lstsize(cur) + 1));
 	while (cur != NULL)
 	{
@@ -68,6 +70,7 @@ void	every_init(t_info *info, t_data *data)
 	info->buff = NULL;
 	info->head = NULL;
 	info->content = NULL;
+	info->parsing_failed = SUCCESS;
 	data->cur_pid = -1;
 	data->pre_flag = 0;
 	data->cmd_node_head = NULL; 

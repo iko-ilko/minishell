@@ -20,17 +20,14 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 			dup2(pipe_data->in_out_fd[0], 0);
 		if (pipe_data->in_out_fd[1] != 1)
 			dup2(pipe_data->in_out_fd[1], 1);
-		if (if_buitin_func(data, args) == 1)//??여기 빌트인에서 전역변수만 설정하고 여기서 그 값을 리턴하면 각 빌트인 함수에서 굳이 분기 나눌 필요가 .....
-			exit(0);
+		if (if_buitin_func(data, args) == 1)
+			exit(g_exit_code);
 		close_all_fd(pipe_data);
 		pipe_data->cur_cmd_path = find_command(args[0], pipe_data->all_path);
-		if (ft_strcmp(args[0], "./minishell") == 0)//지워보자
+		if (ft_strcmp(args[0], "./minishell") == 0)
 			execve(args[0], args, data->envp);
 		else if (execve(pipe_data->cur_cmd_path, args, data->envp) == -1)
-		{
 			exit_error("command not found", args[0], 127);}
-		}
-	//여기서 안안에  있있는는것것들  닫닫고  프프리리
 }
 
 
@@ -42,6 +39,7 @@ void	exe_data(t_data *data, char *root_file_name)
 	set_signal(CHILD);
 	cur = data->cmd_node_head;
 	init_pipe(data, &pipe_data);
+	g_exit_code = 0;
 	while (cur != NULL)
 	{
 		data->cur_pipe = &pipe_data;

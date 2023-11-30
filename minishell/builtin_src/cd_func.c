@@ -16,43 +16,6 @@
 
 extern int g_exit_code;
 
-// int	get_slash_idx(char *pwd)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (pwd[i++])
-// 		;
-// 	while (pwd[--i] != '/')
-// 		;
-// 	return (i);
-// }
-
-// void	change_pwd(t_data *data, char *dir)
-// {
-// 	int		idx;
-// 	char	*temp;
-
-// 	idx = 0;
-// 	if (dir[0] == '/')
-// 	{
-// 		free(data->pwd);
-// 		data->pwd = ft_strdup(dir);
-// 	}
-// 	else if (ft_strcmp(dir, ".") == 0)
-// 		return ;
-// 	else if (ft_strcmp(dir, "..") == 0)
-// 	{
-// 		idx = get_slash_idx(data->pwd);
-// 		temp = data->pwd;
-// 		if (idx == 0)
-// 			data->pwd = ft_strdup("/");
-// 		else
-// 			data->pwd = ft_strndup(data->pwd, idx);
-// 		free(temp);
-// 	}
-// }
-
 void	cd_home(t_data *data, char *error_str)
 {
 	char	*home_dir;
@@ -85,7 +48,7 @@ void	set_pwd_env(t_data *data, char *cwd_temp)
 	char	*temp;
 
 	temp = getcwd(NULL, 0);
-	if (temp == NULL || cwd_temp == NULL)
+	if (temp == NULL && cwd_temp == NULL)
 	{
 		str_error("getcwd failed", "cd");
 		g_exit_code = 1;
@@ -95,9 +58,7 @@ void	set_pwd_env(t_data *data, char *cwd_temp)
 	modify_env(data, ft_strdup("OLDPWD"), ft_strdup(cwd_temp));
 	free_single((void **)&temp);
 }
-///////////////일단 리스트 함수들 만들고 export, unset, pwd 명령어 구현하고 cd구현 마무리하자.
-//cd $HOME은 파싱 부분에서 확장될것이니까 cd $만 처리하자.
-// ㄷㅓ브ㄹ프리남 cd .. 해ㅛㅆㄴㅇ릃 ㄸ깨
+
 void	cd_exe(t_data *data, char **arvs)
 {
 	char	*error_str;
@@ -112,10 +73,7 @@ void	cd_exe(t_data *data, char **arvs)
 		perror(error_str);
 		g_exit_code = 1;
 	}
-	if (g_exit_code == 0)
-		set_pwd_env(data, cwd_temp);
+	set_pwd_env(data, cwd_temp);
 	free_single((void *)&error_str);
 	free_single((void *)&cwd_temp);
-	if (data->cur_pid == 0)
-		exit(g_exit_code);
 }

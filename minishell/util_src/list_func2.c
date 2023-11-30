@@ -6,7 +6,6 @@ void	clear_t_avrl(t_arvl **head)
 	t_arvl	*next;
 	t_cmd	*cmd;
 
-	
 	cur = *head;
 	while (cur != NULL)
 	{

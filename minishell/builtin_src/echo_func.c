@@ -19,6 +19,4 @@ void	echo_exe(t_data *data, char **arvs)
 	}
 	if (n_flag == 0)
 		write(data->cur_pipe->in_out_fd[1], "\n", 1);
-	if (data->cur_pid == 0)
-		exit(g_exit_code);
 }

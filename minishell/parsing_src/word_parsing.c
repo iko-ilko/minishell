@@ -6,7 +6,7 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 20:58:23 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/26 20:21:01 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/29 20:50:44 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,33 +56,31 @@ int	set_env_to_buf(char **envv, char *env, char *buf)
 	return ((int)ft_strlen(buf));
 }
 
-
-char	*word_parsing(char **args, int *idx, char **env, char *buff)
+char	*word_parsing(char **a, int *idx, char **env, char *buff)
 {
-	int	quote;
-	int	i;
-	int	k;
+	int	qt;
+	int	i[2];
 
-	init_word_parsing(&quote, &i, &k);
-	while (args[*idx][++i])
+	init_word_parsing(&qt, i);
+	while (a[*idx][++i[I]])
 	{
-		if (args[*idx][i] == quote)
-			quote = 0;
-        else if (quote == 0 && (args[*idx][i] == '\'' || args[*idx][i] == '\"'))
-            quote = args[*idx][i];
-        else if (quote == 0 && ((args[*idx][i] == '|') || args[*idx][i] == '>') || \
-			(args[*idx][i] == '<'))
-			break;
-		else if (quote != '\'' && args[*idx][i] == '$' && args[*idx][i + 1])
+		if (a[*idx][i[I]] == qt)
+			qt = 0;
+		else if (qt == 0 && (a[*idx][i[I]] == '\'' || a[*idx][i[I]] == '\"'))
+			qt = a[*idx][i[I]];
+		else if (qt == 0 && (a[*idx][i[I]] == '|' || \
+			a[*idx][i[I]] == '>' || a[*idx][i[I]] == '<'))
+			break ;
+		else if (qt != '\'' && a[*idx][i[I]] == '$' && a[*idx][i[I] + 1])
 		{
-			buff[k] = '\0';
-			if (args[*idx][i + 1] == '?')
-				expand_exit_code(&buff, &k, &i);
+			buff[i[K]] = '\0';
+			if (a[*idx][i[I] + 1] == '?')
+				expand_exit_code(&buff, &i[K], &i[I]);
 			else
-				k = set_env_to_buf(env, find_env(args[*idx], &i), buff);
+				i[K] = set_env_to_buf(env, find_env(a[*idx], &i[I]), buff);
 		}
 		else
-			buff[k++] = args[*idx][i];
+			buff[(i[K])++] = a[*idx][i[I]];
 	}
-	return (res_dup(args, buff, k, idx));
+	return (res_dup(a, buff, i[K], idx));
 }

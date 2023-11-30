@@ -6,7 +6,7 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 20:07:30 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/25 20:41:31 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/11/29 19:07:19 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	push_args(t_info *info, char *line)
 	info->content->args[info->args_i] = ft_strdup(info->buff);
 	free_single((void *)&info->buff);
 	if (line[info->i + 1] != '\0')
-		info->buff = get_args_one_size(&line[info->i]);
+		info->buff = get_args_one_size(&line[info->i], info);
 	if (check_sepa(line[info->i]) == 1)
 			info->content->args[info->args_i + 1] = NULL;
 	(info->args_i)++;

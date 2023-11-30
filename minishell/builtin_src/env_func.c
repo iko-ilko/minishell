@@ -44,17 +44,19 @@ void	modify_env(t_data *data, char *key, char *value)
 	{
 		if (ft_strcmp(cur->key, key) == 0)
 		{
-			if (cur->value != NULL)
-				free_single((void **)&cur->value);
 			free_single((void **)&cur->key);
 			cur->key = key;
+			free_single((void **)&cur->value);
 			cur->value = value;
-			return ;
+			break ;
 		}
 		cur = cur->next;
 	}
-	add_env(data, key, value);
+	if (cur == NULL)
+		add_env(data, key, value);
+	update_envp(data, data->envl);
 }
+
 
 void	add_env(t_data *data, char *key, char *value)
 {
@@ -95,6 +97,4 @@ void	env_exe(t_data *data, char **arvs)
 		}
 		cur = cur->next;
 	}
-	if (data->cur_pid == 0)
-		exit(g_exit_code);
 }
