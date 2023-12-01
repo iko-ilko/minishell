@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 18:07:06 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/12/01 16:22:57 by ilko             ###   ########.fr       */
+/*   Updated: 2023/12/01 16:25:39 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,10 +109,10 @@ void	parsing(t_info *info, char *line, char **env)
 	char	*cmd;
 
 	cmd = ft_strtrim(line, " ");
-	if (cmd == NULL || cmd[0] == '\0' || !(error_case(line)))
+	if (cmd == NULL || line[0] == '\0' || !(error_case(line)))
 	{
 		info->parsing_failed = FAIL;
-		if (cmd == NULL || cmd[0] == '\0')
+		if (cmd == NULL || line[0] == '\0')
 			return ;
 		free_single((void **)&cmd);
 		return (str_error("syntax error", NULL));
