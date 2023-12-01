@@ -45,9 +45,9 @@ char	*ft_strtrim(char *s1, char *set)
 		return (0);
 	end = ft_strlen(s1);
 	while (s1[start] && ft_strchr(set, s1[start]))
-			start++;
+		start++;
 	while (end > 0 && s1[end - 1] && ft_strchr(set, s1[end - 1]))
-			end--;
+		end--;
 	if (start > end)
 		return (ft_strdup(""));
 	res = ft_substr(s1, start, end - start);
@@ -98,8 +98,8 @@ size_t	ft_strlcat(char *dst, char *src, size_t dstsize)
 	i = 0;
 	while (dst_len + i < dstsize - 1 && src[i])
 	{
-			dst[dst_len + i] = src[i];
-			i++;
+		dst[dst_len + i] = src[i];
+		i++;
 	}
 	dst[dst_len + i] = '\0';
 	return (src_len + dst_len);

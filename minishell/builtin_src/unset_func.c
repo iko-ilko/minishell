@@ -61,8 +61,6 @@ void	roop_in_unset(t_data *data, char *arv)
 
 void	unset_exe(t_data *data, char **arvs)
 {
-	t_envl	*cur;
-	t_envl	*pre;
 	int		idx;
 
 	idx = 1;

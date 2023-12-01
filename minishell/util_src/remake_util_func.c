@@ -25,7 +25,6 @@ void	set_data_redi(t_data *data, char *file_n, int pre_flag)
 void	make_exe_args_space(t_data *data, t_arvl *cur, int pre_flag)
 {
 	t_cmd	*cur_cmd;
-	t_cmd	*next_cmd;
 	int		exe_args_cnt;
 	int		i;
 
@@ -53,7 +52,6 @@ void	make_exe_args_space(t_data *data, t_arvl *cur, int pre_flag)
 
 void	set_data_args(t_data *data, t_arvl *cur, int pre_flag, int par_i)
 {
-	int		i;
 	t_cmd	*cur_cmd;
 
 	cur_cmd = (t_cmd *)cur->content;

@@ -73,7 +73,7 @@ void	run_args(t_data *data, t_pipe *pipe_data, t_cmd_node *cur)
 	}
 }
 
-void	exe_data(t_data *data, char *root_file_name)
+void	exe_data(t_data *data)
 {
 	t_cmd_node	*cur;
 	t_pipe		pipe_data;	
@@ -86,7 +86,7 @@ void	exe_data(t_data *data, char *root_file_name)
 	{
 		data->cur_pipe = &pipe_data;
 		if (pipe_data.pipe_cnt != 0)
-			set_pipe(data, &pipe_data);
+			set_pipe(&pipe_data);
 		redirect_file(data->envp, cur->redi, &pipe_data);
 		if (next_if_pipe_fail(&pipe_data, &cur) == -1)
 			continue ;
@@ -98,17 +98,15 @@ void	exe_data(t_data *data, char *root_file_name)
 	free_double(&pipe_data.all_path);
 	close_all_fd(&pipe_data);
 	if (pipe_data.simple_cmd_flag == 0)
-		wait_parent(data, &pipe_data);
+		wait_parent(data);
 }
 
-void	wait_parent(t_data *data, t_pipe *pipe_data)
+void	wait_parent(t_data *data)
 {
 	int	status_last;
 	int	status_others;
 	int	signo_last;
-	int	signo_others;
 
-	signo_others = 0;
 	signo_last = 0;
 	status_last = 0;
 	status_others = 0;

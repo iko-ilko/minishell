@@ -39,7 +39,7 @@ char	*word_parsing_splitting(char *args, char **env, char *buff)
 			if (args[i + 1] == '?')
 				expand_exit_code(&buff, &k, &i);
 			else
-			k = set_env_to_buf(env, find_env(args, &i), buff);
+				k = set_env_to_buf(env, find_env(args, &i), buff);
 		}
 		else
 			buff[k++] = args[i];
@@ -50,9 +50,7 @@ char	*word_parsing_splitting(char *args, char **env, char *buff)
 char	*parsing_second_args_tt(char *args, char **env)
 {
 	char	*buff;
-	int		i;
 
-	i = 0;
 	buff = set_buff(args, env);
 	args = word_parsing_splitting(args, env, buff);
 	return (args);

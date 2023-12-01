@@ -19,7 +19,7 @@ int	if_buitin_func(t_data *data, char **arvs)
 	else if (ft_strcmp(arvs[0], "echo") == 0)
 		echo_exe(data, arvs);
 	else if (ft_strcmp(arvs[0], "pwd") == 0)
-		pwd_exe(data, arvs);
+		pwd_exe(data);
 	else if (ft_strcmp(arvs[0], "export") == 0)
 		export_exe(data, arvs);
 	else if (ft_strcmp(arvs[0], "unset") == 0)

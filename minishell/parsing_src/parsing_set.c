@@ -21,7 +21,7 @@ void	push_args(t_info *info, char *line)
 	if (line[info->i + 1] != '\0')
 		info->buff = get_args_one_size(&line[info->i], info);
 	if (check_sepa(line[info->i]) == 1)
-			info->content->args[info->args_i + 1] = NULL;
+		info->content->args[info->args_i + 1] = NULL;
 	(info->args_i)++;
 	info->j = 0;
 }

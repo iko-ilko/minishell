@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-t_envl	*make_env_node(t_data *data, char *key, char *value)
+t_envl	*make_env_node(char *key, char *value)
 {
 	t_envl	*new;
 

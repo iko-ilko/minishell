@@ -37,6 +37,7 @@ void	set_signal(int flag)
 
 void	here_doc_sigterm_handler(int signum)
 {
+	(void)signum;
 	write(1, "here_doc_sigterm_handler\n", 26);
 	write(1, "\n", 1);
 	rl_on_new_line();
@@ -45,6 +46,7 @@ void	here_doc_sigterm_handler(int signum)
 
 void	child_sigint_handler(int signum)
 {
+	(void)signum;
 	write(1, "\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
@@ -52,6 +54,7 @@ void	child_sigint_handler(int signum)
 
 void	parent_sigint_handler(int signum)
 {
+	(void)signum;
 	write(1, "\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);

@@ -14,7 +14,7 @@
 
 extern int	g_exit_code;
 
-void	pwd_exe(t_data *data, char **arvs)
+void	pwd_exe(t_data *data)
 {
 	char	*pwd;
 

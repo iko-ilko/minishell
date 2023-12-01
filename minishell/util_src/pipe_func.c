@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-void	set_pipe(t_data *data, t_pipe *pip)
+void	set_pipe(t_pipe *pip)
 {
 	(pip->cmd_idx)++;
 	if (pip->cmd_idx > 1)
@@ -40,7 +40,7 @@ int	cnt_pipe(t_cmd_node *cmd)
 		cmd = cmd->next;
 	}
 	if (cnt > 0)
-	cnt--;
+		cnt--;
 	return (cnt);
 }
 

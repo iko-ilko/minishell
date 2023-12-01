@@ -25,7 +25,7 @@ int	main(int arc, char **arv, char **envp)
 	t_data	data;
 	char	*line;
 
-	if (arv[1] != NULL)
+	if (arc != 0)
 		exit_error("Too Many Argument", arv[1], 127);
 	init_envl(&data, envp, arv[0]);
 	while (1)
@@ -39,7 +39,7 @@ int	main(int arc, char **arv, char **envp)
 		if (info.parsing_failed == SUCCESS)
 		{
 			remake_arvl(&info, &data);
-			exe_data(&data, arv[0]);
+			exe_data(&data);
 		}
 		free_every(&data, &info, &line);
 	}

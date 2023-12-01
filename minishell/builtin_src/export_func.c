@@ -96,7 +96,6 @@ void	export_exe(t_data *data, char **arvs)
 {
 	int		index;
 	char	*key;
-	char	*value;
 	int		idx;
 
 	if (arvs[1] == NULL)

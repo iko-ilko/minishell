@@ -25,10 +25,9 @@ void	envp_to_envl(t_data *data, char **envp, char *rootfile)
 	int		i;
 	char	*key;
 	char	*value;
-	t_envl	*new;
 
-	i = 0;
-	while (envp[i])
+	i = -1;
+	while (envp[++i])
 	{
 		if (ft_strchr(envp[i], '=') == 0)
 		{
@@ -46,7 +45,6 @@ void	envp_to_envl(t_data *data, char **envp, char *rootfile)
 				value = ft_strdup(ft_strchr(envp[i], '=') + 1);
 		}
 		add_env(data, key, value);
-		i++;
 	}
 }
 

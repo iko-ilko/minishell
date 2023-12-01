@@ -60,7 +60,7 @@ char	*get_args_one_size(char *line, t_info *info)
 	while (line[i] && (line[i] != '|') && (line[i] != '>') && \
 			(line[i] != '<'))
 	{
-		if (line[i] && line[i] == '\'' || line[i] == '\"')
+		if (line[i] && (line[i] == '\'' || line[i] == '\"'))
 		{
 			info->quote = line[i];
 			push_i_j(&i, &j);

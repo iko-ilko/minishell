@@ -69,7 +69,7 @@ void	add_env(t_data *data, char *key, char *value)
 	t_envl	*cur;
 	t_envl	*new;
 
-	new = make_env_node(data, key, value);
+	new = make_env_node(key, value);
 	if (data->envl == NULL)
 	{
 		data->envl = new;

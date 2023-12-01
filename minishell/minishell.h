@@ -18,6 +18,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <fcntl.h>
+# include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 
@@ -45,8 +46,6 @@
 /* index in parsing */
 # define I 0
 # define K 1
-
-/* child minishell pid */
 
 /* env linkedlist */
 typedef struct s_envl
@@ -92,7 +91,7 @@ typedef struct s_redi
 	struct s_redi	*next;
 }	t_redi;
 
-/* 실행에서 쓰이는 커맨드 리스트 */
+/* cmd list for execute */
 typedef struct s_cmd_node
 {
 	char				**args;
@@ -100,7 +99,7 @@ typedef struct s_cmd_node
 	struct s_cmd_node	*next;
 }	t_cmd_node;
 
-/* 매 라인 실행마다 초기화 해주는 파이프 */
+/* every node init pipe */
 typedef struct t_pipe
 {
 	int		cmd_idx;
@@ -115,6 +114,7 @@ typedef struct t_pipe
 	int		in_out_fd[2];
 }	t_pipe;
 
+/* data for execute and remake */
 typedef struct s_data
 {
 	t_envl		*envl;
@@ -129,7 +129,6 @@ typedef struct s_data
 	int			args_i;
 	int			pre_flag;
 	t_pipe		*cur_pipe;
-
 	int			cur_pid;
 }	t_data;
 
@@ -175,13 +174,13 @@ char			**here_doc_parsing(char **args, char **env);
 int				check_args_in_execute(char **args);
 void			execute_child(t_data *data, t_pipe *pipe_data, char **args);
 void			run_args(t_data *data, t_pipe *pipe_data, t_cmd_node *cur);
-void			exe_data(t_data *data, char *root_file_name);
-void			wait_parent(t_data *data, t_pipe *pipe_data);
+void			exe_data(t_data *data);
+void			wait_parent(t_data *data);
 
 /* ./builtin_src/buitin_func.c */
 int				if_buitin_func(t_data *data, char **arvs);
-/* 				cd_func.c */
 
+/* 				cd_func.c */
 void			set_pwd_env(t_data *data, char *cwd_temp);
 void			cd_exe(t_data *data, char **arvs);
 
@@ -204,15 +203,17 @@ char			*get_env_value(t_data *data, char *key);
 
 /* 				echo_func.c */
 void			echo_exe(t_data *data, char **arvs);
+
 /* 				unset_func.c*/
 void			invaild_identifier(char *arv, int flag);
 void			roop_in_unset(t_data *data, char *arv);
 void			unset_exe(t_data *data, char **arvs);
+
 /* 				pwd_func.c*/
-void			pwd_exe(t_data *data, char **arvs);
+void			pwd_exe(t_data *data);
 
 /* util.src/pipe_func.c */
-void			set_pipe(t_data *data, t_pipe *pip);
+void			set_pipe(t_pipe *pip);
 int				cnt_pipe(t_cmd_node *head);
 int				next_if_pipe_fail(t_pipe *pipe_data, t_cmd_node **cur);
 void			set_pipe_child(t_pipe *pipe_data);
@@ -241,7 +242,7 @@ char			*parsing_second_args_tt(char *args, char **env);
 void			here_doc(char **envp, char *limiter, int here_doc_temp_fd);
 
 /*			/list_func.c */
-t_envl			*make_env_node(t_data *data, char *key, char *value);
+t_envl			*make_env_node(char *key, char *value);
 t_arvl			*ft_lstnew(void *content);
 t_arvl			*ft_lstlast(t_arvl *lst);
 void			ft_lstadd_back(t_arvl **lst, t_arvl *new);
@@ -277,29 +278,27 @@ void			free_single(void **p);
 void			free_every(t_data *data, t_info *info, char **line);
 void			close_all_fd(t_pipe *pipe_data);
 
-//구조체, 또는 노드 전체, 또는 노드 하나 프리하는 함수
-
 /* ./str_src/str_func1.c */
 char			**ft_split(char *s, char c);
 
-/* ./str_src/str_func2.c */
+/*			/str_func2.c */
 int				ft_strlen(char *str);
 int				ft_strcmp(char *s1, char *s2);
 char			*ft_strdup(char *s1);
 char			*ft_strndup(char *s1, int len);
 char			*ft_strchr(char *s, int c);
 
-/* ./str_src/str_func3.c */
+/*			/str_func3.c */
 char			*ft_strjoin(char *s1, char *s2);
 char			*ft_strtrim(char *s1, char *set);
 char			*ft_strcpy(char *dest, char *src);
 void			*ft_calloc(size_t count, size_t size);
 int				ft_strncmp(char *s1, char *s2, int n);
 
-/* ./str_src/str_func4.c */
+/*			/str_func4.c */
 char			*ft_strtok(char *str, char sepa);
 
-/* ./str_src/str_func5.c */
+/*			/str_func5.c */
 int				ft_atoi(char *str);
 unsigned char	ft_atous_util(int *error);
 unsigned char	ft_atous_minishell(char *str, int *error);
