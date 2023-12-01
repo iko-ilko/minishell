@@ -172,6 +172,9 @@ void	init_word_parsing(int *quote, int i_k[2]);
 char	*res_dup(char **args, char *buff, int k, int *idx);
 void	init_set_buff(int *i, int *k);
 void	expand_exit_code(char **buff, int *k, int *i);
+char	*set_buff_heredoc(char *args_line);
+char	*word_parsing_heredoc(char **a, int *idx, char **env, char *buff);
+char	**here_doc_parsing(char **args, char **env);
 
 /* ./execute_src/execute.c */
 void	run_args(t_data *data, t_pipe *pipe_data, t_cmd_node *cur);

@@ -46,3 +46,23 @@ void	set_content(t_info *info, char *line, t_arvl **node, int i)
 	}
 	info->args_i = 0;
 }
+
+char	*set_buff_heredoc(char *args_line)
+{
+	int	i;
+	int	k;
+
+	k = 0;
+	i = 0;
+	while (args_line[i])
+	{
+		if (args_line[i] == '\'' || args_line[i] == '\"')
+			i++;
+		else
+		{
+			k++;
+			i++;
+		}
+	}
+	return (make_buff(k));
+}
