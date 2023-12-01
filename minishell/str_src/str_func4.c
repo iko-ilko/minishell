@@ -1,30 +1,25 @@
 #include "../minishell.h"
 
-char	*ft_strtok(char *str, char sepa) {
-    static char	*stock = NULL;
-    char		*p;
+char	*ft_strtok(char *str, char sepa)
+{
+	char	*stock;
+	char	*p;
 
-    if (str != NULL)
-        stock = str;
-
-    if (stock == NULL || *stock == '\0')
-        return (NULL);
-
-    p = stock;
-
-    // 토큰을 찾을 때까지 진행
-    while (*stock != sepa && *stock != '\0')
-        stock++;
-
-    // 토큰을 찾은 경우 NULL로 만들고 다음 위치로 이동
-    if (*stock == sepa) {
-        *stock = '\0';
-        stock++;
-    } else {
-        stock = NULL; // 토큰 끝에 도달한 경우 NULL로 설정하여 더 이상 토큰이 없음을 나타냄
-    }
-
-    return (p);
+	if (str != NULL)
+		stock = str;
+	if (stock == NULL || *stock == '\0')
+		return (NULL);
+	p = stock;
+	while (*stock != sepa && *stock != '\0')
+		stock++;
+	if (*stock == sepa)
+	{
+		*stock = '\0';
+		stock++;
+	}
+	else
+		stock = NULL;
+	return (p);
 }
 
 char	*ft_strtrim(char *s1, char *set)
@@ -47,7 +42,7 @@ char	*ft_strtrim(char *s1, char *set)
 	return (res);
 }
 
-char *ft_itoa(int nbr) 
+char	*ft_itoa(int nbr)
 {
 	char	*result;
 	int		n;
@@ -57,7 +52,7 @@ char *ft_itoa(int nbr)
 	if (nbr == 0)
 		len++;
 	n = nbr;
-	while (n) 
+	while (n)
 	{
 		n /= 10;
 		len++;
@@ -66,9 +61,9 @@ char *ft_itoa(int nbr)
 	if (nbr == 0)
 	{
 		result[0] = '0';
-		return(result);
+		return (result);
 	}
-	while (nbr) 
+	while (nbr)
 	{
 		result[--len] = nbr % 10 + '0';
 		nbr /= 10;
@@ -76,26 +71,26 @@ char *ft_itoa(int nbr)
 	return (result);
 }
 
-size_t  ft_strlcat(char *dst, char *src, size_t dstsize)
+size_t	ft_strlcat(char *dst, char *src, size_t dstsize)
 {
-        size_t  i;
-        size_t  dst_len;
-        size_t  src_len;
+	size_t	i;
+	size_t	dst_len;
+	size_t	src_len;
 
-        src_len = ft_strlen(src);
-        if (dstsize == 0)
-                return (src_len);
-        dst_len = ft_strlen(dst);
-        if (dst_len + 1 > dstsize)
-                return (src_len + dstsize);
-        i = 0;
-        while (dst_len + i < dstsize - 1 && src[i])
-        {
-                dst[dst_len + i] = src[i];
-                i++;
-        }
-        dst[dst_len + i] = '\0';
-        return (src_len + dst_len);
+	src_len = ft_strlen(src);
+	if (dstsize == 0)
+		return (src_len);
+	dst_len = ft_strlen(dst);
+	if (dst_len + 1 > dstsize)
+		return (src_len + dstsize);
+	i = 0;
+	while (dst_len + i < dstsize - 1 && src[i])
+	{
+			dst[dst_len + i] = src[i];
+			i++;
+	}
+	dst[dst_len + i] = '\0';
+	return (src_len + dst_len);
 }
 
 char	*ft_substr(char *s, unsigned int start, size_t len)
@@ -106,11 +101,11 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	if (len == 0)
 	{
 		res = malloc(sizeof(char));
-		//if (res == 0) exit_error("mal ", 1)
 		*res = 0;
 		return (res);
 	}
-	if ((res = (char *)malloc(sizeof(char) * (len + 1))) == 0)
+	res = (char *)malloc(sizeof(char) * (len + 1));
+	if (res == 0)
 		return (0);
 	i = 0;
 	if (start < (unsigned int)ft_strlen(s))

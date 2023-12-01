@@ -6,7 +6,7 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 18:07:06 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/29 20:20:44 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/12/01 14:20:01 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,5 +130,4 @@ void	parsing(t_info *info, char *line, char **env)
 	}
 	parsing_second(info->head, env);
 	free_single((void **)&cmd);
-
 }

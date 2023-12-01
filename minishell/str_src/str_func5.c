@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-int ft_atoi(char *str)
+int	ft_atoi(char *str)
 {
 	int	result;
 	int	sign;
@@ -18,9 +18,9 @@ int ft_atoi(char *str)
 
 unsigned char	ft_atous_minishell(char *str, int *error)
 {
-	unsigned char	result;
+	unsigned char	result;//
 	long long		temp;
-	int	sign;
+	int				sign;
 
 	if (str == NULL)
 		return (0);

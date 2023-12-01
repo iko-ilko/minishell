@@ -63,7 +63,7 @@ char	*ft_strndup(char *s1, int len)
 	return (res);
 }
 
-char    *ft_strchr(char *s, int c)
+char	*ft_strchr(char *s, int c)
 {
 	while (*s)
 	{
@@ -72,6 +72,6 @@ char    *ft_strchr(char *s, int c)
 		s++;
 	}
 	if (c == '\0')
-		return ((char*)s);
+		return ((char *)s);
 	return (0);
 }
