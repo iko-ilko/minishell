@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 15:50:05 by ilko              #+#    #+#             */
-/*   Updated: 2023/12/01 16:15:57 by ilko             ###   ########.fr       */
+/*   Updated: 2023/12/01 16:20:57 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,6 @@ int	main(int arc, char **arv, char **envp)
 		line = readline("minishell$ ");
 		if (line == NULL)
 			break ;
-		if (line[0] != '\0')
-			add_history(line);
 		every_init(&info, &data);
 		parsing(&info, line, data.envp);
 		if (info.parsing_failed == SUCCESS)

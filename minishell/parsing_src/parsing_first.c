@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_first.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 18:07:06 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/12/01 14:20:01 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/12/01 16:22:57 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,14 +109,15 @@ void	parsing(t_info *info, char *line, char **env)
 	char	*cmd;
 
 	cmd = ft_strtrim(line, " ");
-	if (cmd == NULL || !(error_case(line)))
+	if (cmd == NULL || cmd[0] == '\0' || !(error_case(line)))
 	{
 		info->parsing_failed = FAIL;
-		if (cmd == NULL)
+		if (cmd == NULL || cmd[0] == '\0')
 			return ;
 		free_single((void **)&cmd);
 		return (str_error("syntax error", NULL));
 	}
+	add_history(line);
 	make_first_init(info, cmd);
 	while (cmd[info->i])
 	{
