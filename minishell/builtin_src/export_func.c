@@ -78,7 +78,7 @@ void	print_all_export(t_data *data)
 
 void	export_exe(t_data *data, char **arvs)
 {
-	int	 index;
+	int		index;
 	char	*key;
 	char	*value;
 	int		idx;
@@ -91,25 +91,20 @@ void	export_exe(t_data *data, char **arvs)
 	idx = 1;
 	while (arvs[idx])
 	{
-		index = find_index(arvs[idx], '=');//arvs[idx]이 arvs[i]가 되겠지.
+		index = find_index(arvs[idx], '=');
 		if (index == 0 && arvs[idx][index] != '=')
 			index = ft_strlen(arvs[idx]);
 		key = ft_strndup(arvs[idx], index);
 		if (check_key(key, ADD) == -1)
-		{
-			char *temp = ft_strjoin("export: ", arvs[idx]);
-			str_error("not a valid identifier", temp);
-			free_single((void **)&temp);
-			g_exit_code = 1;
-		}
+			invaild_identifier(arvs[idx], ADD);
 		else
-		{
-			if (arvs[idx][index] == '\0')//여기서부턴 key value 값 만듬
+		{/////
+			if (arvs[idx][index] == '\0')
 				value = NULL;
-			else if(arvs[idx][index + 1] == '\0')
+			else if (arvs[idx][index + 1] == '\0')
 				value = ft_strdup("");
 			else
-			    value = ft_strdup(arvs[idx] + index + 1);
+				value = ft_strdup(arvs[idx] + index + 1);
 			if (find_key(data, key) != NULL)
 				modify_env(data, key, value);
 			else

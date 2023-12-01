@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 15:35:20 by ilko              #+#    #+#             */
-/*   Updated: 2023/12/01 15:35:32 by ilko             ###   ########.fr       */
+/*   Updated: 2023/12/01 17:01:50 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,19 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 		if (ft_strcmp(args[0], "./minishell") == 0)
 			execve(args[0], args, data->envp);
 		else if (execve(pipe_data->cur_cmd_path, args, data->envp) == -1)
-			exit_error("command not found", args[0], 127);}
+			exit_error("command not found", args[0], 127);
+	}
+}
+
+void	run_args(t_data *data, t_pipe *pipe_data, t_cmd_node *cur)
+{
+	if (cur->args != NULL)
+	{
+		if (pipe_data->pipe_cnt == 0 && if_buitin_func(data, cur->args) == 1)
+			pipe_data->simple_cmd_flag = 1 ;
+		else
+			execute_child(data, pipe_data, cur->args);
+	}
 }
 
 void	exe_data(t_data *data, char *root_file_name)
@@ -52,13 +64,7 @@ void	exe_data(t_data *data, char *root_file_name)
 		redirect_file(data->envp, cur->redi, &pipe_data);
 		if (next_if_pipe_fail(&pipe_data, &cur) == -1)
 			continue ;
-		if (cur->args != NULL)//->run_args()
-		{
-			if (pipe_data.pipe_cnt == 0 && if_buitin_func(data, cur->args) == 1)
-				pipe_data.simple_cmd_flag = 1 ;
-			else
-				execute_child(data, &pipe_data, cur->args);
-		}
+		run_args(data, &pipe_data, cur);
 		if (pipe_data.heredoc_f == 1)
 			unlink("here_doc.temp");
 		cur = cur->next;

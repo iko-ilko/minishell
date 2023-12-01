@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 19:30:26 by ilko              #+#    #+#             */
-/*   Updated: 2023/12/01 16:52:20 by ilko             ###   ########.fr       */
+/*   Updated: 2023/12/01 17:38:05 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,6 +174,7 @@ void	init_set_buff(int *i, int *k);
 void	expand_exit_code(char **buff, int *k, int *i);
 
 /* ./execute_src/execute.c */
+void	run_args(t_data *data, t_pipe *pipe_data, t_cmd_node *cur);
 void	exe_data(t_data *data, char *root_file_name);
 void	wait_parent(t_data *data, t_pipe *pipe_data);
 
@@ -204,6 +205,7 @@ char	*get_env_value(t_data *data, char *key);
 /* 				echo_func.c */
 void	echo_exe(t_data *data, char **arvs);
 /* 				unset_func.c*/
+void	invaild_identifier(char *arv, int flag);
 void	unset_exe(t_data *data, char **arvs);
 /* 				pwd_func.c*/
 void	pwd_exe(t_data *data, char **arvs);
