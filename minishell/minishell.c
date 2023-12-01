@@ -14,7 +14,6 @@
 
 int	g_exit_code = 0;
 
-
 void a()
 {
     system("leaks minishell");
