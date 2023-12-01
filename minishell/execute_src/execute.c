@@ -1,6 +1,18 @@
-#include "minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/01 15:35:20 by ilko              #+#    #+#             */
+/*   Updated: 2023/12/01 15:35:32 by ilko             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-extern int g_exit_code;
+#include "../minishell.h"
+
+extern int	g_exit_code;
 
 void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 {
@@ -12,14 +24,7 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 	else if (data->cur_pid == 0)
 	{
 		signal(SIGQUIT, SIG_DFL);
-		if (pipe_data->cmd_idx != 0)
-			dup2(pipe_data->pre_fd[0], 0);
-		if (pipe_data->cmd_idx != pipe_data->pipe_cnt)
-			dup2(pipe_data->next_fd[1], 1);
-		if (pipe_data->in_out_fd[0] != 0)
-			dup2(pipe_data->in_out_fd[0], 0);
-		if (pipe_data->in_out_fd[1] != 1)
-			dup2(pipe_data->in_out_fd[1], 1);
+		set_pipe_child(pipe_data);
 		if (if_buitin_func(data, args) == 1)
 			exit(g_exit_code);
 		close_all_fd(pipe_data);
@@ -29,7 +34,6 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 		else if (execve(pipe_data->cur_cmd_path, args, data->envp) == -1)
 			exit_error("command not found", args[0], 127);}
 }
-
 
 void	exe_data(t_data *data, char *root_file_name)
 {
@@ -67,7 +71,7 @@ void	exe_data(t_data *data, char *root_file_name)
 
 void	wait_parent(t_data *data, t_pipe *pipe_data)
 {
-	int status_last;
+	int	status_last;
 	int	status_others;
 	int	signo_last;
 	int	signo_others;

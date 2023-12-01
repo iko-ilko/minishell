@@ -1,11 +1,18 @@
-//export 는 밸류가 없어도 출력되는데 env는 아님.
-//export 는 아스키기준 정렬이 돼서 출력되는데 env는 아님.
-//envl에 정렬하지 않고 저장하고, export할때만 정렬해서 출력하자.
-//env는 밸밸ㄱ류가 널이면 아예 출력 x. export 는 출력 o
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env_func.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/01 15:10:19 by ilko              #+#    #+#             */
+/*   Updated: 2023/12/01 15:10:54 by ilko             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../minishell.h"
 
-extern int g_exit_code;
+extern int	g_exit_code;
 
 char	*get_env_value(t_data *data, char *key)
 {
@@ -57,7 +64,6 @@ void	modify_env(t_data *data, char *key, char *value)
 	update_envp(data, data->envl);
 }
 
-
 void	add_env(t_data *data, char *key, char *value)
 {
 	t_envl	*cur;
@@ -93,7 +99,8 @@ void	env_exe(t_data *data, char **arvs)
 		{
 			write(data->cur_pipe->in_out_fd[1], cur->key, ft_strlen(cur->key));
 			write(data->cur_pipe->in_out_fd[1], "=", 1);
-			write(data->cur_pipe->in_out_fd[1], cur->value, ft_strlen(cur->value));
+			write(data->cur_pipe->in_out_fd[1], cur->value, \
+			ft_strlen(cur->value));
 		}
 		cur = cur->next;
 	}

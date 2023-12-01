@@ -1,5 +1,7 @@
 CC = cc #-Wall -Wextra -Werror
-SRCS = minishell.c execute.c \
+SRCS = minishell.c \
+	./execute_src/execute.c \
+	\
 	./builtin_src/builtin_main.c \
     ./builtin_src/cd_func.c \
     ./builtin_src/echo_func.c \
@@ -8,9 +10,6 @@ SRCS = minishell.c execute.c \
     ./builtin_src/export_func.c \
     ./builtin_src/pwd_func.c \
     ./builtin_src/unset_func.c \
-	\
-	./child_process_src/shell_child.c \
-	./child_process_src/execute_child.c \
 	\
 	./util_src/pipe_func.c \
 	./util_src/redirection.c \
@@ -21,6 +20,7 @@ SRCS = minishell.c execute.c \
 	./util_src/init_func.c \
 	./util_src/free_func.c \
 	./util_src/remake_func.c \
+	./util_src/path_func.c \
 	\
 	./str_src/str_func1.c \
 	./str_src/str_func2.c \

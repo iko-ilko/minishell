@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   error.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/01 15:35:15 by ilko              #+#    #+#             */
+/*   Updated: 2023/12/01 15:35:15 by ilko             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-extern int g_exit_code;
+extern int	g_exit_code;
 
 void	exit_error(char *message, char *reason, int exit_code)
 {
@@ -28,8 +40,8 @@ void	str_error(char *message, char *reason)
 	g_exit_code = 1;
 }
 
-void	my_perror(char *infile_name)
+int	redi_perror(char *infile_name)
 {
 	perror("minishell: ");
-	// exi
+	return (-1);
 }

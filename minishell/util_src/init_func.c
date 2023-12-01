@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_func.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/01 15:39:12 by ilko              #+#    #+#             */
+/*   Updated: 2023/12/01 15:39:12 by ilko             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 void	init_envl(t_data *data, char **envp, char *rootfile)
@@ -8,16 +20,16 @@ void	init_envl(t_data *data, char **envp, char *rootfile)
 	update_envp(data, data->envl);
 }
 
-void    envp_to_envl(t_data *data, char **envp, char *rootfile)
+void	envp_to_envl(t_data *data, char **envp, char *rootfile)
 {
-    int     i;
-    char    *key;
-    char    *value;
+	int		i;
+	char	*key;
+	char	*value;
 	t_envl	*new;
 
-    i = 0;
-    while (envp[i])
-    {
+	i = 0;
+	while (envp[i])
+	{
 		if (ft_strchr(envp[i], '=') == 0)
 		{
 			key = ft_strdup(envp[i]);
@@ -25,17 +37,17 @@ void    envp_to_envl(t_data *data, char **envp, char *rootfile)
 		}
 		else
 		{
-	    	key = ft_strndup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
+			key = ft_strndup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
 			if (ft_strcmp(key, "SHELL") == 0)
 				value = ft_strdup(rootfile);
 			else if (ft_strcmp(key, "SHLVL") == 0)
 				value = ft_itoa(ft_atoi(ft_strchr(envp[i], '=') + 1) + 1);
 			else
-    	    	value = ft_strdup(ft_strchr(envp[i], '=') + 1);
+				value = ft_strdup(ft_strchr(envp[i], '=') + 1);
 		}
 		add_env(data, key, value);
-        i++;
-    }
+		i++;
+	}
 }
 
 void	update_envp(t_data *data, t_envl *cur)
@@ -73,7 +85,7 @@ void	every_init(t_info *info, t_data *data)
 	info->parsing_failed = SUCCESS;
 	data->cur_pid = -1;
 	data->pre_flag = 0;
-	data->cmd_node_head = NULL; 
+	data->cmd_node_head = NULL;
 	data->cmd_node_last = NULL;
 	data->args_i = 0;
 	data->node_open_flag = 0;

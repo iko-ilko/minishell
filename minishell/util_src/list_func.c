@@ -1,5 +1,16 @@
-#include "../minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   list_func.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/01 15:39:52 by ilko              #+#    #+#             */
+/*   Updated: 2023/12/01 15:39:52 by ilko             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "../minishell.h"
 
 t_envl	*make_env_node(t_data *data, char *key, char *value)
 {
@@ -13,7 +24,6 @@ t_envl	*make_env_node(t_data *data, char *key, char *value)
 	new->next = NULL;
 	return (new);
 }
-
 
 t_arvl	*ft_lstnew(void *content)
 {

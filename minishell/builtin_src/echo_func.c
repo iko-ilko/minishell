@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   echo_func.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/01 15:10:09 by ilko              #+#    #+#             */
+/*   Updated: 2023/12/01 15:34:40 by ilko             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-extern int g_exit_code;
+extern int	g_exit_code;
 
 void	echo_exe(t_data *data, char **arvs)
 {
@@ -14,7 +26,8 @@ void	echo_exe(t_data *data, char **arvs)
 	while (arvs[i] != NULL)
 	{
 		write(data->cur_pipe->in_out_fd[1], arvs[i], ft_strlen(arvs[i]));
-		write(data->cur_pipe->in_out_fd[1], " ", 1);
+		if (arvs[i + 1] != NULL)
+			write(data->cur_pipe->in_out_fd[1], " ", 1);
 		i++;
 	}
 	if (n_flag == 0)

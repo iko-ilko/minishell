@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 19:30:26 by ilko              #+#    #+#             */
-/*   Updated: 2023/11/26 19:07:52 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/12/01 15:48:00 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,12 +138,6 @@ typedef struct	s_data
 	int			cur_pid;
 }	t_data;
 
-void	print_data_cmd(t_data *data);
-
-
-
-
-
 /* parsing.c */
 void 	set_quote(t_info *info, char quot, char buffer);
 char	*ft_strtok(char *str, char sepa);
@@ -187,7 +181,7 @@ char		*word_parsing_splitting(char *args, char **env, char *buff);
 char	*res_dup_one(char *args, char *buff, int k);
 
 
-/* execute.c */
+/* ./execute_src/execute.c */
 void	exe_data(t_data *data, char *root_file_name);
 void	wait_parent(t_data *data, t_pipe *pipe_data);
 
@@ -204,8 +198,9 @@ void	exit_exe(t_data *data, char **arvs);
 
 /* 				export_func.c */
 int		check_key(char *str, int unset_flag);
-void    export_exe(t_data *data, char **arvs);
+void	export_exe(t_data *data, char **arvs);
 t_envl	*find_key(t_data *data, char *key);
+void	print_all_export(t_data *data);
 
 /* 				env_func.c */
 void	env_exe(t_data *data, char **arvs);
@@ -222,15 +217,14 @@ void	unset_exe(t_data *data, char **arvs);
 void	pwd_exe(t_data *data, char **arvs);
 
 /* ./child_process/shell_child.c *///???
-void	more_shell(t_data *data, char **arvs, char **envp);
 /* 				execute_child.c */
 
 /* util.src/pipe_func.c */
-char	**get_all_path(char **envp);
-char	*find_command(char *cmd, char **all_path);
 void	set_pipe(t_data *data, t_pipe *pip);
 int		cnt_pipe(t_cmd_node *head);
 int		next_if_pipe_fail(t_pipe *pipe_data, t_cmd_node **cur);
+void	set_pipe_child(t_pipe *pipe_data);
+
 
 /*			/remake_func.c */
 void	remake_arvl(t_info *info, t_data *data);
@@ -259,8 +253,8 @@ int		get_lstsize(t_envl *cur);
 void	clear_t_avrl(t_arvl **head);
 void	clear_t_cmd_node(t_cmd_node **head);
 void	clear_t_envl_node(t_envl **head);
-
-
+t_redi	*new_redi_last_node(t_redi **head);
+t_cmd_node	*new_cmd_last_node(t_cmd_node **head);
 
 /* 			/init_func.c */
 void	init_envl(t_data *data, char **envp, char *rootfile);
@@ -274,6 +268,11 @@ void	set_signal(int flag);
 void    parent_sigint_handler(int signum);
 void    child_sigint_handler(int signum);
 void	here_doc_sigterm_handler(int signum);
+
+/*			/path_func.c */
+char	**get_all_path(char **envp);
+char	*find_command(char *cmd, char **all_path);
+
 
 
 /*			/free_func.c */
@@ -306,8 +305,8 @@ int		ft_strncmp(char *s1, char *s2, int n);
 char	*ft_strtok(char *str, char sepa);
 
 /* ./str_src/str_func5.c */
-int 			ft_atoi(char *str);
-unsigned char 	ft_atous_minishell(char *str, int *error);
+int				ft_atoi(char *str);
+unsigned char	ft_atous_minishell(char *str, int *error);
 
 
 
@@ -319,7 +318,7 @@ int		find_index(char *str, char c);
 /* ./error_done_src/exit_error.c */
 void	exit_error(char *message, char *reason, int exit_code);
 void	str_error(char *message, char *reason);
-void	my_perror(char *infile_name);
+int		redi_perror(char *infile_name);
 
 
 
