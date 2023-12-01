@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 19:30:26 by ilko              #+#    #+#             */
-/*   Updated: 2023/12/01 15:48:00 by ilko             ###   ########.fr       */
+/*   Updated: 2023/12/01 16:06:41 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ typedef struct	s_info
 typedef struct s_redi
 {
 	int		flag;
-	char	*file_name;
+	char	*file_n;
 	struct s_redi *next;
 }	t_redi;
 
@@ -139,17 +139,17 @@ typedef struct	s_data
 }	t_data;
 
 /* parsing.c */
-void 	set_quote(t_info *info, char quot, char buffer);
+void	set_quote(t_info *info, char quot, char buffer);
 char	*ft_strtok(char *str, char sepa);
 int		check_sepa(char c);
 char	*get_pre_sepa_str(char *input, int sepa_idx);
 int		count_token(char *input);
-char 	*get_args_one_size(char *line, t_info *info);
+char	*get_args_one_size(char *line, t_info *info);
 void	push_args(t_info *info, char *line);
 void	set_content(t_info *info, char *line, t_arvl **node, int flag);
 char	*ft_substr(char *s, unsigned int start, size_t len);
 char	*ft_strtrim(char *s1, char *set);
-void 	parsing_check(char *line, t_info *info);
+void	parsing_check(char *line, t_info *info);
 char	*make_buff(int k);
 void	make_first_init(t_info *info, char *line);
 int		ft_isalnum(int c);
@@ -158,28 +158,20 @@ size_t	ft_strlcat(char *dst, char *src, size_t dstsize);
 int		check_unset(char *str, char *envv);
 int		set_env_to_buf(char **envv, char *env, char *buf);
 void	check_split(int *k, int z, int *idx, char quote);
-int     check_unset_sub(char *str, char *envv);
-void 	move_env_size(char **envv, char *env, int *k);
+void	move_env_size(char **envv, char *env, int *k);
 char	*set_buff(char *args_line, char **env);
 void	parsing_second(t_arvl *node, char **env);
 void	print_nodes_to_head(t_arvl *head);
 void	parsing(t_info *info, char *line, char **env);
-char		*word_parsing(char **args, int *idx, char **env, char *buff);
-char *ft_itoa(int nbr) ;
-size_t  ft_strlcat(char *dst, char *src, size_t dstsize);
+char	*word_parsing(char **args, int *idx, char **env, char *buff);
+char	*ft_itoa(int nbr);
+size_t	ft_strlcat(char *dst, char *src, size_t dstsize);
 char	*ft_substr(char *s, unsigned int start, size_t len);
 void	end_of_line(t_info *info, char *line);
 void	init_word_parsing(int *quote, int i_k[2]);
-char *res_dup(char **args, char *buff, int k, int *idx);
+char	*res_dup(char **args, char *buff, int k, int *idx);
 void	init_set_buff(int *i, int *k);
-int	check_quote(char **args, int *idx, int i, int *quote);//?
 void	expand_exit_code(char **buff, int *k, int *i);
-
-//excute.c -> herdoc
-char		*parsing_second_args_one(char *args, char **env);
-char		*word_parsing_splitting(char *args, char **env, char *buff);
-char	*res_dup_one(char *args, char *buff, int k);
-
 
 /* ./execute_src/execute.c */
 void	exe_data(t_data *data, char *root_file_name);
@@ -216,9 +208,6 @@ void	unset_exe(t_data *data, char **arvs);
 /* 				pwd_func.c*/
 void	pwd_exe(t_data *data, char **arvs);
 
-/* ./child_process/shell_child.c *///???
-/* 				execute_child.c */
-
 /* util.src/pipe_func.c */
 void	set_pipe(t_data *data, t_pipe *pip);
 int		cnt_pipe(t_cmd_node *head);
@@ -232,8 +221,8 @@ void	set_data_args(t_data *data, t_arvl *cur, int pre_flag, int par_i);
 
 /* 			/redirect_func.c */
 void	redirect_file(char **envp, t_redi *redi, t_pipe *pipe_data);
-int		redirect_file_out(int flag, char *file_name);
-int		redirect_file_in(char **envp, int flag, char *file_name, int *heredoc_f);
+int		redirect_file_out(int flag, char *file_n);
+int		redirect_file_in(char **envp, int flag, char *file_n, int *heredoc_f);
 
 /*			/here_doc.c */
 char	*res_dup_one(char *args, char *buff, int k);
@@ -265,8 +254,8 @@ void	init_pipe(t_data *data, t_pipe *pipe_data);
 
 /* 			/signal_func.c */
 void	set_signal(int flag);
-void    parent_sigint_handler(int signum);
-void    child_sigint_handler(int signum);
+void	parent_sigint_handler(int signum);
+void	child_sigint_handler(int signum);
 void	here_doc_sigterm_handler(int signum);
 
 /*			/path_func.c */
@@ -292,7 +281,7 @@ int		ft_strlen(char *str);
 int		ft_strcmp(char *s1, char *s2);
 char	*ft_strdup(char *s1);
 char	*ft_strndup(char *s1, int len);
-char    *ft_strchr(char *s, int c);
+char	*ft_strchr(char *s, int c);
 
 /* ./str_src/str_func3.c */
 char	*ft_strjoin(char *s1, char *s2);
@@ -305,14 +294,10 @@ int		ft_strncmp(char *s1, char *s2, int n);
 char	*ft_strtok(char *str, char sepa);
 
 /* ./str_src/str_func5.c */
-int				ft_atoi(char *str);
 unsigned char	ft_atous_minishell(char *str, int *error);
+int		ft_atoi(char *str);
 
 
-
-
-// int		str_check_space(char *str);
-int		find_index(char *str, char c);
 
 
 /* ./error_done_src/exit_error.c */

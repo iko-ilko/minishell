@@ -45,7 +45,7 @@ void	clear_t_cmd_node(t_cmd_node **head)
 		while (redi != NULL)
 		{
 			next_redi = redi->next;
-			free_single((void *)&redi->file_name);
+			free_single((void *)&redi->file_n);
 			free(redi);
 			redi = next_redi;
 		}
@@ -83,7 +83,7 @@ t_redi	*new_redi_last_node(t_redi **head)
 	if (!new)
 		exit_error("malloc error", NULL, 1);
 	new->flag = 0;
-	new->file_name = NULL;
+	new->file_n = NULL;
 	new->next = NULL;
 	cur = *head;
 	if (cur == NULL)

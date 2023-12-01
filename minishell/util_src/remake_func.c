@@ -6,19 +6,19 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 15:40:51 by ilko              #+#    #+#             */
-/*   Updated: 2023/12/01 15:44:04 by ilko             ###   ########.fr       */
+/*   Updated: 2023/12/01 16:10:09 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	set_data_redi(t_data *data, char *file_name, int pre_flag)
+void	set_data_redi(t_data *data, char *file_n, int pre_flag)
 {
 	t_redi	*new;
 
 	new = new_redi_last_node(&data->cmd_node_last->redi);
 	new->flag = pre_flag;
-	new->file_name = ft_strdup(file_name);
+	new->file_n = ft_strdup(file_n);
 	new->next = NULL;
 }
 
