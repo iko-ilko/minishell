@@ -6,7 +6,7 @@
 /*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 20:07:30 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/29 19:07:19 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/12/01 15:56:06 by jiwkim2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,14 @@ void	push_args(t_info *info, char *line)
 void	set_content(t_info *info, char *line, t_arvl **node, int i)
 {
 	if (line[info->i] == '>' && line[info->i + 1] == '>' || \
-		line[info->i] == '<' && line[info->i + 1] == '<')
+		line[info->i] == '<' && line[info->i + 1] == '<' )
 		info->i++;
 	info->content->flag = i;
 	if (*(info->buff) != 0)
 		push_args(info, line);
 	else
-	{
 		info->content->args[info->args_i] = NULL;
-		ft_lstadd_back(node, ft_lstnew(info->content));
-	}
+	ft_lstadd_back(node, ft_lstnew(info->content));
 	if (line[info->i + 1] != '\0')
 	{
 		info->content = ft_calloc(1, sizeof(t_cmd));
