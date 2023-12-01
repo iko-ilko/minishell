@@ -28,14 +28,22 @@ int	ft_atoi(char *str)
 	return (result * sign);
 }
 
+unsigned char	ft_atous_util(int *error)
+{
+	*error = FAIL;
+	return (255);
+}
+
 unsigned char	ft_atous_minishell(char *str, int *error)
 {
-	unsigned char	result;//
+	unsigned char	result;
 	long long		temp;
 	int				sign;
 
 	if (str == NULL)
 		return (0);
+	if (str[0] == '\0')
+		return (ft_atous_util(error));
 	sign = 1;
 	if (*str == '-' || *str == '+')
 		sign = 44 - *str++;
@@ -43,16 +51,10 @@ unsigned char	ft_atous_minishell(char *str, int *error)
 	while (*str)
 	{
 		if (!(*str >= '0' && *str <= '9'))
-		{
-			*error = FAIL;
-			return (255);
-		}
+			return (ft_atous_util(error));
 		temp = temp * 10 + *(str++) - '0';
 		if (temp < 0)
-		{
-			*error = FAIL;
-			return (255);
-		}
+			return (ft_atous_util(error));
 	}
 	*error = SUCCESS;
 	result = temp * sign;

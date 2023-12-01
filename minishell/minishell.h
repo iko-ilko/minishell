@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 19:30:26 by ilko              #+#    #+#             */
-/*   Updated: 2023/12/01 16:06:41 by ilko             ###   ########.fr       */
+/*   Updated: 2023/12/01 16:52:20 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,8 +294,9 @@ int		ft_strncmp(char *s1, char *s2, int n);
 char	*ft_strtok(char *str, char sepa);
 
 /* ./str_src/str_func5.c */
+unsigned char	ft_atous_util(int *error);
 unsigned char	ft_atous_minishell(char *str, int *error);
-int		ft_atoi(char *str);
+int	ft_atoi(char *str);
 
 
 

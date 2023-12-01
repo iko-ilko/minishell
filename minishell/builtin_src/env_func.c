@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 15:10:19 by ilko              #+#    #+#             */
-/*   Updated: 2023/12/01 16:13:10 by ilko             ###   ########.fr       */
+/*   Updated: 2023/12/01 16:35:20 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,14 @@ void	env_exe(t_data *data, char **arvs)
 {
 	t_envl	*cur;
 
+	if (arvs[1] != NULL)
+	{
+		write(2 , "env: ", 5);
+		write(2 , arvs[1], ft_strlen(arvs[1]));
+		write(2 , ": No Such File or Directory\n", 28);
+		g_exit_code = 1;
+		return ;
+	}
 	cur = data->envl;
 	while (cur)
 	{
