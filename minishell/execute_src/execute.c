@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 15:35:20 by ilko              #+#    #+#             */
-/*   Updated: 2023/12/01 17:01:50 by ilko             ###   ########.fr       */
+/*   Updated: 2023/12/01 19:52:16 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,31 @@
 
 extern int	g_exit_code;
 
+int	check_args_in_execute(char **args)
+{
+	int		i;
+	char	*temp;
+
+	i = 0;
+	while (args[i])
+	{
+		temp = ft_strtrim(args[i], " ");
+		if (temp[0] != '\0')
+		{
+			free_single((void **)&temp);
+			return (i);
+		}
+		i++;
+		free_single((void **)&temp);
+	}
+	return (-1);
+}
+
 void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 {
+	int	idx;
+
+	idx = 0;
 	if (args == NULL || args[0] == NULL)
 		return ;
 	data->cur_pid = fork();
@@ -28,11 +51,14 @@ void	execute_child(t_data *data, t_pipe *pipe_data, char **args)
 		if (if_buitin_func(data, args) == 1)
 			exit(g_exit_code);
 		close_all_fd(pipe_data);
-		pipe_data->cur_cmd_path = find_command(args[0], pipe_data->all_path);
-		if (ft_strcmp(args[0], "./minishell") == 0)
-			execve(args[0], args, data->envp);
+		idx = check_args_in_execute(args);
+		if (idx == -1)
+			exit(0);
+		pipe_data->cur_cmd_path = find_command(args[idx], pipe_data->all_path);
+		if (ft_strcmp(args[idx], "./minishell") == 0)
+			execve(args[idx], args, data->envp);
 		else if (execve(pipe_data->cur_cmd_path, args, data->envp) == -1)
-			exit_error("command not found", args[0], 127);
+			exit_error("command not found", args[idx], 127);
 	}
 }
 

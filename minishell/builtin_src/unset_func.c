@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 15:34:49 by ilko              #+#    #+#             */
-/*   Updated: 2023/12/01 17:42:21 by ilko             ###   ########.fr       */
+/*   Updated: 2023/12/01 20:01:53 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,32 @@ void	invaild_identifier(char *arv, int flag)
 	g_exit_code = 1;
 }
 
+void	roop_in_unset(t_data *data, char *arv)
+{
+	t_envl	*cur;
+	t_envl	*pre;
+
+	cur = data->envl;
+	pre = NULL;
+	while (cur != NULL)
+	{
+		if (ft_strcmp(cur->key, arv) == 0)
+		{
+			if (pre == NULL)
+				data->envl = cur->next;
+			else
+				pre->next = cur->next;
+			free_single((void **)&cur->key);
+			free_single((void **)&cur->value);
+			free(cur);
+			cur = NULL;
+			break ;
+		}
+		pre = cur;
+		cur = cur->next;
+	}
+}
+
 void	unset_exe(t_data *data, char **arvs)
 {
 	t_envl	*cur;
@@ -45,26 +71,7 @@ void	unset_exe(t_data *data, char **arvs)
 		if (check_key(arvs[idx], DEL) == -1)
 			invaild_identifier(arvs[idx], DEL);
 		else
-		{
-			cur = data->envl;
-			pre = NULL;
-			while (cur)
-			{/////////
-				if (ft_strcmp(cur->key, arvs[idx]) == 0)
-				{
-					if (pre == NULL)
-						data->envl = cur->next;
-					else
-						pre->next = cur->next;
-					free_single((void **)&cur->key);
-					free_single((void **)&cur->value);
-					free(cur);
-					break ;
-				}
-				pre = cur;
-				cur = cur->next;
-			}
-		}
+			roop_in_unset(data, arvs[idx]);
 		idx++;
 	}
 	free_double(&data->envp);

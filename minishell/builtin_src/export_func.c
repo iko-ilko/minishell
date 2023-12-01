@@ -76,6 +76,22 @@ void	print_all_export(t_data *data)
 	}
 }
 
+void	roop_in_export(t_data *data, char *arv, int index, char *key)
+{
+	char	*value;
+
+	if (arv[index] == '\0')
+		value = NULL;
+	else if (arv[index + 1] == '\0')
+		value = ft_strdup("");
+	else
+		value = ft_strdup(arv + index + 1);
+	if (find_key(data, key) != NULL)
+		modify_env(data, key, value);
+	else
+		add_env(data, key, value);
+}
+
 void	export_exe(t_data *data, char **arvs)
 {
 	int		index;
@@ -88,8 +104,8 @@ void	export_exe(t_data *data, char **arvs)
 		print_all_export(data);
 		return ;
 	}
-	idx = 1;
-	while (arvs[idx])
+	idx = 0;
+	while (arvs[++idx])
 	{
 		index = find_index(arvs[idx], '=');
 		if (index == 0 && arvs[idx][index] != '=')
@@ -98,20 +114,7 @@ void	export_exe(t_data *data, char **arvs)
 		if (check_key(key, ADD) == -1)
 			invaild_identifier(arvs[idx], ADD);
 		else
-		{/////
-			if (arvs[idx][index] == '\0')
-				value = NULL;
-			else if (arvs[idx][index + 1] == '\0')
-				value = ft_strdup("");
-			else
-				value = ft_strdup(arvs[idx] + index + 1);
-			if (find_key(data, key) != NULL)
-				modify_env(data, key, value);
-			else
-				add_env(data, key, value);
-
-		}
-		idx++;
+			roop_in_export(data, arvs[idx], index, key);
 	}
 	free_double(&data->envp);
 	update_envp(data, data->envl);

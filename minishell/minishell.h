@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 19:30:26 by ilko              #+#    #+#             */
-/*   Updated: 2023/12/01 17:38:05 by ilko             ###   ########.fr       */
+/*   Updated: 2023/12/01 20:47:34 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ typedef struct	s_info
 	int		i; // cmd의 인덱스. parsing함수에서 사용
 	int		j; // buff의 인덱스. parsing_check함수에서 사용
 	int		token_count;
-	int		prev_flag;
+	int		pr_f;
 	char	quote;
 	char 	*buff;
 	int		parsing_failed;
@@ -177,6 +177,8 @@ char	*word_parsing_heredoc(char **a, int *idx, char **env, char *buff);
 char	**here_doc_parsing(char **args, char **env);
 
 /* ./execute_src/execute.c */
+int		check_args_in_execute(char **args);
+void	execute_child(t_data *data, t_pipe *pipe_data, char **args);
 void	run_args(t_data *data, t_pipe *pipe_data, t_cmd_node *cur);
 void	exe_data(t_data *data, char *root_file_name);
 void	wait_parent(t_data *data, t_pipe *pipe_data);
@@ -194,6 +196,7 @@ void	exit_exe(t_data *data, char **arvs);
 
 /* 				export_func.c */
 int		check_key(char *str, int unset_flag);
+void	roop_in_export(t_data *data, char *arv, int index, char *key);
 void	export_exe(t_data *data, char **arvs);
 t_envl	*find_key(t_data *data, char *key);
 void	print_all_export(t_data *data);
@@ -209,6 +212,7 @@ char	*get_env_value(t_data *data, char *key);
 void	echo_exe(t_data *data, char **arvs);
 /* 				unset_func.c*/
 void	invaild_identifier(char *arv, int flag);
+void	roop_in_unset(t_data *data, char *arv);
 void	unset_exe(t_data *data, char **arvs);
 /* 				pwd_func.c*/
 void	pwd_exe(t_data *data, char **arvs);
@@ -222,7 +226,14 @@ void	set_pipe_child(t_pipe *pipe_data);
 
 /*			/remake_func.c */
 void	remake_arvl(t_info *info, t_data *data);
+
+/*			/remake_util_func.c */
+void	set_data_redi(t_data *data, char *file_n, int pre_flag);
+void	make_exe_args_space(t_data *data, t_arvl *cur, int pre_flag);
 void	set_data_args(t_data *data, t_arvl *cur, int pre_flag, int par_i);
+void	open_new_node(t_data *data);
+int		next_if_null(t_arvl **cur, int *pre_flag);
+
 
 /* 			/redirect_func.c */
 void	redirect_file(char **envp, t_redi *redi, t_pipe *pipe_data);
