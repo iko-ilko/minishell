@@ -1,4 +1,4 @@
-CC = cc #-Wall -Wextra -Werror
+CC = cc -Wall -Wextra -Werror
 SRCS = minishell.c \
 	./execute_src/execute.c \
 	\

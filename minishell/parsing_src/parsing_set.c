@@ -28,8 +28,8 @@ void	push_args(t_info *info, char *line)
 
 void	set_content(t_info *info, char *line, t_arvl **node, int i)
 {
-	if (line[info->i] == '>' && line[info->i + 1] == '>' || \
-		line[info->i] == '<' && line[info->i + 1] == '<' )
+	if ((line[info->i] == '>' && line[info->i + 1] == '>') || \
+		(line[info->i] == '<' && line[info->i + 1] == '<' ))
 		info->i++;
 	info->content->flag = i;
 	if (*(info->buff) != 0)

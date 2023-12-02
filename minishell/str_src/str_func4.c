@@ -14,24 +14,27 @@
 
 char	*ft_strtok(char *str, char sepa)
 {
-	char	*stock;
-	char	*p;
+	static char	*last_t;
+	char		*start_t;
 
-	if (str != NULL)
-		stock = str;
-	if (stock == NULL || *stock == '\0')
-		return (NULL);
-	p = stock;
-	while (*stock != sepa && *stock != '\0')
-		stock++;
-	if (*stock == sepa)
+	if (last_t == NULL)
 	{
-		*stock = '\0';
-		stock++;
+		if (str != NULL)
+			last_t = str;
+		else
+			return (NULL);
+	}
+	start_t = last_t;
+	while (*last_t != sepa && *last_t != '\0')
+		last_t++;
+	if (*last_t == sepa)
+	{
+		*last_t = '\0';
+		last_t++;
 	}
 	else
-		stock = NULL;
-	return (p);
+		last_t = NULL;
+	return (start_t);
 }
 
 char	*ft_strtrim(char *s1, char *set)
