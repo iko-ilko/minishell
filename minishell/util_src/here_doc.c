@@ -12,6 +12,8 @@
 
 #include "../minishell.h"
 
+extern int	g_exit_code;
+
 char	*res_dup_one(char *args, char *buff, int k)
 {
 	char	*res;
@@ -78,7 +80,7 @@ void	here_doc(char **envp, char *limiter, int here_doc_temp_fd)
 		}
 		write(here_doc_temp_fd, line, ft_strlen(line));
 		write(here_doc_temp_fd, "\n", 1);
-		free(line);
+		free_single((void **)&line);
 	}
 	free_single((void *)&line);
 	close(here_doc_temp_fd);

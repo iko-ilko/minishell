@@ -60,3 +60,23 @@ unsigned char	ft_atous_minishell(char *str, int *error)
 	result = temp * sign;
 	return (result);
 }
+
+int	check_args_in_execute(char **args)
+{
+	int		i;
+	char	*temp;
+
+	i = 0;
+	while (args[i])
+	{
+		temp = ft_strtrim(args[i], " ");
+		if (temp[0] != '\0')
+		{
+			free_single((void **)&temp);
+			return (i);
+		}
+		i++;
+		free_single((void **)&temp);
+	}
+	return (-1);
+}

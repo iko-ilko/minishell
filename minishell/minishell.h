@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 19:30:26 by ilko              #+#    #+#             */
-/*   Updated: 2023/12/01 20:47:34 by ilko             ###   ########.fr       */
+/*   Updated: 2023/12/02 21:28:49 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <sys/ioctl.h>
 
 /* export add, delete */
 # define ADD 0
@@ -128,6 +129,7 @@ typedef struct s_data
 	int			node_open_flag;
 	int			args_i;
 	int			pre_flag;
+	int			redi_flag;
 	t_pipe		*cur_pipe;
 	int			cur_pid;
 }	t_data;
@@ -265,8 +267,7 @@ void			init_pipe(t_data *data, t_pipe *pipe_data);
 /* 			/signal_func.c */
 void			set_signal(int flag);
 void			parent_sigint_handler(int signum);
-void			child_sigint_handler(int signum);
-void			here_doc_sigterm_handler(int signum);
+void			here_doc_sigint_handler(int signum);
 
 /*			/path_func.c */
 char			**get_all_path(char **envp);
@@ -302,6 +303,7 @@ char			*ft_strtok(char *str, char sepa);
 int				ft_atoi(char *str);
 unsigned char	ft_atous_util(int *error);
 unsigned char	ft_atous_minishell(char *str, int *error);
+int	check_args_in_execute(char **args);
 
 /* ./error_done_src/exit_error.c */
 void			exit_error(char *message, char *reason, int exit_code);

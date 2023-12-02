@@ -81,6 +81,7 @@ void	every_init(t_info *info, t_data *data)
 	info->head = NULL;
 	info->content = NULL;
 	info->parsing_failed = SUCCESS;
+	data->redi_flag = SUCCESS;
 	data->cur_pid = -1;
 	data->pre_flag = 0;
 	data->cmd_node_head = NULL;

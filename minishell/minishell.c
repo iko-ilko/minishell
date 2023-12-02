@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 15:50:05 by ilko              #+#    #+#             */
-/*   Updated: 2023/12/01 20:17:53 by ilko             ###   ########.fr       */
+/*   Updated: 2023/12/02 21:35:18 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	main(int arc, char **arv, char **envp)
 	t_data	data;
 	char	*line;
 
-	if (arc != 0)
+	if (arc != 1)
 		exit_error("Too Many Argument", arv[1], 127);
 	init_envl(&data, envp, arv[0]);
 	while (1)
@@ -43,7 +43,7 @@ int	main(int arc, char **arv, char **envp)
 		}
 		free_every(&data, &info, &line);
 	}
+	atexit(a);
 	free_double(&data.envp);
 	clear_t_envl_node(&data.envl);
-	// atexit(a);
 }

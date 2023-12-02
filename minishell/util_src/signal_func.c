@@ -22,34 +22,22 @@ void	set_signal(int flag)
 		signal(SIGINT, parent_sigint_handler);
 		signal(SIGQUIT, SIG_IGN);
 	}
-	else if (flag == CHILD)
-	{
-		signal(SIGINT, child_sigint_handler);
-		signal(SIGQUIT, SIG_IGN);
-	}
 	else if (flag == HEREDOC)
 	{
-		signal(SIGINT, parent_sigint_handler);
+		rl_catch_signals = 0;
+		signal(SIGINT, here_doc_sigint_handler);
 		signal(SIGQUIT, SIG_IGN);
-		signal(SIGTERM, here_doc_sigterm_handler);
+		signal(SIGTERM, SIG_DFL);
 	}
 }
 
-void	here_doc_sigterm_handler(int signum)
+void	here_doc_sigint_handler(int signum)
 {
 	(void)signum;
-	write(1, "here_doc_sigterm_handler\n", 26);
-	write(1, "\n", 1);
+	ioctl(STDIN_FILENO, TIOCSTI, "\04");
 	rl_on_new_line();
 	rl_replace_line("", 0);
-}
-
-void	child_sigint_handler(int signum)
-{
-	(void)signum;
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
+	g_exit_code = 1;
 }
 
 void	parent_sigint_handler(int signum)

@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 15:40:23 by ilko              #+#    #+#             */
-/*   Updated: 2023/12/01 15:40:30 by ilko             ###   ########.fr       */
+/*   Updated: 2023/12/02 21:06:46 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ int	next_if_pipe_fail(t_pipe *pipe_data, t_cmd_node **cur)
 
 void	set_pipe_child(t_pipe *pipe_data)
 {
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	if (pipe_data->cmd_idx != 0)
 		dup2(pipe_data->pre_fd[0], 0);
 	if (pipe_data->cmd_idx != pipe_data->pipe_cnt)

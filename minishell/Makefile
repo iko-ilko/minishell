@@ -47,10 +47,10 @@ all: $(NAME)
 	
 
 $(NAME): $(OBJS)
-	$(CC) -g3 -fsanitize=address $(OBJS) -lreadline -o $(NAME)
+	$(CC) -g3 $(OBJS) -lreadline -o $(NAME)
 
 %.o:%.c
-	$(CC) -g3 -fsanitize=address -c $< -o $@
+	$(CC) -g3 -c $< -o $@
 
 clean:
 	rm -rf $(OBJS)
@@ -58,6 +58,3 @@ clean:
 fclean: clean
 	rm -rf $(NAME)
 re: fclean all
-###############temp
-and: all clean
-#####################
