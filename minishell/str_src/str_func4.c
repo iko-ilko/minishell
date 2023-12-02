@@ -17,7 +17,7 @@ char	*ft_strtok(char *str, char sepa)
 	char	*stock;
 	char	*p;
 
-	if (str != NULL)
+
 		stock = str;
 	if (stock == NULL || *stock == '\0')
 		return (NULL);

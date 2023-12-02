@@ -166,7 +166,7 @@ char			*res_dup(char **args, char *buff, int k, int *idx);
 void			init_set_buff(int *i, int *k);
 void			expand_exit_code(char **buff, int *k, int *i);
 char			*set_buff_heredoc(char *args_line);
-char			*word_parsing_heredoc(char **a, int *idx, char **env, \
+char			*word_parsing_heredoc(char **a, int *idx, \
 										char *buff);
 char			**here_doc_parsing(char **args, char **env);
 

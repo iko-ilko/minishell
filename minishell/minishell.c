@@ -25,7 +25,7 @@ int	main(int arc, char **arv, char **envp)
 	t_data	data;
 	char	*line;
 
-	if (arc != 0)
+	if (arc != 1)
 		exit_error("Too Many Argument", arv[1], 127);
 	init_envl(&data, envp, arv[0]);
 	while (1)

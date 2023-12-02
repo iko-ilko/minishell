@@ -42,6 +42,7 @@ void	str_error(char *message, char *reason)
 
 int	redi_perror(char *infile_name)
 {
+	(void)infile_name;
 	perror("minishell: ");
 	return (-1);
 }

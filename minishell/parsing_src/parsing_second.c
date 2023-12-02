@@ -38,7 +38,7 @@ char	**parsing_second_args(char **args, char **env)
 	return (args);
 }
 
-char	*word_parsing_heredoc(char **a, int *idx, char **env, char *buff)
+char	*word_parsing_heredoc(char **a, int *idx, char *buff)
 {
 	int	qt;
 	int	i[2];
@@ -67,7 +67,7 @@ char	**here_doc_parsing(char **args, char **env)
 		if (idx == 0)
 		{
 			buff = set_buff_heredoc(args[0]);
-			args[idx] = word_parsing_heredoc(args, &idx, env, buff);
+			args[idx] = word_parsing_heredoc(args, &idx, buff);
 			buff = NULL;
 			idx++;
 		}
