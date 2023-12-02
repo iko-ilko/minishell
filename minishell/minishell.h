@@ -303,7 +303,7 @@ char			*ft_strtok(char *str, char sepa);
 int				ft_atoi(char *str);
 unsigned char	ft_atous_util(int *error);
 unsigned char	ft_atous_minishell(char *str, int *error);
-int	check_args_in_execute(char **args);
+int				check_args_in_execute(char **args);
 
 /* ./error_done_src/exit_error.c */
 void			exit_error(char *message, char *reason, int exit_code);

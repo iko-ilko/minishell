@@ -14,11 +14,6 @@
 
 int	g_exit_code = 0;
 
-void a()
-{
-    system("leaks minishell");
-}
-
 int	main(int arc, char **arv, char **envp)
 {
 	t_info	info;
@@ -43,7 +38,6 @@ int	main(int arc, char **arv, char **envp)
 		}
 		free_every(&data, &info, &line);
 	}
-	atexit(a);
 	free_double(&data.envp);
 	clear_t_envl_node(&data.envl);
 }

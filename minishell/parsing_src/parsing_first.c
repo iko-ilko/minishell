@@ -17,7 +17,7 @@ void	make_first_init(t_info *info, char *line)
 	int	count;
 
 	info->args_i = 0;
-	info->i = 0;
+	info->i = -1;
 	info->j = 0;
 	info->quote = 0;
 	info->head = NULL;
@@ -109,24 +109,22 @@ void	parsing(t_info *info, char *line, char **env)
 	char	*cmd;
 
 	cmd = ft_strtrim(line, " ");
-	if (cmd == NULL || line[0] == '\0' || !(error_case(line)))
+	if (cmd == NULL || cmd[0] == '\0' || !(error_case(line)))
 	{
 		info->parsing_failed = FAIL;
+		free_single((void **)&cmd);
 		if (cmd == NULL || line[0] == '\0')
 			return ;
-		free_single((void **)&cmd);
 		return (str_error("syntax error", NULL));
 	}
 	add_history(line);
 	make_first_init(info, cmd);
-	while (cmd[info->i])
-	{
+	while (cmd[++(info->i)])
 		parsing_check(cmd, info);
-		info->i++;
-	}
 	if (info->quote != 0)
 	{
 		info->parsing_failed = FAIL;
+		free_single((void **)&cmd);
 		return (str_error("Unclosed quotation mark", NULL));
 	}
 	parsing_second(info->head, env);
