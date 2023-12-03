@@ -6,7 +6,7 @@
 /*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 19:30:26 by ilko              #+#    #+#             */
-/*   Updated: 2023/12/02 21:28:49 by ilko             ###   ########.fr       */
+/*   Updated: 2023/12/03 16:26:21 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,7 +240,7 @@ int				redirect_file_in(char **envp, int flag, char *file_n, \
 /*			/here_doc.c */
 char			*res_dup_one(char *args, char *buff, int k);
 char			*word_parsing_splitting(char *args, char **env, char *buff);
-char			*parsing_second_args_tt(char *args, char **env);
+char			*parsing_second_args_heredoc(char *args, char **env);
 void			here_doc(char **envp, char *limiter, int here_doc_temp_fd);
 
 /*			/list_func.c */

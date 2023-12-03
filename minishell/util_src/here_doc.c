@@ -49,7 +49,7 @@ char	*word_parsing_splitting(char *args, char **env, char *buff)
 	return (res_dup_one(args, buff, k));
 }
 
-char	*parsing_second_args_tt(char *args, char **env)
+char	*parsing_second_args_heredoc(char *args, char **env)
 {
 	char	*buff;
 
@@ -74,7 +74,7 @@ void	here_doc(char **envp, char *limiter, int here_doc_temp_fd)
 		i = -1;
 		while (line[++i])
 		{
-			line = parsing_second_args_tt(line, envp);
+			line = parsing_second_args_heredoc(line, envp);
 			if (line[0] == '\0')
 				break ;
 		}

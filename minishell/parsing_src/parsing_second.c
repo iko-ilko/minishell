@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_second.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jiwkim2 <jiwkim2@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ilko <ilko@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/22 20:49:38 by jiwkim2           #+#    #+#             */
-/*   Updated: 2023/11/25 20:44:12 by jiwkim2          ###   ########.fr       */
+/*   Updated: 2023/12/03 16:18:54 by ilko             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,12 +93,10 @@ void	parsing_second(t_arvl *node, char **env)
 	while (crr != NULL)
 	{
 		cmd = (t_cmd *)(crr->content);
-		if (prev_flag != 5)
-		{
-			cmd->args = parsing_second_args(cmd->args, env);
-		}
 		if (prev_flag == 5)
 			cmd->args = here_doc_parsing(cmd->args, env);
+		else
+			cmd->args = parsing_second_args(cmd->args, env);
 		prev_flag = cmd->flag;
 		crr = crr->next;
 	}
